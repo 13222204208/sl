@@ -25,6 +25,22 @@ Route::get('login', function () {
 
 }); */
 
+
+
+Route::prefix('home')->group(function () {
+    Route::get('homepage', function () {
+        return view('home.homepage');
+    });
+
+    Route::get('clean/count','Home\HomePageController@cleanCount');//获取扫楼记录数量
+    Route::post('clean/date','Home\HomePageController@cleanDate');//获取时间范围内扫楼记录数量
+
+    Route::get('tenant/count','Home\HomePageController@tenantCount');//获取租户信息数量
+    Route::post('tenant/date','Home\HomePageController@tenantDate');//获取时间范围内扫楼记录数量
+
+    Route::get('tenant/type','Home\HomePageController@tenantType');//租户类型，饼状图
+});
+
 Route::get('admin/code','Login\LoginController@adminLogin');//后台登录验证码
 Route::post('login/login','Login\LoginController@login');//后台登录验证
 
@@ -114,6 +130,7 @@ Route::prefix('clean')->group(function () {//扫楼记录管理
     Route::get('record-change', function () {
         return view('clean.record-change');//按楼盘查看数据变更
     });
+    Route::get('change/houses','Clean\CleanController@changeHouses');//按楼盘查看数据变更
 });
 
 Route::prefix('tenant')->group(function () {//租户管理

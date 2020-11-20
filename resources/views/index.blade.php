@@ -135,23 +135,20 @@
           </div>
 
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+
             <li data-name="home" class="layui-nav-item layui-nav-itemed">
               <a href="javascript:;" lay-tips="主页" lay-direction="2">
                 <i class="layui-icon layui-icon-home"></i>
-                <cite>数据统计</cite>
+                <cite>主页</cite>
               </a>
               <dl class="layui-nav-child">
 
                 <dd data-name="console">
-                  <a lay-href="home/homepage">扫楼数量统计</a>
-                  <a lay-href="home/homepage">新增租户信息数量</a>
-                  <a lay-href="home/homepage">到期租户预警</a>
-                  <a lay-href="home/homepage">楼盘空置率</a>
-                  <a lay-href="home/homepage">楼内租户类型占比</a>
-                  <a lay-href="home/homepage">扫楼完成率</a>
+                  <a lay-href="home/homepage">数据统计</a>
                 </dd>
               </dl>
             </li>
+            
 
             <li data-name="user" class="layui-nav-item">
               <a href="javascript:;" lay-tips="楼盘架构管理" lay-direction="2">

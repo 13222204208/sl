@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>查看全部扫楼记录</title>
+  <title>按楼盘查看数据变更</title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -21,52 +21,9 @@
 
 
 
-  <div class="layui-row" id="popUpdateTest" style="display:none;">
-    <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
-
-
-
-      <div class="layui-form-item">
-        <label class="layui-form-label">名称</label>
-        <div class="layui-input-block">
-          <input type="text" name="nickname" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label class="layui-form-label">角色</label>
-        <div class="layui-input-block">
-          <select name="role" lay-filter="aihao">
-
-          </select>
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label class="layui-form-label">状态</label>
-        <div class="layui-input-block">
-          <input type="text" name="state"  autocomplete="off" placeholder="" value="" class="layui-input">
-        </div>
-      </div>
-
-      <div class="layui-form-item ">
-        <div class="layui-input-block">
-          <div class="layui-footer" style="left: 0;">
-            <button class="layui-btn" lay-submit="" lay-filter="editAccount">修改</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-
 
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
-<!--   <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-  </script> -->
 
 
   <script src="/layuiadmin/layui/layui.js"></script>
@@ -78,11 +35,10 @@
       var form = layui.form;
 
 
-      
+   
 
       table.render({
-        height: 600,
-        url: "gain/clean" //数据接口
+        url: "change/houses" //数据接口
           ,
         page: true //开启分页
           ,
@@ -96,84 +52,18 @@
               width: 80,
               sort: true
             }, {
-              field: 'houses_name',
-              title: '楼盘名称',
-              width: 180,
+              field: 'before',
+              title: '变更前名称',
+              width: 200
             }, {
-              field: 'houses_info',
-              title: '楼盘信息',
-              width: 180,
+              field: 'update_name',
+              title: '当前名称',
+              width: 200
             }, {
-              field: 'houses_num',
-              title: '房间名称',
-              width: 120,
-            }, {
-              field: 'tenant_name',
-              title: '租户名称',
-              width: 180,
-            }, {
-              field: 'is_we_company',
-              title: '是否司租户',
-              width: 100,
-            }, {
-              field: 'company_type',
-              title: '公司类型',
-              width: 120,
-            }, {
-              field: 'tenant_user',
-              title: '联系人',
-              width: 180,
-            }, {
-              field: 'start_time',
-              title: '合同起始时间',
-              width: 150,
-            },{
-              field: 'stop_time',
-              title: '合同到期时间',
-              width: 150,
-            }, {
-              field: 'pay_type',
-              title: '付款方式',
-              width: 120,
-            }, {
-              field: 'pay_time',
-              title: '下次应付款时间',
-              width: 150,
-            }, {
-              field: 'tenant_need',
-              title: '租户需求',
-              width: 120,
-            },{
-              field: 'remark',
-              title: '备注',
-              width: 120,
-            }, {
-              field: 'broker_name',
-              title: '经纪人姓名',
-              width: 120,
-            }, {
-              field: 'broker_phone',
-              title: '经纪人手机号',
-              width: 120,
-            }, {
-              field: 'position',
-              title: '提交位置',
-              width: 180,
-            }, {
-              field: 'enclosure',
-              title: '附件',
-              width: 100,
-            }, {
-              field: 'created_at',
-              title: '创建时间',
-     
-            }/* ,    {
-              fixed: 'right',
-              title: "操作",
-              width: 150,
-              align: 'center',
-              toolbar: '#barDemo'
-            } */
+              field: 'pid',
+              title: '父ID',
+              width: 120
+            }
           ]
         ],
         parseData: function(res) { //res 即为原始返回的数据

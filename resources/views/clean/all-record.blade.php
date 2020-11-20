@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>按楼盘查看数据变更</title>
+  <title>查看全部扫楼记录</title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -23,50 +23,153 @@
 
   <div class="layui-row" id="popUpdateTest" style="display:none;">
     <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
-
-
-
-      <div class="layui-form-item">
-        <label class="layui-form-label">名称</label>
+    <div class="layui-form-item">
+        <label class="layui-form-label">楼盘名称</label>
         <div class="layui-input-block">
-          <input type="text" name="nickname" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+          <input type="text" name="houses_name" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>    
+      
+      <div class="layui-form-item">
+        <label class="layui-form-label">楼盘信息</label>
+        <div class="layui-input-block">
+          <input type="text" name="houses_info" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>    
+      
+      <div class="layui-form-item">
+        <label class="layui-form-label">房间号</label>
+        <div class="layui-input-block">
+          <input type="text" name="houses_num" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">租户名称</label>
+        <div class="layui-input-block">
+          <input type="text" name="tenant_name" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label">角色</label>
+        <label class="layui-form-label">是否我司租户</label>
         <div class="layui-input-block">
-          <select name="role" lay-filter="aihao">
-
-          </select>
+          <input type="text" name="is_we_company" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label">状态</label>
+        <label class="layui-form-label">公司类型</label>
         <div class="layui-input-block">
-          <input type="text" name="state"  autocomplete="off" placeholder="" value="" class="layui-input">
+          <input type="text" name="company_type" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
       </div>
 
-      <div class="layui-form-item ">
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">联系人</label>
+        <div class="layui-input-block">
+          <input type="text" name="tenant_user" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">合同开始时间</label>
+          <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="start_time" id="start-time" style="width: 300px;" placeholder="yyyy-MM-dd HH:mm:ss">
+          </div>
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">合同结束时间</label>
+          <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="stop_time" id="stop-time" style="width: 300px;" placeholder="yyyy-MM-dd HH:mm:ss">
+          </div>
+        </div>
+      </div>
+
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">付款方式</label>
+        <div class="layui-input-block">
+          <input type="text" name="pay_type" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">付款时间</label>
+          <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="pay_time" id="pay-time" style="width: 300px;" placeholder="yyyy-MM-dd HH:mm:ss">
+          </div>
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">租户需求</label>
+        <div class="layui-input-block">
+          <input type="text" name="tenant_need" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+          <input type="text" name="remark" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">经纪人姓名</label>
+        <div class="layui-input-block">
+          <input type="text" name="broker_name" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">经纪人手机号</label>
+        <div class="layui-input-block">
+          <input type="text" name="broker_phone" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">提交位置</label>
+        <div class="layui-input-block">
+          <input type="text" name="position" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">附件</label>
+        <div class="layui-input-block">
+          <input type="text" name="enclosure" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+
+<!--       <div class="layui-form-item ">
         <div class="layui-input-block">
           <div class="layui-footer" style="left: 0;">
             <button class="layui-btn" lay-submit="" lay-filter="editAccount">修改</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
           </div>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 
 
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
-  <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-  </script>
+   <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">查看</a>
+  
+  </script> 
 
 
   <script src="/layuiadmin/layui/layui.js"></script>
@@ -78,88 +181,11 @@
       var form = layui.form;
 
 
-      $(document).on('click', '#admin-management', function() {
-        layer.open({
-          //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-          type: 1,
-          title: "新建帐号",
-          area: ['620px', '400px'],
-          content: $("#layuiadmin-form-admin") //引用的弹出层的页面层的方式加载修改界面表单
-        });
-      });
-
-      //添加帐号
-      form.on('submit(createAccount)', function(data) {
-        console.log(data.field);
-        $.ajax({
-          headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          },
-          url: "add/account",
-          method: 'POST',
-          data: data.field,
-          dataType: 'json',
-          success: function(res) {
-            // console.log(res);
-            if (res.status == 200) {
-              layer.msg('新建帐号成功', {
-                offset: '15px',
-                icon: 1,
-                time: 2000
-              }, function() {
-                location.href = 'background-account';
-              })
-            } else if (res.status == 403) {
-              layer.msg('填写错误或帐号重复', {
-                offset: '15px',
-                icon: 2,
-                time: 3000
-              }, function() {
-                location.href = 'background-account';
-              })
-            }
-          }
-        });
-        return false;
-      });
-
-      //获取角色名称
-      $.ajax({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        url: "query/role",
-        method: 'get',
-        dataType: 'json',
-        success: function(res) {
-          //console.log(res.role_name);
-          status = res.status;
-          role_name = res.role_name;
-          if (status == 200) {
-            options = "";
-            for (var i = 0; i < role_name.length; i++) {
-              var t = role_name[i];
-
-              options += '<option value="' + t.role_name + '">' + t.role_name + '</option>';
-            }
-
-            $("select[name='role_name']").html(options);
-            $("select[name='select_role']").html(options);
-            $("select[name='role']").html(options);
-            form.render('select');
-          } else if (res.status == 403) {
-            layer.msg('错误', {
-              offset: '15px',
-              icon: 2,
-              time: 3000
-            })
-          }
-        }
-      });
+      
 
       table.render({
         height: 600,
-        url: "query/account" //数据接口
+        url: "gain/clean" //数据接口
           ,
         page: true //开启分页
           ,
@@ -173,28 +199,84 @@
               width: 80,
               sort: true
             }, {
-              field: 'account_num',
-              title: '帐号',
-              width: 120
+              field: 'houses_name',
+              title: '楼盘名称',
+              width: 180,
             }, {
-              field: 'nickname',
-              title: '昵称',
-              width: 120
+              field: 'houses_info',
+              title: '楼盘信息',
+              width: 180,
             }, {
-              field: 'role',
-              title: '角色',
-              width: 120
+              field: 'houses_num',
+              title: '房间名称',
+              width: 120,
             }, {
-              field: 'state',
-              title: '状态',
-              width: 160
+              field: 'tenant_name',
+              title: '租户名称',
+              width: 180,
             }, {
+              field: 'is_we_company',
+              title: '是否司租户',
+              width: 100,
+            }, {
+              field: 'company_type',
+              title: '公司类型',
+              width: 120,
+            }, {
+              field: 'tenant_user',
+              title: '联系人',
+              width: 180,
+            }, {
+              field: 'start_time',
+              title: '合同起始时间',
+              width: 150,
+            },{
+              field: 'stop_time',
+              title: '合同到期时间',
+              width: 150,
+            }, {
+              field: 'pay_type',
+              title: '付款方式',
+              width: 120,
+            }, {
+              field: 'pay_time',
+              title: '下次应付款时间',
+              width: 150,
+            }, {
+              field: 'tenant_need',
+              title: '租户需求',
+              width: 120,
+            },{
+              field: 'remark',
+              title: '备注',
+              width: 120,
+            }, {
+              field: 'broker_name',
+              title: '经纪人姓名',
+              width: 120,
+            }, {
+              field: 'broker_phone',
+              title: '经纪人手机号',
+              width: 120,
+            }, {
+              field: 'position',
+              title: '提交位置',
+              width: 180,
+            }, {
+              field: 'enclosure',
+              title: '附件',
+              width: 100,
+            }, {
+              field: 'created_at',
+              title: '创建时间',
+     
+            } ,    {
               fixed: 'right',
               title: "操作",
               width: 150,
               align: 'center',
               toolbar: '#barDemo'
-            }
+            } 
           ]
         ],
         parseData: function(res) { //res 即为原始返回的数据
@@ -336,40 +418,12 @@
       table.on('tool(user)', function (obj) {
             var data = obj.data;
          
-           if (obj.event === 'del') {
-            if (data.id == 1) {
-              layer.msg("超级管理员无法删除", {icon: 2});
-              return false;
-            }
-                layer.confirm('真的删除行么', function (index) {
-                    $.ajax({
-                        url: "del/account",
-                        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-                        type: "POST",
-                        data: {id: data.id},
-                        success: function (msg) {
-                  
-                            if (msg.status == 200) {
-                                //删除这一行
-                                obj.del();
-                                //关闭弹框
-                                layer.close(index);
-                                layer.msg("删除成功", {icon: 6});
-                            } else {
-                                layer.msg("删除失败", {icon: 5});
-                            }
-                        }
-                    });
-                    return false;
-                });
-            } else if (obj.event === 'edit') {
+     if (obj.event === 'edit') {
                     layer.open({
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
-                        title: "修改帐号信息",
-                        area: ['420px', '330px'],
+                        title: "详情",
+                        area: ['600px','800px'],
                         content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
                     });
                     //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取

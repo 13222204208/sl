@@ -66,12 +66,41 @@ class HousesController extends Controller
         }
     }
 
-    public function updateName(Request $request)
+    public function updateName(Request $request)//修改楼盘架构名称
     {
         if ($request->ajax()) {
             $level = Level::find($request->id);
+            
+            $before = "";
+            if ($level->tree == '/') {
+                $before = $level->type_name;
+                $newName = $request->type_name;
+            }else{
+                $tree = explode('/',$level->tree);//拼接楼盘分类名称
+                $tree = array_filter($tree);
+                foreach($tree as $tid){
+
+                    $tname = Level::find(intval($tid));
+                
+                    $before .=  $tname->type_name;
+                }
+
+                $newName = $before.$request->type_name;
+
+                $before .= $level->type_name;
+               
+            }
+    
             $level->type_name= $request->type_name;
+            $pid = $level->parent_id;
             if ($level->save()) {
+                $time= date('Y-m-d H:i:s');
+                DB::table('update_level_name')->insertGetId([
+                    'before'=>$before,'update_name'=>$newName,
+                    'pid'=>$pid,'hid'=>$request->id,'created_at'=>$time,
+                    'tree'=> $level->tree
+                    ]);
+
                 return response()->json(['status'=>200]);
             }else{
                  return response()->json(['status'=>403]);
