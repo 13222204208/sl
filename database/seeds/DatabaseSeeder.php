@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
 /*          $this->call(ActivityTableSeeder::class);
          $this->call(ApplyActivityTableSeeder::class);
          $this->call(BettingTableSeeder::class); */
-         //$this->call(BgUsersTableSeeder::class);
+         $this->call(BgUsersTableSeeder::class);
          $this->call(CleanTableSeeder::class);
          $this->call(TenantTableSeeder::class);
 /*          $this->call(FeedbackTableSeeder::class);

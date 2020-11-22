@@ -66,9 +66,13 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'adminLogin' => \App\Http\Middleware\AdminLogin::class,//判断是否登陆
+
         //跨域
         'cors' => \Fruitcake\Cors\HandleCors::class,
         //jwt
         'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class
     ];
 }

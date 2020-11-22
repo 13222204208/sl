@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Model\BgUser;
+use App\Model\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
@@ -30,7 +30,7 @@ class AdminLogin
         if ($url != '/' ) {
             $arr=explode("/",$url);
             if (session('id') != 1) {
-                $role = BgUser::find(session('id'));
+                $role = User::find(session('id'));
                 $data = DB::table('bg_roles')->where('role_name',$role->role)->value('role_scope');
                 $data = json_decode($data,true);
                 array_push($data,'home');

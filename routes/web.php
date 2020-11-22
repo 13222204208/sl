@@ -88,13 +88,26 @@ Route::prefix('broker')->group(function () {//经纪人管理
     Route::get('query/account','Broker\BrokerController@queryAccount');//获取所有后台帐号
     Route::post('add/role','Broker\BrokerController@addRole');//添加角色
     Route::get('query/role','Broker\BrokerController@queryRole');//查看所有角色
-    Route::get('del/role','Broker\BrokerController@delRole');//删除一个角色
+
+    Route::get('query/permission','Broker\BrokerController@queryPermission');//查看所有权限
+    Route::post('del/permission','Broker\BrokerController@delPermission');//删除一个权限
+    Route::post('update/pname','Broker\BrokerController@updatePname');//更新权限的名称
+
+
+    Route::post('del/role','Broker\BrokerController@delRole');//删除一个角色
     Route::get('gain/role','Broker\BrokerController@gainRole');//获取所有角色
 
-    Route::post('add/role/scope','Broker\BrokerController@addRoleScope');//获取所有角色
+    //Route::post('all/role','Broker\BrokerController@addRoleScope');//获取所有角色
 
+    Route::post('have/role','Broker\BrokerController@haveRole');//获取当前用户的角色名称
+    Route::post('update/role','Broker\BrokerController@updateRole');//更新用户的角色
+
+
+    Route::post('update/permission','Broker\BrokerController@updatePermission');//更新角色的权限
     Route::post('add/power','Broker\BrokerController@addPower');//添加权限
-    Route::get('gain/power','Broker\BrokerController@gainPower');//获取所有权限名称
+    Route::get('all/permission','Broker\BrokerController@allPermission');//获取所有权限名称
+    Route::post('have/permission','Broker\BrokerController@havePermission');//获取当前角色的权限名称
+
     
     Route::get('power', function () {
         return view('broker.power');//权限管理

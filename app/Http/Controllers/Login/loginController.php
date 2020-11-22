@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Login;
 
-use App\Model\BgUser;
+use App\Model\User;
 use Illuminate\Http\Request;
 use Gregwar\Captcha\CaptchaBuilder;
 use App\Http\Controllers\Controller;
@@ -24,7 +24,7 @@ class loginController extends Controller
 
             $account_num= $request->username;
         
-            $user = BgUser::where('account', $account_num)->first();
+            $user = User::where('account', $account_num)->first();
         
             if (!$user || decrypt($user->password) != $request->password) {
                 return response()->json(['status'=>403]);

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Broker;
 
-use App\Model\BgUser;
+use App\Model\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -16,48 +16,161 @@ class BrokerController extends Controller
         if ($request->ajax()) {
             try {
                 $request->validate([
-                    'account' => 'required|unique:users|max:12',
-                    'name' => 'required|unique:users|max:12',
+                    'account' => 'required|unique:users|max:20',
                 ]); 
             } catch (\Throwable $th) {
                 return response()->json(['status'=>403]);
             }
-            $role= Role::where('name',$request->role_name)->first();
-       
-            $id= DB::table('users')->insertGetId([
-                'account'=>$request->input('account'),
-                'name'=>$request->input('name'),
-                'password'=>encrypt($request->input('password')),
-                'role_id' => $role->id
-            ]);
-/*             $user= BgUser::where('id',$id)->first();
-            $user->assignRole('编辑');
-            $user= Role::find(1);
-            $permissions = $user->permissions; */
 
-            if ($id) {
-                return response()->json(['status'=>200]);
-            }else{
-                return response()->json(['status'=>403]);
+            $user= User::create([
+                'account'=>$request->account,
+                'name' => $request->name,
+                'password' => encrypt($request->password)
+            ]); 
+        
+            $roles= $request->limits;
+            
+            foreach ($roles as $role) {
+                $user->assignRole($role);
             }
-           
+            return response()->json(['status'=>200]);
         }
     }
 
     public function addRole(Request $request)//添加角色
     {
-        $role = Role::create(['name' => $request->role_name]);
+        try {
+            $request->validate([
+                'name' => 'required|unique:roles|max:12',
+            ]); 
+        } catch (\Throwable $th) {
+            return response()->json(['status'=>403]);
+        }
+        $role = Role::create(['name' => $request->name]);
+
+        $permissions= $request->limits;
+        
+        foreach ($permissions as $permission) {
+            $role->givePermissionTo($permission);
+        }
        
-        if ($role) {
+            return response()->json(['status'=>200]);
+    }
+
+
+    public function haveRole(Request $request)//获取当前用户所关联的角色
+    {
+        $user= User::find($request->id);
+        $have = array();
+        $roles= Role::select('name')->get();
+
+        foreach ($roles as $role) {//判断角色是否拥有此权限
+
+            $state= $user->hasAnyRole($role['name']);
+            if ($state) {
+                $have[]= $role['name'];
+            }
+        }
+        return response()->json(['status'=>200,'data'=>$have]);
+
+    }
+
+    public function updateRole(Request $request)//更新用户的角色
+    {  
+        $user= User::find($request->id);
+        $roles= $request->role;
+
+        if (isset($roles)) {    
+            $user->roles()->detach(); // 如果没有选择任何与用户关联的角色则将之前关联角色解除
+            foreach ($roles as $role) {
+                $user->assignRole($role);
+            }
+        } 
+
+
+        return response()->json(['status'=>200]);
+      
+    }
+
+    public function havePermission(Request $request)//获取当前角色的权限
+    {
+        $role= Role::find($request->id);
+        $have = array();
+        $permissions= Permission::select('name')->get();
+        foreach ($permissions as $permission) {//判断角色是否拥有此权限
+
+            $state= $role->hasPermissionTo($permission['name']);
+            if ($state) {
+                $have[]= $permission['name'];
+            }
+        }
+        return response()->json(['status'=>200,'data'=>$have]);
+
+    }
+
+    public function allPermission()//获取所有权限名称
+    {
+        $permissions = Permission::select('name')->get();
+        if ($permissions) {
+            return response()->json(['status'=>200,'data'=>$permissions]);
+        }else{
+            return response()->json(['status'=>403]);
+        }
+
+    }
+
+    public function delPermission(Request $request)//删除一个权限
+    {
+        if ($request->ajax()) {
+            $id= $request->input('id');
+            $state= Permission::destroy($id);
+        }
+
+        if ($state) {
             return response()->json(['status'=>200]);
         }else{
             return response()->json(['status'=>403]);
         }
+
+    }
+
+    public function updatePname(Request $request)//更新一个权限的名称
+    {
+        if ($request->ajax()) {
+            $permission= Permission::find(intval($request->id));
+            $permission->name = $request->name;
+            $permission->route = $request->route;
+
+            if ($permission->save()) {
+                return response()->json(['status'=>200]);
+            }else{
+                return response()->json(['status'=>403]);
+            }
+
+        }
+    }
+
+    public function updatePermission(Request $request)//更新角色的权限范围
+    {  
+        $role= Role::find($request->id);
+        $permissions= $request->permission;
+        
+        $p_all = Permission::all();
+        foreach ($p_all as $p) {
+            $role->revokePermissionTo($p);
+        }
+        
+        foreach ($permissions as $permission) {
+            $role->givePermissionTo($permission);
+        }
+
+        return response()->json(['status'=>200]);
+      
     }
 
     public function addPower(Request $request)//添加权限 
     {
-        $role = Permission::create(['name' => $request->name]);
+        $role = Permission::create(['name' => $request->name,'route'=>$request->route]);
        
         if ($role) {
             return response()->json(['status'=>200]);
@@ -69,7 +182,7 @@ class BrokerController extends Controller
     public function queryRole(Request $request)
     {
         $limit = $request->get('limit');
-        $roles = Role::paginate($limit);//获取所有角色
+        $roles = Role::paginate($limit);//获取所有角色列表
         return $roles;
     }
 
@@ -95,11 +208,11 @@ class BrokerController extends Controller
         }
     }
 
-    public function queryAccountRole(Request $request,$role)
-    {
+    public function queryPermission(Request $request)
+    {   
         $limit = $request->get('limit');
-        $data= DB::table('bg_users')->where('role','=',$role)->select('id','account_num','nickname','role','state')->paginate($limit);
-        return $data;
+        $permissions = Permission::paginate($limit);//获取所有角色
+        return $permissions; 
     }
 
     public function delAccount(Request $request)
@@ -119,14 +232,13 @@ class BrokerController extends Controller
     public function delRole(Request $request)
     {
         if ($request->ajax()) {
-            $id= $request->input('id');
-            $state= DB::table('users')->where('id',$id)->delete();
-        }
-
-        if ($state) {
-            return response()->json(['status'=>200]);
-        }else{
-            return response()->json(['status'=>403]);
+            $id= $request->input('id'); 
+            $state = Role::destroy($id);
+            if ($state) {
+                return response()->json(['status'=>200]);
+            }else{
+                return response()->json(['status'=>403]);
+            }
         }
     }
 
