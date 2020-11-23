@@ -241,7 +241,7 @@
                     <dd><a lay-href="parm/demand">租户需求配置</a></dd>
                   </dl>
                 </dd>
-                <dd><a lay-href="platform/add-platform">合同到期提醒手机</a></dd>
+                <dd><a lay-href="parm/phone">合同到期提醒手机</a></dd>
               </dl>
             </li>
 

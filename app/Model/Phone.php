@@ -5,10 +5,10 @@ namespace App\Model;
 use Illuminate\Database\Eloquent\Model;
 use App\Model\Traits\Timestamp;
 
-class Clean extends Model
+class Phone extends Model
 {  
     use Timestamp;
-    protected $table = "clean";
+    protected $table = "phone";
     protected $guarded = [];
 
     protected $casts = [

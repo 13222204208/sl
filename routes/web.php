@@ -185,4 +185,11 @@ Route::prefix('parm')->group(function () {//经纪人管理
     Route::post('create/name','Parm\DemandController@createName');//创建分类名称
     Route::post('update/name','Parm\DemandController@updateName');//更新分类名称
     Route::post('del/name','Parm\DemandController@delName');//删除分类
+
+    Route::get('phone', function () {
+        return view('parm.phone');//合同到期提醒手机号设置
+    });
+
+    Route::post('update/phone','Parm\DemandController@updatePhone');//更新手机号
+    Route::get('query/phone','Parm\DemandController@queryPhone');//获取手机号
 });

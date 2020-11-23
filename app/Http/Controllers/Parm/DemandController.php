@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Parm;
 
 
+use App\Model\Phone;
+use App\Model\Demand;
 use Illuminate\Http\Request;
+use function PHPSTORM_META\type;
+
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Model\Demand;
-
-use function PHPSTORM_META\type;
 
 class DemandController extends Controller
 {
@@ -95,5 +96,29 @@ class DemandController extends Controller
             }
         }
         
+    }
+
+    public function updatePhone(Request $request)
+    {
+        if ($request->ajax()) {
+            $state= Phone::updateOrCreate(['id'=>1],['phone'=>$request->phone]);
+            if ($state) {
+                return response()->json(['status'=>200]);
+            }else{
+                 return response()->json(['status'=>403]);
+            }
+        }
+    }
+
+    public function queryPhone(Request $request)
+    {
+        if ($request->ajax()) {
+            $state= Phone::find(1);
+            if ($state) {
+                return response()->json(['status'=>200,'phone'=> $state->phone]);
+            }else{
+                 return response()->json(['status'=>403]);
+            }
+        }
     }
 }
