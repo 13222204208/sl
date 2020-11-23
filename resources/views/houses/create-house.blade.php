@@ -130,7 +130,7 @@
                                 icon: 1,
                                 time: 1000
                             }, function () {
-                              
+                                layer.closeAll();
                               $(".layui-laypage-btn").click() 
                   
                             })

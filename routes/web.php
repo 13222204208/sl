@@ -173,9 +173,9 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::get('gain/company','Parm\CompanyTypeController@gainCompany');//获取公司类型信息
     Route::get('gain/company/type/{id}','Parm\CompanyTypeController@gainCompanyType');//获取公司类型
-    Route::post('create/name','Parm\CompanyTypeController@createName');//创建分类名称
-    Route::post('update/name','Parm\CompanyTypeController@updateName');//更新分类名称
-    Route::post('del/name','Parm\CompanyTypeController@delName');//删除分类
+    Route::post('create/cname','Parm\CompanyTypeController@createName');//创建分类名称
+    Route::post('update/cname','Parm\CompanyTypeController@updateName');//更新分类名称
+    Route::post('del/cname','Parm\CompanyTypeController@delName');//删除分类
 
     Route::get('demand', function () {
         return view('parm.demand');//租户需求

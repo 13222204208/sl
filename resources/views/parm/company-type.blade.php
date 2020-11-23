@@ -118,7 +118,7 @@
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: "create/name",
+                    url: "create/cname",
                     method: 'POST',
                     data: data.field,
                     dataType: 'json',
@@ -130,7 +130,7 @@
                                 icon: 1,
                                 time: 1000
                             }, function () {
-                              
+                                layer.closeAll();
                               $(".layui-laypage-btn").click() 
                   
                             })
@@ -200,7 +200,7 @@
 
                     layer.confirm('真的删除此分类么', function (index) {
                         $.ajax({
-                            url: "del/name",
+                            url: "del/cname",
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
                                     'content')
@@ -301,7 +301,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "update/name",
+                        url: "update/cname",
                         type: 'post',
                         data: {
                             id: data.id,

@@ -40,7 +40,7 @@ class HousesController extends Controller
         if ($request->ajax()) {
 
             $str= str_replace(" ",'',$request->type_name);
-            $type_name= explode('，',$str);
+            $type_name= array_filter(explode('，',$str));
             $data= array();
             $pid = intval($request->pid);
             if ($pid == 0 ) {

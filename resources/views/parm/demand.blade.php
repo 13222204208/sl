@@ -130,7 +130,7 @@
                                 icon: 1,
                                 time: 1000
                             }, function () {
-                              
+                                layer.closeAll(); //关闭所有的弹出层
                               $(".layui-laypage-btn").click() 
                   
                             })

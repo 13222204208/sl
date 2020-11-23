@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('account')->unique();
             $table->string('password');
+            $table->string('head_img');//头像
             $table->integer('role_id')->unsigned()->default(0)->comment('角色id');
             $table->timestamps();
         });

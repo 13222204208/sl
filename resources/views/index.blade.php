@@ -165,9 +165,6 @@
                 <dd>
                   <a lay-href="houses/info">楼盘详情</a>
                 </dd>
-                <dd>
-                  <a lay-href="houses/user-tracking">楼盘审核</a>
-                </dd>
               </dl>
             </li>
 
