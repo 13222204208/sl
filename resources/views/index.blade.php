@@ -64,7 +64,7 @@
           </li>
           <li class="layui-nav-item" lay-unselect>
             <a href="javascript:;">
-              <cite>{{session('nickname')}}</cite>
+              <cite>{{session('account')}}</cite>
             </a>
             <dl class="layui-nav-child">
               <dd><a lay-href="bguser/basic/document">基本资料</a></dd>

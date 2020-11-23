@@ -18,8 +18,8 @@ class AdminLogin
      */
     public function handle($request, Closure $next)
     {   
-        if (!(session('nickname'))) {
-            return redirect()->to('login');
+        if (!(session('account'))) {
+            return redirect('login');
         }
 
         

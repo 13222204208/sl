@@ -1,6 +1,8 @@
 <?php
 
+use App\Model\User;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Permission;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,13 +16,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('index');
+        return view('index');
 });
 
 Route::get('login', function () {
     return view('login.login');
 });
 
+//后台退出
+Route::get('logout', function (Illuminate\Http\Request $request) {
+    $request->session()->flush();
+    return redirect('login');
+});
 /* Route::middleware('role')->group(function () {
 
 }); */
@@ -30,7 +37,7 @@ Route::get('login', function () {
 Route::prefix('home')->group(function () {
     Route::get('homepage', function () {
         return view('home.homepage');
-    });
+    })->name('home')->middleware('adminRoute');
 
     Route::get('clean/count','Home\HomePageController@cleanCount');//获取扫楼记录数量
     Route::post('clean/date','Home\HomePageController@cleanDate');//获取时间范围内扫楼记录数量
@@ -48,7 +55,7 @@ Route::prefix('houses')->group(function () {//楼盘管理
 
     Route::get('created', function () {
         return view('houses.create-house');//创建楼盘
-    });
+    })->name('houses')->middleware('adminRoute');
     Route::get('gain/loupan','Houses\HousesController@gainLoupan');//获取楼盘信息
     Route::get('gain/loupan/type/{id}','Houses\HousesController@gainLoupanType');//获取分类下楼盘
     Route::post('create/name','Houses\HousesController@createName');//创建分类名称
@@ -57,14 +64,14 @@ Route::prefix('houses')->group(function () {//楼盘管理
 
     Route::get('list', function () {
         return view('houses.house-list');//楼盘列表
-    });
+    })->name('houses')->middleware('adminRoute');;
 });
 
 Route::prefix('branch')->group(function () {//组织架构管理
 
     Route::get('created', function () {
         return view('branch.create-branch');//创建部门
-    });
+    })->name('branch')->middleware('adminRoute');
 
     Route::get('gain/branch','Branch\BranchController@gainBranch');//获取公司类型信息
     Route::get('gain/branch/type/{id}','Branch\BranchController@gainBranchType');//获取公司类型
@@ -122,27 +129,27 @@ Route::prefix('work')->group(function () {//工作管理
 
     Route::get('broker-list', function () {
         return view('work.broker-list');//经纪人列表
-    });
+    })->name('work')->middleware('adminRoute');
 
     Route::get('broker/list','Work\WorkController@brokerList');//获取经纪人列表
     Route::get('query/account/{account}','Work\WorkController@queryAccount');//查询经纪人
     
     Route::get('broker-workinfo', function () {
         return view('work.broker-workinfo');//经纪人工作详情
-    });
+    })->name('work')->middleware('adminRoute');
 });
 
 Route::prefix('clean')->group(function () {//扫楼记录管理
 
     Route::get('all-record', function () {
         return view('clean.all-record');//查看全部扫楼记录
-    });
+    })->name('clean')->middleware('adminRoute');
 
     Route::get('gain/clean','Clean\CleanController@gainClean');
     
     Route::get('record-change', function () {
         return view('clean.record-change');//按楼盘查看数据变更
-    });
+    })->name('clean')->middleware('adminRoute');
     Route::get('change/houses','Clean\CleanController@changeHouses');//按楼盘查看数据变更
 });
 
@@ -150,7 +157,7 @@ Route::prefix('tenant')->group(function () {//租户管理
 
     Route::get('query', function () {
         return view('tenant.query');//租户查询
-    });
+    })->name('tenant')->middleware('adminRoute');
 
     Route::get('query/tenant','Tenant\TenantController@queryTenant');//租户信息列表 
     Route::get('gain/info/{state}','Tenant\TenantController@gainInfo');//查询单个租户信息
@@ -161,7 +168,7 @@ Route::prefix('tenant')->group(function () {//租户管理
     
     Route::get('manage', function () {
         return view('tenant.manage');//租户管理
-    });
+    })->name('tenant')->middleware('adminRoute');
 });
 
 
@@ -169,7 +176,7 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::get('company', function () {
         return view('parm.company-type');//公司类型
-    });
+    })->name('parm')->middleware('adminRoute');
 
     Route::get('gain/company','Parm\CompanyTypeController@gainCompany');//获取公司类型信息
     Route::get('gain/company/type/{id}','Parm\CompanyTypeController@gainCompanyType');//获取公司类型
@@ -179,7 +186,7 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::get('demand', function () {
         return view('parm.demand');//租户需求
-    });
+    })->name('parm')->middleware('adminRoute');
     Route::get('gain/demand','Parm\DemandController@gainDemand');//获取租户需求信息
     Route::get('gain/demand/type/{id}','Parm\DemandController@gainDemandType');//获取租户需求类型
     Route::post('create/name','Parm\DemandController@createName');//创建分类名称
@@ -188,7 +195,7 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::get('phone', function () {
         return view('parm.phone');//合同到期提醒手机号设置
-    });
+    })->name('parm')->middleware('adminRoute');
 
     Route::post('update/phone','Parm\DemandController@updatePhone');//更新手机号
     Route::get('query/phone','Parm\DemandController@queryPhone');//获取手机号

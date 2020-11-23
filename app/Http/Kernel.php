@@ -72,6 +72,9 @@ class Kernel extends HttpKernel
         //jwt
         'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
 
+        'adminRoute' => \App\Http\Middleware\AdminMiddleware::class,//判断是否登陆
+
+
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class
     ];

@@ -29,7 +29,7 @@ class loginController extends Controller
             if (!$user || decrypt($user->password) != $request->password) {
                 return response()->json(['status'=>403]);
             }
-            session(['nickname' => $user->name]); 
+            session(['account' => $user->account]); 
             session(['id' => $user->id]); 
         
             $response = [
