@@ -17,7 +17,8 @@ class Level extends Migration
             $table->increments('id');
             $table->string('type_name',50)->default('')->comment('类型名称');
             $table->integer('parent_id')->unsigned()->comment('父id');
-			$table->string('tree',50)->default('')->comment('楼盘架构');
+            $table->string('tree',50)->default('')->comment('楼盘架构');
+            $table->integer('uid')->unsigned()->comment('用户id');
             $table->timestamps();
         });
     }

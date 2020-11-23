@@ -21,6 +21,7 @@ class UpdateLevelName extends Migration
                 $table->integer('pid')->unsigned()->comment('父id');
                 $table->integer('hid')->unsigned()->comment('被修改名称的id');
                 $table->string('tree',50)->default('')->comment('树');
+                $table->integer('uid')->unsigned()->comment('用户id');
                 $table->timestamps();
             });
         }

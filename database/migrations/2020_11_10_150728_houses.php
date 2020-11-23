@@ -24,7 +24,7 @@ class Houses extends Migration
             $table->string('houses_num',30)->default('')->comment('房间号或房间名称');
             $table->string('houses_tenant',30)->default('')->comment('房号上的租户');
             $table->string('broker_name',30)->default('')->comment('租户的隶属经纪人');
-            $table->integer('uid')->unsigned()->comment('经纪人id');
+            $table->integer('uid')->unsigned()->comment('用户id');
             $table->timestamps();
 
             

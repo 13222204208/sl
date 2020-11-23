@@ -32,6 +32,7 @@ class Clean extends Migration
             $table->string('broker_phone',11)->comment('经纪人手机号');
             $table->string('position',320)->default('')->comment('当前提交位置');
             $table->string('enclosure',300)->default('')->comment('附件');
+            $table->integer('uid')->unsigned()->comment('用户id');
             $table->timestamps();
         });
     }
