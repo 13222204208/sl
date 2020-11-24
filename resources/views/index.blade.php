@@ -67,8 +67,8 @@
               <cite>{{session('account')}}</cite>
             </a>
             <dl class="layui-nav-child">
-              <dd><a lay-href="bguser/basic/document">基本资料</a></dd>
-              <dd><a lay-href="bguser/password">修改密码</a></dd>
+          <!--    <dd><a lay-href="bguser/basic/document">基本资料</a></dd> -->
+              <dd><a lay-href="user/upassword">修改密码</a></dd>
               <hr>
               <dd layadmin-event="" style="text-align: center;" ><a onclick="logout()">退出</a></dd>
             </dl>
@@ -159,9 +159,9 @@
               <dd>
                   <a lay-href="houses/created">新建楼盘</a>
                 </dd>
-                <dd>
+      {{--            <dd>
                   <a lay-href="houses/list">楼盘列表</a>
-                </dd>
+                </dd>  --}}
                 <dd>
                   <a lay-href="houses/info">楼盘详情</a>
                 </dd>
@@ -175,7 +175,7 @@
               </a>
               <dl class="layui-nav-child">
                 <dd><a lay-href="branch/created">新建部门</a></dd>
-                <dd><a lay-href="branch/list">部门列表</a></dd>
+            {{--      <dd><a lay-href="branch/list">部门列表</a></dd>  --}}
               </dl>
             </li>
 
@@ -239,6 +239,7 @@
                   <dl class="layui-nav-child">
                     <dd><a lay-href="parm/company">公司类型配置</a></dd>
                     <dd><a lay-href="parm/demand">租户需求配置</a></dd>
+                    <dd><a lay-href="parm/paytype">付款方式配置</a></dd>
                   </dl>
                 </dd>
                 <dd><a lay-href="parm/phone">合同到期提醒手机</a></dd>

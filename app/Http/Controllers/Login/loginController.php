@@ -50,4 +50,25 @@ class loginController extends Controller
         header('Content-Type: image/jpeg');
         $builder->output();
     }
+
+    
+    public function setMypass(Request $request)
+    {
+        if (session('id')) {
+            $user = User::find(session('id'));
+            if (!$user || decrypt($user->password) != $request->oldPassword) {
+                return response()->json(['status'=>403]);
+            }
+            $user->password = encrypt($request->password);
+            $state = $user->save();
+            if ($state) {
+                return response()->json(['status'=>200]); 
+            }else{
+                return response()->json(['status'=>403]);
+            }
+        }else{
+            return response()->json(['status'=>403]);
+        }
+        
+    }
 }

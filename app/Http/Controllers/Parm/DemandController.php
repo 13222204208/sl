@@ -121,4 +121,20 @@ class DemandController extends Controller
             }
         }
     }
+
+    public function addPaytype(Request $request)
+    {
+        if ($request->ajax()) {
+            $state= DB::table('paytype')->insert([
+                'type_name' => $request->type_name,
+                'month' => intval($request->month)
+            ]);
+            
+            if ($state) {
+                return response()->json(['status'=>200]);
+            }else{
+                 return response()->json(['status'=>403]);
+            }
+        }
+    }
 }

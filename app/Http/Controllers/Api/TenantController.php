@@ -19,7 +19,7 @@ class TenantController extends Controller
 
         $user = JWTAuth::authenticate($request->token); 
         if (!$user->account) {
-            return response()->json(['msg' =>'请登陆', 'code' => 301]);
+            return response()->json(['msg' =>'请登陆', 'code' => -1]);
         }
 
         $tenant_name = '';
@@ -47,7 +47,7 @@ class TenantController extends Controller
 
 
         return response()->json([
-            'code' => 201,
+            'code' => 1,
             'msg' => '查询成功',
             'data'=> $data
         ], 200);

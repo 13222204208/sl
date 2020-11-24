@@ -1,6 +1,7 @@
 <?php
 
 use App\Model\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 
@@ -32,7 +33,10 @@ Route::get('logout', function (Illuminate\Http\Request $request) {
 
 }); */
 
-
+Route::get('user/upassword', function () {
+    return view('user.upassword');
+});
+Route::post('set/mypass','Login\LoginController@setMypass');//修改登陆密码
 
 Route::prefix('home')->group(function () {
     Route::get('homepage', function () {
@@ -46,6 +50,8 @@ Route::prefix('home')->group(function () {
     Route::post('tenant/date','Home\HomePageController@tenantDate');//获取时间范围内扫楼记录数量
 
     Route::get('tenant/type','Home\HomePageController@tenantType');//租户类型，饼状图
+
+    Route::get('due/tenant','Home\HomePageController@dueTenant');//快到期租户
 });
 
 Route::get('admin/code','Login\LoginController@adminLogin');//后台登录验证码
@@ -62,9 +68,9 @@ Route::prefix('houses')->group(function () {//楼盘管理
     Route::post('update/name','Houses\HousesController@updateName');//更新分类名称
     Route::post('del/name','Houses\HousesController@delName');//删除分类
 
-    Route::get('list', function () {
+/*     Route::get('list', function () {
         return view('houses.house-list');//楼盘列表
-    })->name('houses')->middleware('adminRoute');;
+    })->name('houses')->middleware('adminRoute');; */
 });
 
 Route::prefix('branch')->group(function () {//组织架构管理
@@ -79,16 +85,16 @@ Route::prefix('branch')->group(function () {//组织架构管理
     Route::post('update/name','Branch\BranchController@updateName');//更新分类名称
     Route::post('del/name','Branch\BranchController@delName');//删除分类
     
-    Route::get('list', function () {
+/*     Route::get('list', function () {
         return view('branch.branch-list');//部门列表
-    });
+    }); */
 });
 
 Route::prefix('broker')->group(function () {//经纪人管理
 
     Route::get('account', function () {
         return view('broker.account');//帐号管理
-    });
+    })->name('broker')->middleware('adminRoute');
 
     Route::post('add/account','Broker\BrokerController@addAccount');//添加后台帐号
     Route::post('del/account','Broker\BrokerController@delAccount');//删除一个帐号
@@ -122,7 +128,7 @@ Route::prefix('broker')->group(function () {//经纪人管理
 
     Route::get('role', function () {
         return view('broker.role');//角色管理
-    });
+    })->name('broker')->middleware('adminRoute');
 });
 
 Route::prefix('work')->group(function () {//工作管理
@@ -198,5 +204,10 @@ Route::prefix('parm')->group(function () {//经纪人管理
     })->name('parm')->middleware('adminRoute');
 
     Route::post('update/phone','Parm\DemandController@updatePhone');//更新手机号
-    Route::get('query/phone','Parm\DemandController@queryPhone');//获取手机号
+    Route::get('query/phone','Parm\DemandController@queryPhone');//
+    
+    Route::get('paytype', function () {
+        return view('parm.paytype');//付款方式设置
+    })->name('parm')->middleware('adminRoute');
+    Route::post('add/paytype','Parm\DemandController@addPaytype');//添加付款方式
 });

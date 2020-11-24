@@ -120,11 +120,12 @@
       <div class="layui-col-sm6 layui-col-md3">
         <div class="layui-card">
           <div class="layui-card-header">
-            到期租户预警
+            到期租户预警 一个月内
        
           </div>
           <div class="layui-card-body layuiadmin-card-list">
-          {{--    <p>申请笔数： <span class=" layui-badge layui-bg-green " id="with_apply_num">0</span></p>  --}}
+          
+          <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
          
           </div>
         </div>
@@ -385,6 +386,54 @@
             })
           }
         }
+      });
+
+      table.render({
+        height: 370,
+        url: "due/tenant" //数据接口
+          ,
+        page: true //开启分页
+          ,
+        elem: '#LAY_table_user',
+        cols: [
+          [
+
+          //  {
+          //    field: 'id',
+           //   title: 'ID',
+      
+             // sort: true
+            //},
+            
+            
+            {
+              field: 'tenant_name',
+              title: '租户名称',
+        
+            }, {
+              field: 'tenant_user',
+              title: '联系人',
+        
+            }, {
+              field: 'stop_time',
+              title: '合同到期时间',
+        
+            }
+          ]
+        ],
+        parseData: function(res) { //res 即为原始返回的数据
+          console.log(res);
+          return {
+            "code": '0', //解析接口状态
+            "msg": res.message, //解析提示文本
+            "count": res.total, //解析数据长度
+            "data": res.data //解析数据列表
+          }
+        },
+        id: 'testReload',
+        title: '后台用户',
+        totalRow: true
+
       });
 
 

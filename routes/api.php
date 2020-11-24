@@ -24,10 +24,14 @@ Route::middleware('cors')->prefix('user')->group(function (){
     Route::post('login','Api\SaoLouController@login');//登录
     Route::post('newpass', 'Api\SaoLouController@newpass');//修改密码
 
+    Route::post('pcode', 'Api\SaoLouController@pcode');//发送手机验证码
+    Route::get('paytype', 'Api\SaoLouController@paytype');//获取付款方式
+
     Route::group(['middleware' => 'auth.jwt'], function () {
         Route::post('logout', 'Api\SaoLouController@logout');//退出登录
 
-        Route::post('head_img', 'Api\SaoLouController@headImg');//用户头像上传
+        Route::post('upload_img', 'Api\SaoLouController@uploadImg');//图片上传
+        Route::post('update_head', 'Api\SaoLouController@updateHead');//更新用户头像
 
     });
 });
@@ -38,11 +42,13 @@ Route::middleware('cors')->prefix('sl')->group(function (){
         Route::get('houses', 'Api\SaoLouController@houses');//获取楼盘架构
 
         Route::get('company', 'Api\SaoLouController@company');//获取公司类型
+        Route::post('entering', 'Api\SaoLouController@entering');//保存提交的扫楼记录
 
         Route::get('demand', 'Api\SaoLouController@demand');//获取租户需求名称
         Route::post('sl_record', 'Api\SaoLouController@slRecord');//获取扫楼记录
 
         Route::post('tenant_record', 'Api\TenantController@tenantRecord');//获取我的租户记录
+        
 
     });
 });

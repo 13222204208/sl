@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Carbon\Carbon;
 
 use App\Model\Clean;
+use App\Model\Tenant;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -21,9 +22,9 @@ class DataController extends Controller
 
         $user = JWTAuth::authenticate($request->token); 
         if (!$user->account) {
-            return response()->json(['msg' =>'请登陆', 'code' => 301]);
+            return response()->json(['msg' =>'未登陆', 'code' => -1]);
         }
-        $datecount = array();
+/*         $datecount = array();
         $day=Carbon::now()->startOfDay()->toDateString();//今天
         $week=Carbon::now()->startOfWeek()->toDateString();//当前星期
         $month=Carbon::now()->startOfMonth()->toDateString();//当月
@@ -40,13 +41,19 @@ class DataController extends Controller
         $datecount['monthcount']= $monthcount;//当月的数量
 
         $yearcount = Clean::where('broker_phone',$user->account)->whereDate('created_at','>=',$year)->count();
-        $datecount['yearcount']= $yearcount;//今年的数量
+        $datecount['yearcount']= $yearcount;//今年的数量 */
         
+        $count = array();
+        $cleancount = Clean::where('broker_phone',$user->account)->count();//我的扫楼记录数量
+        $count['cleancount']= $cleancount;
+
+        $tenantcount = Tenant::where('uid',$user->id)->count();//我的租户记录数量
+        $count['tenantcount'] = $tenantcount;
         
         return response()->json([
-            'code' => 201,
+            'code' => 1,
             'msg' => '查询成功',
-            'datecount' =>$datecount 
+            'count' =>$count 
         ], 200);
     }
 }

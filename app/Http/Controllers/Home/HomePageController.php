@@ -72,5 +72,17 @@ class HomePageController extends Controller
         } 
     }
 
+    public function dueTenant(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $dueTime= date("Y-m-d",strtotime("+1 month",time()));
+            $limit = $request->get('limit');
+            $data= Tenant::whereDate('stop_time','<=',$dueTime)->paginate($limit);
+
+            return $data;
+        }
+    }
+
    
 }
