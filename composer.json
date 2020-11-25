@@ -13,7 +13,6 @@
         "fruitcake/laravel-cors": "^1.0",
         "gregwar/captcha": "1.*",
         "guzzlehttp/guzzle": "^7.0",
-        "jiaxincui/closure-table": "^2.1",
         "kalnoy/nestedset": "^5.0",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",

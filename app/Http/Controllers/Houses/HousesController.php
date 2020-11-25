@@ -16,7 +16,7 @@ class HousesController extends Controller
     { 
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= Level::where('parent_id',0)->paginate($limit);
+            $data= Level::where('parent_id',null)->paginate($limit);
 
             return $data;
       
@@ -43,20 +43,16 @@ class HousesController extends Controller
             $type_name= array_filter(explode('，',$str));
             $data= array();
             $pid = intval($request->pid);
-            if ($pid == 0 ) {
-                $state = '/';
+            if ($pid == 0) {
+                for ($i=0; $i < count($type_name) ; $i++) { 
+                  $status=  Level::create(['type_name'=> $type_name[$i]]);
+                }
             }else{
-                $level = Level::find($pid);
-                $state = rtrim($level->tree,'/').'/'.strval($pid).'/';
-                //return response()->json(['status'=>$tree]);
+               
+                for ($i=0; $i < count($type_name) ; $i++) { 
+                    $status=  Level::create(['type_name'=> $type_name[$i],'parent_id'=>$pid]);
+                  }
             }
-           
-            for ($i=0; $i < count($type_name) ; $i++) { //指添加分类数据
-                $data[$i]['type_name'] = $type_name[$i];
-                $data[$i]['parent_id'] = $pid;
-                $data[$i]['tree'] = $state;
-            }
-            $status = Level::insert($data);
            
            if ($status) {
                 return response()->json(['status'=>200,'pid'=>2]);
@@ -70,53 +66,36 @@ class HousesController extends Controller
     {
         if ($request->ajax()) {
             $level = Level::find($request->id);
-            
-            $before = "";
-            if ($level->tree == '/') {
-                $before = $level->type_name;
-                $newName = $request->type_name;
-            }else{
-                $tree = explode('/',$level->tree);//拼接楼盘分类名称
-                $tree = array_filter($tree);
-                foreach($tree as $tid){
+            $before= $level->type_name;
+             if($level->parent_id == null){
+                 $pid = 0;
+             }else{
+                 $pid = $level->parent_id;
+             }
+            $level->type_name = $request->type_name;
 
-                    $tname = Level::find(intval($tid));
-                
-                    $before .=  $tname->type_name;
-                }
-
-                $newName = $before.$request->type_name;
-
-                $before .= $level->type_name;
-               
-            }
-    
-            $level->type_name= $request->type_name;
-            $pid = $level->parent_id;
             if ($level->save()) {
                 $time= date('Y-m-d H:i:s');
-                DB::table('update_level_name')->insertGetId([
-                    'before'=>$before,'update_name'=>$newName,
-                    'pid'=>$pid,'hid'=>$request->id,'created_at'=>$time,
-                    'tree'=> $level->tree
-                    ]);
-
-                return response()->json(['status'=>200]);
-            }else{
-                 return response()->json(['status'=>403]);
+                    DB::table('update_level_name')->insertGetId([
+                       'before'=>$before,'update_name'=>$request->type_name,
+                        'pid'=>$pid,'hid'=>$request->id,'created_at'=>$time]);
+                        return response()->json(['status'=>200]);
+                         }else{
+                              return response()->json(['status'=>403]);
+                         }
+                        
             }
-        }
+            
+      
+        
         
     }
 
     public function delName(Request $request)
     {
         if ($request->ajax()) {
-           $tree = rtrim($request->tree,'/').'/'.$request->id.'%';
-          
-            
-           Level::where('tree','like',$tree)->delete();
-           $state= Level::destroy($request->id);
+            $company = Level::find($request->id);
+            $state= $company->delete();
             if ($state) {
                 return response()->json(['status'=>200]);
             }else{

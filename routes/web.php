@@ -91,9 +91,9 @@ Route::prefix('houses')->group(function () {//楼盘管理
     Route::post('update/name','Houses\HousesController@updateName');//更新分类名称
     Route::post('del/name','Houses\HousesController@delName');//删除分类
 
-/*     Route::get('list', function () {
+     Route::get('list', function () {
         return view('houses.house-list');//楼盘列表
-    })->name('houses')->middleware('adminRoute');; */
+    })->name('houses')->middleware('adminRoute');
 });
 
 Route::prefix('branch')->group(function () {//组织架构管理
