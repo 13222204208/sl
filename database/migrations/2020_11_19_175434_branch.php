@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Kalnoy\Nestedset\NestedSet;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class Branch extends Migration
 {
@@ -15,9 +16,8 @@ class Branch extends Migration
     {
         Schema::create('branch', function (Blueprint $table) {//vip表
             $table->increments('id');
-            $table->string('type_name',50)->default('')->comment('类型名称');
-            $table->integer('parent_id')->unsigned()->comment('父id');
-			$table->string('tree',50)->default('')->comment('结构');
+            $table->string('name');
+            NestedSet::columns($table);
             $table->timestamps();
         });
     }

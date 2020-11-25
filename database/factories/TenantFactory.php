@@ -8,7 +8,7 @@ use Faker\Generator as Faker;
 $factory->define(Tenant::class, function (Faker $faker) {
     return [
         'tenant_name'=>$faker->name('female'),
-        'tenant_type'=>$faker->randomElement(['公司', '个人']),
+        'is_we_company'=>$faker->randomElement(['公司', '个人']),
         'tenant_user'=> $faker->freeEmailDomain,
      
         'company_type'=>$faker->randomElement(['教育', '娱乐', 'IT']),

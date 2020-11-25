@@ -136,6 +136,7 @@
 
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
 
+           @if(in_array('主页',$per))
             <li data-name="home" class="layui-nav-item layui-nav-itemed">
               <a href="javascript:;" lay-tips="主页" lay-direction="2">
                 <i class="layui-icon layui-icon-home"></i>
@@ -148,8 +149,9 @@
                 </dd>
               </dl>
             </li>
-            
+            @endif
 
+            @if(in_array('楼盘架构管理',$per))
             <li data-name="user" class="layui-nav-item">
               <a href="javascript:;" lay-tips="楼盘架构管理" lay-direction="2">
                 <i class="layui-icon layui-icon-user"></i>
@@ -167,7 +169,9 @@
                 </dd>
               </dl>
             </li>
+            @endif
 
+          @if(in_array('组织架构管理',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="组织架构管理" lay-direction="2">
                 <i class="layui-icon layui-icon-template"></i>
@@ -178,7 +182,9 @@
             {{--      <dd><a lay-href="branch/list">部门列表</a></dd>  --}}
               </dl>
             </li>
+            @endif
 
+            @if(in_array('经纪人管理',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="经纪人管理" lay-direction="2">
                 <i class="layui-icon layui-icon-app"></i>
@@ -191,8 +197,9 @@
            
               </dl>
             </li>
+            @endif
 
-
+            @if(in_array('工作管理',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="工作管理" lay-direction="2">
                 <i class="layui-icon layui-icon-senior"></i>
@@ -204,7 +211,9 @@
 
               </dl>
             </li>
+            @endif
 
+            @if(in_array('扫楼记录管理',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="扫楼记录管理" lay-direction="2">
                 <i class="layui-icon layui-icon-template"></i>
@@ -215,7 +224,9 @@
                 <dd><a lay-href="clean/record-change">按楼盘查看数据变更</a></dd>
               </dl>
             </li>
+            @endif
 
+            @if(in_array('租户管理',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="租户管理" lay-direction="2">
                 <i class="layui-icon layui-icon-set"></i>
@@ -226,7 +237,9 @@
                 <dd><a lay-href="tenant/manage">租户管理</a></dd>
               </dl>
             </li>
+            @endif
 
+            @if(in_array('参数配置',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="参数配置" lay-direction="2">
                 <i class="layui-icon layui-icon-set"></i>
@@ -245,6 +258,7 @@
                 <dd><a lay-href="parm/phone">合同到期提醒手机</a></dd>
               </dl>
             </li>
+            @endif
 
 
           </ul>
@@ -267,21 +281,24 @@
             </li>
           </ul>
         </div>
+     
         <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
           <ul class="layui-tab-title" id="LAY_app_tabsheader">
             <li lay-id="home/homepage" lay-attr="home/homepage" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
           </ul>
         </div>
+     
       </div>
 
 
       <!-- 主体内容 -->
+     
       <div class="layui-body" id="LAY_app_body">
         <div class="layadmin-tabsbody-item layui-show">
           <iframe src="home/homepage" frameborder="0" class="layadmin-iframe"></iframe>
         </div>
       </div>
-
+     
       <!-- 辅助元素，一般用于移动设备下遮罩 -->
       <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>

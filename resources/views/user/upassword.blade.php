@@ -89,7 +89,7 @@
 
             //提交
             form.on('submit(setmypass)', function(obj) {
-              data = obj.field;
+              data = obj.field; //console.log(data); return false;
 
               $.ajax({
                 headers: {
@@ -116,7 +116,7 @@
                   }
                 },
                 error: function(error) {
-                  layer.msg('登录失败请确认信息', {
+                  layer.msg('失败请确认信息', {
                     offset: '15px',
                     icon: 1,
                     time: 3000

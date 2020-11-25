@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>添加分类 </title>
+    <title>创建部门 </title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -25,10 +25,10 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">分类名称</label>
                 <div class="layui-input-block">
-                   {{--  <input type="text" name="type_name" required lay-verify="type_name" autocomplete="off"
+                   {{--  <input type="text" name="name" required lay-verify="name" autocomplete="off"
                         placeholder="请输入分类名称" value="" class="layui-input"> --}}
 
-                        <textarea placeholder="可以添加多条数据，用逗号 , 分隔"  name="type_name" class="layui-textarea"></textarea>
+                        <textarea placeholder="可以添加多条数据，用逗号 , 分隔"  name="name" class="layui-textarea"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -58,7 +58,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">分类名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="type_name" required lay-verify="type_name" autocomplete="off"
+                    <input type="text" name="name" required lay-verify="name" autocomplete="off"
                         placeholder="请输入分类名称" value="" class="layui-input">
                 </div>
             </div>
@@ -103,7 +103,7 @@
             });
 
             form.verify({
-                type_name: function (value) {
+                name: function (value) {
                     if (value.length > 8) {
                         return '最多只能八个字符';
                     }
@@ -163,7 +163,7 @@
                             width: 80,
                             sort: true
                         }, {
-                            field: 'type_name',
+                            field: 'name',
                             title: '分类名称',
                         }, {
                             field: 'parent_id',
@@ -241,8 +241,8 @@
                     form.val("formUpdate", data);
                     setFormValue(obj, data);
                 } else if (obj.event === 'show') {
-                    console.log(data.type_name);
-                    $("#typeNameId").val(data.type_name);
+                    console.log(data.name);
+                    $("#typeNameId").val(data.name);
                     $("#PId").val(data.id);
                    var id= data.id
                     table.render({
@@ -260,7 +260,7 @@
                                   width: 80,
                                   sort: true
                               }, {
-                                  field: 'type_name',
+                                  field: 'name',
                                   title: '分类名称',
                               }, {
                                   field: 'parent_id',
@@ -305,7 +305,7 @@
                         type: 'post',
                         data: {
                             id: data.id,
-                            type_name: massage.type_name,
+                            name: massage.name,
                         },
                         success: function (msg) {
                             console.log(msg);
@@ -318,7 +318,7 @@
                                 setTimeout(function () {
 
                                     obj.update({
-                                        type_name: massage.type_name,
+                                        name: massage.name,
                                     }); //修改成功修改表格数据不进行跳转 
 
 

@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Kalnoy\Nestedset\NestedSet;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class Demand extends Migration
 {
@@ -13,11 +14,10 @@ class Demand extends Migration
      */
     public function up()
     {
-        Schema::create('demand', function (Blueprint $table) {//vip表
+        Schema::create('demand', function (Blueprint $table) {//租户需求
             $table->increments('id');
             $table->string('type_name',50)->default('')->comment('类型名称');
-            $table->integer('parent_id')->unsigned()->comment('父id');
-			$table->string('tree',50)->default('')->comment('结构');
+            NestedSet::columns($table);
             $table->timestamps();
         });
     }

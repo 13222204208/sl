@@ -1,6 +1,8 @@
 <?php
 
 use App\Model\User;
+use App\Model\Branch;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
@@ -16,13 +18,33 @@ use Spatie\Permission\Models\Permission;
 |
 */
 
-Route::get('/', function () {
-        return view('index');
-});
+    Route::get('/', function () {
+      
+
+        if (session('id')) {
+            $user= User::find(session('id'));
+            $permission= $user->getAllPermissions();
+            $data= json_decode($permission);
+            $per = array();
+        
+            foreach($data as $d){
+                $per[] = $d->{'name'};
+            }
+        }
+
+        
+         if (session('id')==1) {
+             $per = array('主页','楼盘架构管理','组织架构管理','经纪人管理','工作管理','扫楼记录管理','租户管理','参数配置');
+         }
+         return view('index',['per'=>$per]);
+     })->middleware('adminLogin');
+
+
 
 Route::get('login', function () {
     return view('login.login');
 });
+
 
 //后台退出
 Route::get('logout', function (Illuminate\Http\Request $request) {
@@ -36,7 +58,8 @@ Route::get('logout', function (Illuminate\Http\Request $request) {
 Route::get('user/upassword', function () {
     return view('user.upassword');
 });
-Route::post('set/mypass','Login\LoginController@setMypass');//修改登陆密码
+
+Route::post('user/set/mypass','Login\LoginController@setMypass');//修改登陆密码
 
 Route::prefix('home')->group(function () {
     Route::get('homepage', function () {

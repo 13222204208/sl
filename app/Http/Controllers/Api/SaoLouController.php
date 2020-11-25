@@ -310,7 +310,7 @@ class SaoLouController extends Controller
         }
 
         $upload= new UploadController;
-        $namePath= $upload->uploadImg($request->file('img'),'UserHeadImg');//上传用户头像1,图片,2图片存放目录
+        $namePath= $upload->uploadImg($request->file('img'),'UserImg');//上传用户头像1,图片,2图片存放目录
         $namePath = $namePath;//图片访问地址
     
         if ($namePath) {

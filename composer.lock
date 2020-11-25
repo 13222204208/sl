@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2299d344e685499fdd6e007fad16516",
+    "content-hash": "30c744920006ef10d991ea14ca82a630",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -959,6 +959,131 @@
                 "watermark"
             ],
             "time": "2019-11-02T09:15:47+00:00"
+        },
+        {
+            "name": "jiaxincui/closure-table",
+            "version": "2.1.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jiaxincui/closure-table.git",
+                "reference": "0c2efdb9591463d68781cfbb8b88115fb1c1a791"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jiaxincui/closure-table/zipball/0c2efdb9591463d68781cfbb8b88115fb1c1a791",
+                "reference": "0c2efdb9591463d68781cfbb8b88115fb1c1a791",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "illuminate/database": "~5.0|~6.0|~7.0",
+                "illuminate/support": "~5.0|~6.0|~7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jiaxincui\\ClosureTable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "jiaxincui",
+                    "email": "jenkincei@hotmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A closure table tree package for laravel eloquent",
+            "keywords": [
+                "closure-table",
+                "eloquent",
+                "laravel",
+                "laravel-tree",
+                "tree"
+            ],
+            "support": {
+                "email": "jenkincei@hotmail.com",
+                "issues": "https://github.com/jiaxincui/closure-table/issues",
+                "source": "https://github.com/jiaxincui/closure-table"
+            },
+            "time": "2020-05-20T02:33:54+00:00"
+        },
+        {
+            "name": "kalnoy/nestedset",
+            "version": "v5.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lazychaser/laravel-nestedset.git",
+                "reference": "1edd06d0744251940240f28021de7651d7fa71d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/1edd06d0744251940240f28021de7651d7fa71d3",
+                "reference": "1edd06d0744251940240f28021de7651d7fa71d3",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "illuminate/database": "~5.7.0|~5.8.0|^6.0|^7.0|^8.0",
+                "illuminate/events": "~5.7.0|~5.8.0|^6.0|^7.0|^8.0",
+                "illuminate/support": "~5.7.0|~5.8.0|^6.0|^7.0|^8.0",
+                "php": ">=7.1.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "7.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "v5.0.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Kalnoy\\Nestedset\\NestedSetServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kalnoy\\Nestedset\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Kalnoy",
+                    "email": "lazychaser@gmail.com"
+                }
+            ],
+            "description": "Nested Set Model for Laravel 5.7 and up",
+            "keywords": [
+                "database",
+                "hierarchy",
+                "laravel",
+                "nested sets",
+                "nsm"
+            ],
+            "support": {
+                "issues": "https://github.com/lazychaser/laravel-nestedset/issues",
+                "source": "https://github.com/lazychaser/laravel-nestedset/tree/v5.0.2"
+            },
+            "time": "2020-09-11T06:18:17+00:00"
         },
         {
             "name": "laravel/framework",

@@ -346,8 +346,8 @@
             peo = [];
             
             for (let i = 0; i < data.length; i++) {
-              arr.push(data[i].tenant_type);
-              peo.push({'name':data[i].tenant_type,'value':data[i].total});
+              arr.push(data[i].is_we_company);
+              peo.push({'name':data[i].is_we_company,'value':data[i].total});
             }
 
         var optionchartBing = {

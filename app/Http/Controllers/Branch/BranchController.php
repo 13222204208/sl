@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Branch;
 
 
+use App\Menu;
+use App\Model\Branch;
 use Illuminate\Http\Request;
+use function PHPSTORM_META\type;
+
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Model\Branch;
-
-use function PHPSTORM_META\type;
 
 class BranchController extends Controller
 {
@@ -16,7 +17,7 @@ class BranchController extends Controller
     { 
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= Branch::where('parent_id',0)->paginate($limit);
+            $data= Branch::where('parent_id',null)->paginate($limit);
 
             return $data;
       
@@ -24,8 +25,7 @@ class BranchController extends Controller
     }
 
     public function gainBranchType(Request $request,$pid)
-    { 
-       
+    {  
         if ($request->ajax()) {
             $limit = $request->get('limit');
             $data= Branch::where('parent_id',$pid)->paginate($limit);
@@ -39,11 +39,28 @@ class BranchController extends Controller
     {
         if ($request->ajax()) {
 
-            $str= str_replace(" ",'',$request->type_name);
+            $str= str_replace(" ",'',$request->name);
             $type_name= explode('，',$str);
-            $data= array();
+            //$data= array();
             $pid = intval($request->pid);
-            if ($pid == 0 ) {
+
+            if ($pid == 0) {
+                for ($i=0; $i < count($type_name) ; $i++) { 
+                  $status=  Branch::create(['name'=> $type_name[$i]]);
+                }
+            }else{
+               
+                for ($i=0; $i < count($type_name) ; $i++) { 
+                    $status=  Branch::create(['name'=> $type_name[$i],'parent_id'=>$pid]);
+                  }
+            }
+
+            if ($status) {
+                return response()->json(['status'=>200]);
+           }else{
+                return response()->json(['status'=>403]);
+           }
+      /*       if ($pid == 0 ) {
                 $state = '/';
             }else{
                 $Branch = Branch::find($pid);
@@ -53,24 +70,25 @@ class BranchController extends Controller
            
             for ($i=0; $i < count($type_name) ; $i++) { //指添加分类数据
                 $data[$i]['type_name'] = $type_name[$i];
-                $data[$i]['parent_id'] = $pid;
+                $data[$i]['parent_id_id'] = $pid;
                 $data[$i]['tree'] = $state;
             }
             $status = Branch::insert($data);
            
            if ($status) {
-                return response()->json(['status'=>200,'pid'=>2]);
+                return response()->json(['status'=>200]);
            }else{
                 return response()->json(['status'=>403]);
-           }
+           } */
         }
     }
 
     public function updateName(Request $request)
     {
         if ($request->ajax()) {
+
             $Branch = Branch::find($request->id);
-            $Branch->type_name= $request->type_name;
+            $Branch->name= $request->name;
             if ($Branch->save()) {
                 return response()->json(['status'=>200]);
             }else{
@@ -83,7 +101,15 @@ class BranchController extends Controller
     public function delName(Request $request)
     {
         if ($request->ajax()) {
-           $tree = rtrim($request->tree,'/').'/'.$request->id.'%';
+            $branch = Branch::find($request->id);
+            $state= $branch->delete();
+        
+            if ($state) {
+                return response()->json(['status'=>200]);
+            }else{
+                 return response()->json(['status'=>403]);
+            } 
+          /*  $tree = rtrim($request->tree,'/').'/'.$request->id.'%';
           
             
            Branch::where('tree','like',$tree)->delete();
@@ -92,7 +118,7 @@ class BranchController extends Controller
                 return response()->json(['status'=>200]);
             }else{
                  return response()->json(['status'=>403]);
-            }
+            } */
         }
         
     }

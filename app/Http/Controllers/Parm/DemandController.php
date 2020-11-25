@@ -17,7 +17,7 @@ class DemandController extends Controller
     { 
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= Demand::where('parent_id',0)->paginate($limit);
+            $data= Demand::where('parent_id',null)->paginate($limit);
 
             return $data;
       
@@ -42,22 +42,19 @@ class DemandController extends Controller
 
             $str= str_replace(" ",'',$request->type_name);
             $type_name= array_filter(explode('，',$str));
-            $data= array();
-            $pid = intval($request->pid);
-            if ($pid == 0 ) {
-                $state = '/';
-            }else{
-                $Demand = Demand::find($pid);
-                $state = rtrim($Demand->tree,'/').'/'.strval($pid).'/';
-                //return response()->json(['status'=>$tree]);
-            }
            
-            for ($i=0; $i < count($type_name) ; $i++) { //指添加分类数据
-                $data[$i]['type_name'] = $type_name[$i];
-                $data[$i]['parent_id'] = $pid;
-                $data[$i]['tree'] = $state;
+            $pid = intval($request->pid);
+
+            if ($pid == 0) {
+                for ($i=0; $i < count($type_name) ; $i++) { 
+                  $status=  Demand::create(['type_name'=> $type_name[$i]]);
+                }
+            }else{
+               
+                for ($i=0; $i < count($type_name) ; $i++) { 
+                    $status=  Demand::create(['type_name'=> $type_name[$i],'parent_id'=>$pid]);
+                  }
             }
-            $status = Demand::insert($data);
            
            if ($status) {
                 return response()->json(['status'=>200]);
@@ -84,11 +81,8 @@ class DemandController extends Controller
     public function delName(Request $request)
     {
         if ($request->ajax()) {
-           $tree = rtrim($request->tree,'/').'/'.$request->id.'%';
-          
-            
-           Demand::where('tree','like',$tree)->delete();
-           $state= Demand::destroy($request->id);
+            $branch = Demand::find($request->id);
+            $state= $branch->delete();
             if ($state) {
                 return response()->json(['status'=>200]);
             }else{

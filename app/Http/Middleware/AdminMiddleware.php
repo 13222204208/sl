@@ -19,7 +19,7 @@ class AdminMiddleware
     public function handle($request, Closure $next)
     {
         if (!(session('account'))) {
-            return redirect()->to('login');
+            return redirect('login');
         }
         
         $route = Route::currentRouteName();

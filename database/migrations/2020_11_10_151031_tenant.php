@@ -15,8 +15,8 @@ class Tenant extends Migration
     {
         Schema::create('tenant', function (Blueprint $table) {//租户表
             $table->id('id');
-            $table->string('tenant_name',50)->unique()->comment('租户名称');
-            $table->integer('is_we_company',2)->unsigned()->comment('是否我司租户,1代表是，0代表否');
+            $table->string('tenant_name',50)->comment('租户名称');
+            $table->string('is_we_company')->comment('是否我司租户,1代表是，0代表否');
             $table->string('tenant_user',320)->default('')->comment('联系人，手机号，微信号');
             $table->string('company_type',30)->default('')->comment('公司类型');
             $table->string('start_time',30)->default('')->comment('合同开始时间');

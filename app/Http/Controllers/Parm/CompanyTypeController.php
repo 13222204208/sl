@@ -16,7 +16,7 @@ class CompanyTypeController extends Controller
     { 
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= Company::where('parent_id',0)->paginate($limit);
+            $data= Company::where('parent_id',null)->paginate($limit);
 
             return $data;
       
@@ -41,22 +41,19 @@ class CompanyTypeController extends Controller
 
             $str= str_replace(" ",'',$request->type_name);
             $type_name= array_filter(explode('，',$str));
-            $data= array();
-            $pid = intval($request->pid);
-            if ($pid == 0 ) {
-                $state = '/';
-            }else{
-                $Company = Company::find($pid);
-                $state = rtrim($Company->tree,'/').'/'.strval($pid).'/';
-                //return response()->json(['status'=>$tree]);
-            }
             
-            for ($i=0; $i < count($type_name) ; $i++) { //指添加分类数据
-                $data[$i]['type_name'] = $type_name[$i];
-                $data[$i]['parent_id'] = $pid;
-                $data[$i]['tree'] = $state;
-            } 
-            $status = Company::insert($data);
+            $pid = intval($request->pid);
+
+            if ($pid == 0) {
+                for ($i=0; $i < count($type_name) ; $i++) { 
+                  $status=  Company::create(['type_name'=> $type_name[$i]]);
+                }
+            }else{
+               
+                for ($i=0; $i < count($type_name) ; $i++) { 
+                    $status=  Company::create(['type_name'=> $type_name[$i],'parent_id'=>$pid]);
+                  }
+            }
             
            if ($status) {
                 return response()->json(['status'=>200]);
@@ -83,11 +80,8 @@ class CompanyTypeController extends Controller
     public function delName(Request $request)
     {
         if ($request->ajax()) {
-           $tree = rtrim($request->tree,'/').'/'.$request->id.'%';
-          
-            
-           Company::where('tree','like',$tree)->delete();
-           $state= Company::destroy($request->id);
+            $company = Company::find($request->id);
+            $state= $company->delete();
             if ($state) {
                 return response()->json(['status'=>200]);
             }else{

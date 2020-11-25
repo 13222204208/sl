@@ -60,8 +60,8 @@ class HomePageController extends Controller
     public function tenantType()//租户类型饼状图占比
     { 
         $data= DB::table('tenant')
-        ->select('tenant_type', DB::raw('count(*) as total'))
-        ->groupBy('tenant_type')
+        ->select('is_we_company', DB::raw('count(*) as total'))
+        ->groupBy('is_we_company')
         ->get();
          //$data = Tenant::groupBy('tenant_type')->count('tenant_type');
 
