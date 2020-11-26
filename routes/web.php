@@ -126,6 +126,7 @@ Route::prefix('broker')->group(function () {//经纪人管理
     Route::get('query/role','Broker\BrokerController@queryRole');//查看所有角色
 
     Route::get('query/permission','Broker\BrokerController@queryPermission');//查看所有权限
+    Route::get('gain/broker/permission/{id}','Broker\BrokerController@gainPermission');//查看子权限
     Route::post('del/permission','Broker\BrokerController@delPermission');//删除一个权限
     Route::post('update/pname','Broker\BrokerController@updatePname');//更新权限的名称
 
@@ -147,6 +148,10 @@ Route::prefix('broker')->group(function () {//经纪人管理
     
     Route::get('power', function () {
         return view('broker.power');//权限管理
+    });
+
+    Route::get('testrole', function () {
+        return view('broker.testrole');//权限管理
     });
 
     Route::get('role', function () {

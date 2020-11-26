@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "30c744920006ef10d991ea14ca82a630",
+    "content-hash": "c20c3c0a2f888e95d8d65ef9669426c5",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1044,62 +1044,6 @@
                 "source": "https://github.com/Intervention/image/tree/master"
             },
             "time": "2019-11-02T09:15:47+00:00"
-        },
-        {
-            "name": "jiaxincui/closure-table",
-            "version": "2.1.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jiaxincui/closure-table.git",
-                "reference": "0c2efdb9591463d68781cfbb8b88115fb1c1a791"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jiaxincui/closure-table/zipball/0c2efdb9591463d68781cfbb8b88115fb1c1a791",
-                "reference": "0c2efdb9591463d68781cfbb8b88115fb1c1a791",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "illuminate/database": "~5.0|~6.0|~7.0",
-                "illuminate/support": "~5.0|~6.0|~7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Jiaxincui\\ClosureTable\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "jiaxincui",
-                    "email": "jenkincei@hotmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A closure table tree package for laravel eloquent",
-            "keywords": [
-                "closure-table",
-                "eloquent",
-                "laravel",
-                "laravel-tree",
-                "tree"
-            ],
-            "support": {
-                "email": "jenkincei@hotmail.com",
-                "issues": "https://github.com/jiaxincui/closure-table/issues",
-                "source": "https://github.com/jiaxincui/closure-table"
-            },
-            "time": "2020-05-20T02:33:54+00:00"
         },
         {
             "name": "kalnoy/nestedset",
@@ -5723,16 +5667,16 @@
         },
         {
             "name": "tymon/jwt-auth",
-            "version": "dev-develop",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tymondesigns/jwt-auth.git",
-                "reference": "6c3ae2e27fb5f5c738caaa9411951a9f8e515bd7"
+                "reference": "b927137cd5bd4d2f5d48a1ca71bc85006b99dbae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/6c3ae2e27fb5f5c738caaa9411951a9f8e515bd7",
-                "reference": "6c3ae2e27fb5f5c738caaa9411951a9f8e515bd7",
+                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/b927137cd5bd4d2f5d48a1ca71bc85006b99dbae",
+                "reference": "b927137cd5bd4d2f5d48a1ca71bc85006b99dbae",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -5758,7 +5702,6 @@
                 "mockery/mockery": ">=0.9.9",
                 "phpunit/phpunit": "~4.8|~6.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -5810,7 +5753,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-11-13T11:15:03+00:00"
+            "time": "2020-09-08T12:29:20+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -8321,9 +8264,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "tymon/jwt-auth": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

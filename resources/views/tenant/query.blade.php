@@ -197,7 +197,7 @@
               title: '租户名称',
               width: 120
             }, {
-              field: 'tenant_type',
+              field: 'is_we_company',
               title: '租户类型',
               width: 120
             }, {

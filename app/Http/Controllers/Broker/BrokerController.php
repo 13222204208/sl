@@ -48,8 +48,10 @@ class BrokerController extends Controller
         }
         $role = Role::create(['name' => $request->name]);
 
-        $permissions= $request->limits;
         
+        $str= str_replace(" ",'',$request->per);
+        $permissions= array_filter(explode(',',$str));
+      
         foreach ($permissions as $permission) {
             $role->givePermissionTo($permission);
         }
@@ -104,13 +106,28 @@ class BrokerController extends Controller
                 $have[]= $permission['name'];
             }
         }
-        return response()->json(['status'=>200,'data'=>$have]);
+
+        $pers = Permission::get()->toTree();
+        
+      
+       
+        for ($i=0; $i< count($pers); $i++) {
+           
+                for($j= 0 ; $j<count($pers[$i]['children']); $j++){
+                    if(in_array($pers[$i]['children'][$j]['name'],$have)){
+                    $pers[$i]['children'][$j]['checked'] = true;
+                    }
+                }
+            
+          } 
+          return $pers;
+        return response()->json(['status'=>200,'data'=>$pers]);
 
     }
 
     public function allPermission()//获取所有权限名称
     {
-        $permissions = Permission::select('name')->get();
+        $permissions = Permission::get()->toTree();return $permissions;
         if ($permissions) {
             return response()->json(['status'=>200,'data'=>$permissions]);
         }else{
@@ -123,7 +140,8 @@ class BrokerController extends Controller
     {
         if ($request->ajax()) {
             $id= $request->input('id');
-            $state= Permission::destroy($id);
+            $permission = Permission::find($id);
+            $state = $permission->delete();
         }
 
         if ($state) {
@@ -139,6 +157,7 @@ class BrokerController extends Controller
         if ($request->ajax()) {
             $permission= Permission::find(intval($request->id));
             $permission->name = $request->name;
+            $permission->title = $request->name;
             $permission->route = $request->route;
 
             if ($permission->save()) {
@@ -153,12 +172,14 @@ class BrokerController extends Controller
     public function updatePermission(Request $request)//更新角色的权限范围
     {  
         $role= Role::find($request->id);
-        $permissions= $request->permission;
         
         $p_all = Permission::all();
         foreach ($p_all as $p) {
             $role->revokePermissionTo($p);
         }
+
+        $str= str_replace(" ",'',$request->permission);
+        $permissions= array_filter(explode(',',$str));
         
         foreach ($permissions as $permission) {
             $role->givePermissionTo($permission);
@@ -170,13 +191,32 @@ class BrokerController extends Controller
 
     public function addPower(Request $request)//添加权限 
     {
-        $role = Permission::create(['name' => $request->name,'route'=>$request->route]);
-       
-        if ($role) {
-            return response()->json(['status'=>200]);
+        $str= str_replace(" ",'',$request->name);
+        $type_name['name']= array_filter(explode('，',$str));
+
+        $r= str_replace(" ",'',$request->route);
+        $type_name['route']= array_filter(explode('，',$r));
+    
+
+        $pid = intval($request->pid);
+
+        if ($pid == 0) {
+            for ($i=0; $i < count($type_name['name']) ; $i++) { 
+              $status=  Permission::create(['title'=> $type_name['name'][$i],'name'=> $type_name['name'][$i],'route'=>$type_name['route'][$i]]);
+            }
         }else{
-            return response()->json(['status'=>403]);
+           
+            for ($i=0; $i < count($type_name['name']) ; $i++) { 
+                $status=  Permission::create(['title'=> $type_name['name'][$i],'name'=> $type_name['name'][$i],'route'=>$type_name['route'][$i],'parent_id'=>$pid]);
+              }
         }
+
+        if ($status) {
+            return response()->json(['status'=>200]);
+       }else{
+            return response()->json(['status'=>403]);
+       }
+       
     }
 
     public function queryRole(Request $request)
@@ -211,7 +251,14 @@ class BrokerController extends Controller
     public function queryPermission(Request $request)
     {   
         $limit = $request->get('limit');
-        $permissions = Permission::paginate($limit);//获取所有角色
+        $permissions = Permission::where('parent_id',null)->paginate($limit);//获取所有角色
+        return $permissions; 
+    }
+
+    public function gainPermission(Request $request,$id)//查看子权限 
+    {   
+        $limit = $request->get('limit');
+        $permissions = Permission::where('parent_id',$id)->paginate($limit);//获取所有角色
         return $permissions; 
     }
 

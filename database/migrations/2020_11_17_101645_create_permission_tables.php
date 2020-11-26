@@ -1,5 +1,6 @@
 <?php
 
+use Kalnoy\Nestedset\NestedSet;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -25,6 +26,8 @@ class CreatePermissionTables extends Migration
             $table->string('name');
             $table->string('guard_name');
             $table->string('route');//路由别名
+            $table->string('title');
+            NestedSet::columns($table);
             $table->timestamps();
         });
 

@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
         'passwords' => 'users',
     ],
 
@@ -46,6 +46,7 @@ return [
             'provider' => 'users',
             //'hash' => false,
         ],
+
     ],
 
     /*
@@ -71,6 +72,7 @@ return [
             'model' => App\Model\User::class,
             //'model' => App\Model\UserInfo::class,
         ],
+
 
         // 'users' => [
         //     'driver' => 'database',

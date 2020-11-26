@@ -207,7 +207,7 @@
               </a>
               <dl class="layui-nav-child">
                 <dd><a lay-href="work/broker-list">经纪人列表</a></dd>
-                <dd><a lay-href="work/broker-workinfo">经纪人工作详情</a></dd>
+            
 
               </dl>
             </li>
@@ -233,8 +233,8 @@
                 <cite>租户管理</cite>
               </a>
               <dl class="layui-nav-child">
-                <dd><a lay-href="tenant/query">租户查询</a></dd>
-                <dd><a lay-href="tenant/manage">租户管理</a></dd>
+                <dd><a lay-href="tenant/query">租户管理</a></dd>
+          
               </dl>
             </li>
             @endif
@@ -295,7 +295,7 @@
      
       <div class="layui-body" id="LAY_app_body">
         <div class="layadmin-tabsbody-item layui-show">
-          <iframe src="home/homepage" frameborder="0" class="layadmin-iframe"></iframe>
+           <iframe src="home/homepage" frameborder="0" class="layadmin-iframe"></iframe> 
         </div>
       </div>
      

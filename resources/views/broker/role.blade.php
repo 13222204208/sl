@@ -34,7 +34,7 @@
 
       </div>
       </div>
-
+   
       <div class="layui-form-item ">
         <div class="layui-input-block">
           <div class="layui-footer" style="left: 0;">
@@ -49,12 +49,13 @@
   <div class="layui-row" id="popUpdateTest" style="display:none;">
     <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
 
+       <div class="layui-form-item">
+        <label class="layui-form-label">权限范围</label>
+      <div class="layui-input-block" id="updateRoleScope" >
 
 
-      <div class="layui-input-block"  id="updateRoleScope" style="margin: 5px">
- 
- 
-       </div>
+      </div>
+      </div>
 <br>
 
       <div class="layui-form-item ">
@@ -76,11 +77,12 @@
 
   <script src="/layuiadmin/layui/layui.js"></script>
   <script>
-    layui.use(['table', 'laydate', 'jquery', 'form'], function() {
+    layui.use(['table', 'laydate', 'jquery', 'form','tree'], function() {
       var table = layui.table;
       var laydate = layui.laydate;
       var $ = layui.jquery;
       var form = layui.form;
+      var tree = layui.tree;
 
       $(document).on('click', '#admin-management', function() {
 
@@ -88,7 +90,7 @@
           //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
           type: 1,
           title: "新建角色",
-          area: ['600px', '300px'],
+          area: ['600px', '600px'],
           content: $("#layuiadmin-form-admin") //引用的弹出层的页面层的方式加载修改界面表单
         });
       });
@@ -101,6 +103,12 @@
         }
       });
 
+
+      
+      //基本演示
+ 
+
+
             //获取权限名称
             $.ajax({
         headers: {
@@ -109,20 +117,20 @@
         url: "all/permission",
         method: 'get',
         dataType: 'json',
-        success: function(res) {
-          status = res.status;
-          role_name = res.data;
+        success: function(res) {console.log(res);
+          
+          tree.render({
+            elem: '#roleScope'
+            ,data: res
+            ,showCheckbox: true  //是否显示复选框
+            ,showLine:false
+            ,id: 'demoId1'
+        
+          });
           if (res.status == 200) {
-            optionData = "";
-              for (var i = 0; i < role_name.length; i++) {
-              var t = role_name[i];
             
-              optionData += '<input type="checkbox" name="limits[]" lay-skin="primary" title="' + t.name + '" value="' + t.name + '">';
-            }
-
-              console.log(optionData);
-              $("#roleScope").html(optionData);
-              $("#updateRoleScope").html(optionData);
+              //$("#roleScope").html(optionData);
+              //$("#updateRoleScope").html(optionData);
               form.render(); 
 
             }else if (res.status == 403) {
@@ -137,19 +145,51 @@
         }
       });
 
+      function getChecked_list(data) {
+        var id = "";
+        var name ="";
+        $.each(data, function (index, item) {
+            if (id != "") {
+                id = id + "," + item.id;
+                if(item.parent_id != null){
+                  name = name + "," + item.name;
+                }
+              
+            }
+            else {
+                id = item.id;
+                if(item.parent_id != null){
+                    name = item.name;
+                }
+            }
+            var i = getChecked_list(item.children);
+            if (i != "") {
+                id = id + "," + i;
+                name = name + "," + i;
+            }
+        });
+        return name;
+    }
+
+
       //监听提交
       form.on('submit(create)', function(data) {
-console.log(data.field);
+        var checkData = tree.getChecked('demoId1');
+
+                var list = new Array();
+
+                list = getChecked_list(checkData);
+                console.log(data.field);
         $.ajax({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
           url: "add/role",
           method: 'POST',
-          data: data.field,
+          data: {per:list,name:data.field.name},
           dataType: 'json',
           success: function(res) {
-            console.log(res);
+            console.log(res);return false;
             if (res.status == 200) {
               layer.msg('创建角色名称成功', {
                 offset: '15px',
@@ -189,19 +229,19 @@ console.log(data.field);
             }, {
               field: 'name',
               title: '角色名称',
-              width: 120
+            
             }, {
               field: 'created_at',
               title: '创建时间',
-              width: 260
+             
             }, {
               field: 'updated_at',
               title: '更新时间',
-              width: 260
+             
             },  {
               fixed: 'right',
               title: "操作",
-              width: 150,
+              width: 250,
               align: 'center',
               toolbar: '#barDemo'
             } 
@@ -257,7 +297,7 @@ console.log(data.field);
                 //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                 type: 1,
                 title: "分配权限",
-                area: ['600px', '300px'],
+                area: ['600px','600px'],
                 content: $("#popUpdateTest") //引用的弹出层的页面层的方式加载修改界面表单
               });
 
@@ -272,38 +312,20 @@ console.log(data.field);
         dataType: 'json',
         data:{id:data.id},
         success: function(res) {
-          status = res.status;
-          arr = res.data;
+           
+          tree.render({
+            elem: '#updateRoleScope'
+            ,data: res
+            ,showCheckbox: true  //是否显示复选框
+            ,showLine:false
+            ,id: 'demoId2'
+        
+          });
           if (res.status == 200) {
              
-             array= new Array();
-             zh = new Array();
-            $("#updateRoleScope input[type='checkbox']").each(function(){
-                var permission = $(this).val();
-                array.push(permission);
-              });
 
-              zh= array;
-            optionData = "";
-            let arraySel = Object.values(arr)
-            for (let index = 0; index < array.length; index++) {
-                const element = array[index];
-                const t = zh[index];
-                istrue = false;
-                for (let i = 0; i < arraySel.length; i++) {
-                  if (arraySel[i]== element) {
-                    istrue = true;
-                  }   
-                }
-                if (istrue) {
-                  optionData += '<input type="checkbox" checked  name="limits[]" lay-skin="primary" title="' + t + '" value="' + element + '">';
-                } else {
-                  optionData += '<input type="checkbox"  name="limits[]" lay-skin="primary" title="' + t + '" value="' + element + '">';
-                }
-              }
-
-            console.log(optionData);
-            $("#updateRoleScope").html(optionData);
+           
+            //$("#updateRoleScope").html(res);
             form.render();            
               
 
@@ -328,7 +350,12 @@ console.log(data.field);
 
         function setFormValue(obj, data) {
         form.on('submit(editAccount)', function(massage) {
-          massage= massage.field; console.log(massage);
+          var checkData = tree.getChecked('demoId2');
+
+          var list = new Array();
+
+          list = getChecked_list(checkData);
+         
           $.ajax({
             headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -337,7 +364,7 @@ console.log(data.field);
             type: 'post',
             data: {
               id: data.id,
-              permission: massage
+              permission: list
             },
             success: function(msg) {
               console.log(msg);

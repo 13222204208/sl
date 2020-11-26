@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UploadController;
 use App\Http\Requests\RegisterAuthRequest;
 use Tymon\JWTAuth\Exceptions\JWTException;
+
 use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 
 class SaoLouController extends Controller
@@ -41,12 +42,12 @@ class SaoLouController extends Controller
         $phoneCode = $request->account.$request->pcode;
         $num = Cache::get($phoneCode);
 
-        if ($phoneCode != $num) {
+      /*   if ($phoneCode != $num) {
             return response()->json([
                 'code' => 0,
                 'msg' =>"验证码不正确",
             ],200);
-        }
+        } */
 
             $user = new User;
             $user->account = $request->account;
@@ -111,9 +112,10 @@ class SaoLouController extends Controller
     public function login(Request $request)
     {
         $input = $request->only('account', 'password');
+      
         $jwt_token = null;
-
-        if (!$jwt_token = JWTAuth::attempt($input)) {
+ 
+        if (! $jwt_token = JWTAuth::attempt($input)) {
             return response()->json([
                 'code' => 0,
                 'msg' => '用户名或者密码错误',
