@@ -6,6 +6,7 @@ use App\Model\User;
 use Illuminate\Http\Request;
 use Gregwar\Captcha\CaptchaBuilder;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class loginController extends Controller
 {
@@ -26,7 +27,7 @@ class loginController extends Controller
         
             $user = User::where('account', $account_num)->first();
         
-            if (!$user || decrypt($user->password) != $request->password) {
+            if (!Hash::check($request->password,$user->password)) {
                 return response()->json(['status'=>403]);
             }
             session(['account' => $user->account]); 

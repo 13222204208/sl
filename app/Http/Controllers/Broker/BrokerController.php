@@ -25,14 +25,14 @@ class BrokerController extends Controller
             $user= User::create([
                 'account'=>$request->account,
                 'name' => $request->name,
-                'password' => encrypt($request->password)
+                'password' => bcrypt($request->password)
             ]); 
-        
-            $roles= $request->limits;
-            
+        if($roles= $request->limits){
             foreach ($roles as $role) {
                 $user->assignRole($role);
             }
+        }
+    
             return response()->json(['status'=>200]);
         }
     }

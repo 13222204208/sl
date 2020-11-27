@@ -15,7 +15,7 @@ class BgUsersTableSeeder extends Seeder
         DB::table('users')->insert([
             'account'=>'myadmin',
             'name' => '超级管理员',
-            'password' => encrypt('12345678'),
+            'password' => bcrypt('12345678'),
             'created_at' => '2020-11-17 16:19:51',
             'updated_at' => '2020-11-17 18:19:51'
         ]);
