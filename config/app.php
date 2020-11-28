@@ -183,6 +183,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\EasySmsServiceProvider::class,//短信发送
+
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class//jwt
        
 
     ],
