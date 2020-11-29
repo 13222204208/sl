@@ -136,11 +136,11 @@
 
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
 
-           @if(in_array('主页',$per))
+           @if(in_array('数据统计',$per))
             <li data-name="home" class="layui-nav-item layui-nav-itemed">
-              <a href="javascript:;" lay-tips="主页" lay-direction="2">
+              <a href="javascript:;" lay-tips="数据统计" lay-direction="2">
                 <i class="layui-icon layui-icon-home"></i>
-                <cite>主页</cite>
+                <cite>数据统计</cite>
               </a>
               <dl class="layui-nav-child">
 
@@ -161,12 +161,10 @@
               <dd>
                   <a lay-href="houses/created">新建楼盘</a>
                 </dd>
-      {{--            <dd>
-                  <a lay-href="houses/list">楼盘列表</a>
-                </dd>  --}}
                 <dd>
-                  <a lay-href="houses/info">楼盘详情</a>
-                </dd>
+                  <a lay-href="houses/list">楼盘列表</a>
+                </dd>  
+               
               </dl>
             </li>
             @endif
@@ -178,7 +176,7 @@
                 <cite>组织架构管理</cite>
               </a>
               <dl class="layui-nav-child">
-                <dd><a lay-href="branch/created">新建部门</a></dd>
+                <dd><a lay-href="branch/created">编辑部门</a></dd>
             {{--      <dd><a lay-href="branch/list">部门列表</a></dd>  --}}
               </dl>
             </li>

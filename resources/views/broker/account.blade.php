@@ -61,6 +61,14 @@
       </div>
 
       <div class="layui-form-item">
+        <label class="layui-form-label">部门选择</label>
+      <div class="layui-input-block" id="updateBranchScope" >
+
+
+      </div>
+      </div>
+
+      <div class="layui-form-item">
         <label class="layui-form-label">角色选择</label>
       <div class="layui-input-block" id="roleScope" >
 
@@ -72,6 +80,35 @@
         <div class="layui-input-block">
           <div class="layui-footer" style="left: 0;">
             <button class="layui-btn" lay-submit="" lay-filter="createAccount">保存</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="layui-row" id="update-info" style="display:none;">
+    <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="accountUpdate" style="margin:20px">
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">新的姓名</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" required lay-verify="required" autocomplete="off" placeholder="请输入修改的姓名" value="" class="layui-input">
+        </div>
+      </div>
+
+      {{-- <div class="layui-form-item">
+        <label class="layui-form-label">新的密码</label>
+        <div class="layui-input-block">
+          <input type="password" name="password" required lay-verify="required" autocomplete="off" placeholder="请输入新的密码" value="" class="layui-input">
+        </div>
+      </div> --}}
+
+
+      <div class="layui-form-item ">
+        <div class="layui-input-block">
+          <div class="layui-footer" style="left: 0;">
+            <button class="layui-btn" lay-submit="" lay-filter="updateAccount">修改</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
           </div>
         </div>
@@ -110,6 +147,7 @@
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
   <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="update">编辑</a>
     <a class="layui-btn layui-btn-xs" lay-event="edit">分配角色</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
   </script>
@@ -119,10 +157,49 @@
   <script src="/layuiadmin/layui/layui.js"></script>
 
   <script>
-    layui.use(['table', 'laydate', 'jquery', 'form'], function() {
+    layui.use(['table', 'laydate', 'jquery', 'form','tree'], function() {
       var table = layui.table;
       var $ = layui.jquery;
       var form = layui.form;
+      var tree = layui.tree;
+
+                              //获取部门名称
+                              $.ajax({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url: "have/branch",
+        method: 'post',
+        dataType: 'json',
+        success: function(res) {
+           
+          tree.render({
+            elem: '#updateBranchScope'
+            ,data: res
+            ,showCheckbox: true  //是否显示复选框
+            ,showLine:false
+            ,id: 'demoId2'
+        
+          });
+          if (res.status == 200) {
+             
+
+           
+            //$("#updateRoleScope").html(res);
+            form.render();            
+              
+
+            }else if (res.status == 403) {
+            layer.msg('填写错误或角色名重复', {
+              offset: '15px',
+              icon: 2,
+              time: 3000
+            }, function() {
+              location.href = 'power';
+            })
+          }
+        }
+      });
 
 
       $(document).on('click', '#admin-management', function() {
@@ -136,15 +213,47 @@
       });
 
       //添加帐号
+
+      function getChecked_list(data) {
+        var id = "";
+        var name ="";
+        $.each(data, function (index, item) {
+            if (id != "") {
+                id = id + "," + item.id;
+                  name = name + "," + item.name;
+                
+              
+            }
+            else {
+                id = item.id;
+                    name = item.name;
+                
+            }
+            var i = getChecked_list(item.children);
+            if (i != "") {
+                id = id + "," + i;
+                name = name + "," + i;
+            }
+        });
+        return name;
+    }
+
       form.on('submit(createAccount)', function(data) {
-        console.log(data.field);
+        var checkData = tree.getChecked('demoId2');
+
+var list = new Array();
+
+list = getChecked_list(checkData);
+data = data.field;
+data['branch'] =list;
+        console.log(data);
         $.ajax({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
           url: "add/account",
           method: 'POST',
-          data: data.field,
+          data: data,
           dataType: 'json',
           success: function(res) {
             console.log(res);
@@ -215,13 +324,20 @@
         elem: '#LAY_table_user',
         cols: [
           [
-
             {
-              field: 'id',
-              title: 'ID',
-              width: 120,
-              sort: true
-            }, {
+              type:'numbers',
+              title:'序号',
+              algin:'center',
+              width:80,
+            },
+
+            // {
+            //   field: 'id',
+            //   title: 'ID',
+            //   width: 120,
+            //   sort: true
+            // }, 
+            {
               field: 'account',
               title: '帐号',
           
@@ -230,9 +346,12 @@
               title: '名称',
            
             }, {
+              field: 'branch',
+              title: '部门',
+           
+            }, {
               fixed: 'right',
               title: "操作",
-              width: 180,
               align: 'center',
               toolbar: '#barDemo'
             }
@@ -285,6 +404,66 @@
                     });
                     return false;
                 });
+            }else if (obj.event === 'update') {
+            if (data.id == 1) {
+              layer.msg("超级管理员无法修改", {icon: 2});
+              return false;
+            }
+            layer.open({
+                        //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                        type: 1,
+                        title: "修改帐号信息",
+                        area: ['420px', '330px'],
+                        content: $("#update-info")//引用的弹出层的页面层的方式加载修改界面表单
+                    });
+                    console.log(data);
+                    form.val("accountUpdate", data);
+                form.render();
+                    form.on('submit(updateAccount)', function(massage) {
+          massage= massage.field; console.log(data);
+
+          $.ajax({
+            headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "update/account",
+            type: 'post',
+            data: {
+              id: data.id,
+              name:massage.name,
+            },
+            success: function(msg) {
+              console.log(msg);
+              if (msg.status == 200) {
+                layer.closeAll('loading');
+                layer.load(2);
+                layer.msg("修改成功", {
+                  icon: 6
+                });
+                setTimeout(function() {
+
+                  obj.update({
+                    name: massage.name,
+                  }); //修改成功修改表格数据不进行跳转 
+ 
+             
+                  layer.closeAll(); //关闭所有的弹出层
+                  //window.location.href = "/edit/horse-info";
+
+                }, 1000);
+               
+
+              } else {
+                layer.msg("修改失败", {
+                  icon: 5
+                });
+              }
+            }
+          })
+          return false;
+        })
+
+
             } else if (obj.event === 'edit') {
               if (data.id == 1) {
               layer.msg("超级管理员拥有所有权限", {icon: 6});

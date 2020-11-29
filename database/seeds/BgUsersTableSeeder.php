@@ -16,8 +16,8 @@ class BgUsersTableSeeder extends Seeder
             'account'=>'myadmin',
             'name' => '超级管理员',
             'password' => bcrypt('12345678'),
-            'created_at' => '2020-11-17 16:19:51',
-            'updated_at' => '2020-11-17 18:19:51'
+            'created_at' => date('Y-m-d H:i:s',time()),
+            'updated_at' => date('Y-m-d H:i:s',time())
         ]);
     }
 }

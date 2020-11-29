@@ -23,52 +23,8 @@ class SaoLouController extends Controller
 {
     public $loginAfterSignUp = true;
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function register(RegisterAuthRequest $request)
-    { 
 
-        if ($request->password !== $request->rpassword) {
-            return response()->json([
-                'code' => 0,
-                'msg' =>"两次密码不一致",
-            ],200);
-        }
-
-        $phoneCode = $request->account.$request->pcode;
-        $num = Cache::get($phoneCode);
-
-      /*   if ($phoneCode != $num) {
-            return response()->json([
-                'code' => 0,
-                'msg' =>"验证码不正确",
-            ],200);
-        } */
-
-            $user = new User;
-            $user->account = $request->account;
-            $user->password = bcrypt($request->password);
-  
-            $user->save();//保存注册用户
-
-   
-
-            if ($this->loginAfterSignUp) {
-                return $this->login($request);//注册完成后直接登陆
-            }
-
-            return response()->json([
-                'code' => 1,
-                'msg' =>"注册成功",
-                'data' => $user
-            ],200);
-    }
-
-    public function newpass(Request $request)
+    public function newpass(Request $request)//忘记密码
     {
         try {
             $request->validate([
@@ -103,10 +59,18 @@ class SaoLouController extends Controller
                 'password'=> bcrypt($request->password)
             ]);
 
-            return response()->json([
-                'code' => 1,
-                'msg' =>"修改密码成功",
-            ],200);
+            if ($user) {
+                return response()->json([
+                    'code' => 1,
+                    'msg' =>"修改密码成功",
+                ],200);
+            }else{
+                return response()->json([
+                    'code' => 0,
+                    'msg' => '用户名不存在',
+                ], 200);
+            }
+
     }
 
     public function login(Request $request)
@@ -136,7 +100,7 @@ class SaoLouController extends Controller
         $this->validate($request, [
             'token' => 'required'
         ]);
-
+        
         try {
             JWTAuth::invalidate($request->token);
 
@@ -159,7 +123,7 @@ class SaoLouController extends Controller
         ]);
         $user = JWTAuth::authenticate($request->token);
         
-        $month = $day = '+'.$request->pay_type.'month';
+        $month = '+'.$request->pay_type.'month';
         $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
 
         $clean= new Clean;//扫楼记录表
@@ -185,6 +149,7 @@ class SaoLouController extends Controller
         $tenant = new Tenant;
 
         $tenant->tenant_name = $request->tenant_name;//租户名称
+        $tenant->tenant_address = $request->houses_info;//租户地址
         $tenant->is_we_company = $request->is_we_company;//是否是我司租户
         $tenant->company_type = $request->company_type;//公司类型
         $tenant->tenant_user = $request->tenant_user;//联系人
@@ -197,6 +162,12 @@ class SaoLouController extends Controller
         $tenant->broker_name = $user->name;//当前提交的经纪人的名称
         $tenant->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
         $tenant->uid = $user->id;//当前提交人的id
+        $tenant->save();//保存租户表信息
+
+        DB::table('houses')->insertGetId([
+            'houses_num'=> $request->houses_info,//楼盘信息
+            'map' => $request->position//当前提交的位置
+        ]);
 
         if ($clean->save()) {
             return response()->json([

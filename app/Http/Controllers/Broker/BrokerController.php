@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Broker;
 
 use App\Model\User;
+use App\Model\Branch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -13,10 +14,13 @@ class BrokerController extends Controller
 {
     public function addAccount(Request $request)//添加帐号
     {
-        if ($request->ajax()) {
+        if ($request->ajax()) { 
             try {
                 $request->validate([
                     'account' => 'required|unique:users|max:20',
+                    'password' => 'required',
+                    'name' => 'required',
+                    'branch' => 'required'
                 ]); 
             } catch (\Throwable $th) {
                 return response()->json(['status'=>403]);
@@ -25,6 +29,7 @@ class BrokerController extends Controller
             $user= User::create([
                 'account'=>$request->account,
                 'name' => $request->name,
+                'branch' => $request->branch,
                 'password' => bcrypt($request->password)
             ]); 
         if($roles= $request->limits){
@@ -32,8 +37,24 @@ class BrokerController extends Controller
                 $user->assignRole($role);
             }
         }
-    
-            return response()->json(['status'=>200]);
+    if ($user) {
+        return response()->json(['status'=>200]);
+    }else{
+        return response()->json(['status'=>403]);
+
+    }
+        }
+    }
+
+    public function updateAccount(Request $request)
+    {
+        if ($request->ajax()) {
+            $user= User::find(intval($request->id));
+            $user->name = $request->name;
+            //$user->password = bcrypt($request->password);
+            if ($user->save()) {
+                return response()->json(['status'=>200]);
+            }
         }
     }
 
@@ -92,6 +113,16 @@ class BrokerController extends Controller
 
         return response()->json(['status'=>200]);
       
+    }
+
+    public function haveBranch(Request $request)//获取当前部门
+    {
+  
+
+        $pers = Branch::get()->toTree();
+        
+      return $pers;
+
     }
 
     public function havePermission(Request $request)//获取当前角色的权限
@@ -229,7 +260,7 @@ class BrokerController extends Controller
     public function queryAccount(Request $request)
     {
         $limit = $request->get('limit');
-        $data= DB::table('users')->select('id','account','name')->paginate($limit);
+        $data= DB::table('users')->where('id','>',1)->select('id','branch','account','name')->paginate($limit);
         return $data;
     }
 

@@ -17,6 +17,7 @@ class Branch extends Migration
         Schema::create('branch', function (Blueprint $table) {//vip表
             $table->increments('id');
             $table->string('name');
+            $table->string('title');
             NestedSet::columns($table);
             $table->timestamps();
         });

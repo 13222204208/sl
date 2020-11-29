@@ -12,7 +12,7 @@ class WorkController extends Controller
     {
         if ($request->ajax()) {  
             $limit = $request->get('limit'); 
-            $data= User::paginate($limit);
+            $data= User::where('id','>',1)->paginate($limit);
             return $data; 
         }
     }

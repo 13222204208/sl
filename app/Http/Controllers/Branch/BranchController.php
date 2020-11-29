@@ -46,12 +46,12 @@ class BranchController extends Controller
 
             if ($pid == 0) {
                 for ($i=0; $i < count($type_name) ; $i++) { 
-                  $status=  Branch::create(['name'=> $type_name[$i]]);
+                  $status=  Branch::create(['name'=> $type_name[$i],'title'=> $type_name[$i]]);
                 }
             }else{
                
                 for ($i=0; $i < count($type_name) ; $i++) { 
-                    $status=  Branch::create(['name'=> $type_name[$i],'parent_id'=>$pid]);
+                    $status=  Branch::create(['name'=> $type_name[$i],'title'=> $type_name[$i],'parent_id'=>$pid]);
                   }
             }
 
@@ -89,6 +89,7 @@ class BranchController extends Controller
 
             $Branch = Branch::find($request->id);
             $Branch->name= $request->name;
+            $Branch->title= $request->name;
             if ($Branch->save()) {
                 return response()->json(['status'=>200]);
             }else{

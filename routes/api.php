@@ -20,9 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('cors')->prefix('user')->group(function (){
 
-    Route::post('register','Api\SaoLouController@register');//注册
+    //Route::post('register','Api\SaoLouController@register');//注册
     Route::post('login','Api\SaoLouController@login');//登录
-    Route::post('newpass', 'Api\SaoLouController@newpass');//修改密码
+    Route::post('newpass', 'Api\SaoLouController@newpass');//忘记密码
 
     Route::post('pcode', 'Api\SaoLouController@pcode');//发送手机验证码
     Route::get('paytype', 'Api\SaoLouController@paytype');//获取付款方式

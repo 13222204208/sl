@@ -20,8 +20,11 @@ use Spatie\Permission\Models\Permission;
 
     Route::get('/', function () {
       
+         if (session('id')==1) {
+             $per = array('数据统计','楼盘架构管理','组织架构管理','经纪人管理','工作管理','扫楼记录管理','租户管理','参数配置');
 
-        if (session('id')) {
+             return view('index',['per'=>$per]);
+         }else if (session('id')) {
             $user= User::find(session('id'));
             $permission= $user->getAllPermissions();
             $data= json_decode($permission);
@@ -30,13 +33,9 @@ use Spatie\Permission\Models\Permission;
             foreach($data as $d){
                 $per[] = $d->{'name'};
             }
+            return view('index',['per'=>$per]);
         }
-
         
-         if (session('id')==1) {
-             $per = array('主页','楼盘架构管理','组织架构管理','经纪人管理','工作管理','扫楼记录管理','租户管理','参数配置');
-         }
-         return view('index',['per'=>$per]);
      })->middleware('adminLogin');
 
 
@@ -69,6 +68,10 @@ Route::prefix('home')->group(function () {
     Route::get('clean/count','Home\HomePageController@cleanCount');//获取扫楼记录数量
     Route::post('clean/date','Home\HomePageController@cleanDate');//获取时间范围内扫楼记录数量
 
+    //已出租即有租户的房间占总体房间数的百分比
+    Route::get('tenant/kong','Home\HomePageController@tenantKong');//获取时间范围内扫楼记录数量
+
+
     Route::get('tenant/count','Home\HomePageController@tenantCount');//获取租户信息数量
     Route::post('tenant/date','Home\HomePageController@tenantDate');//获取时间范围内扫楼记录数量
 
@@ -86,6 +89,11 @@ Route::prefix('houses')->group(function () {//楼盘管理
         return view('houses.create-house');//创建楼盘
     })->name('houses')->middleware('adminRoute');
     Route::get('gain/loupan','Houses\HousesController@gainLoupan');//获取楼盘信息
+
+    Route::get('info','Houses\HousesController@info');//楼盘详细信息
+
+    Route::get('tenant/info/{hnum}','Houses\HousesController@tenantInfo');//楼盘上的租户信息
+
     Route::get('gain/loupan/type/{id}','Houses\HousesController@gainLoupanType');//获取分类下楼盘
     Route::post('create/name','Houses\HousesController@createName');//创建分类名称
     Route::post('update/name','Houses\HousesController@updateName');//更新分类名称
@@ -93,7 +101,7 @@ Route::prefix('houses')->group(function () {//楼盘管理
 
      Route::get('list', function () {
         return view('houses.house-list');//楼盘列表
-    })->name('houses')->middleware('adminRoute');
+    })->name('hlist')->middleware('adminRoute');
 });
 
 Route::prefix('branch')->group(function () {//组织架构管理
@@ -117,10 +125,14 @@ Route::prefix('broker')->group(function () {//经纪人管理
 
     Route::get('account', function () {
         return view('broker.account');//帐号管理
-    })->name('broker')->middleware('adminRoute');
+    })->name('account')->middleware('adminRoute');
 
     Route::post('add/account','Broker\BrokerController@addAccount');//添加后台帐号
+    Route::post('have/branch','Broker\BrokerController@haveBranch');//选择部门
+
     Route::post('del/account','Broker\BrokerController@delAccount');//删除一个帐号
+    Route::post('update/account','Broker\BrokerController@updateAccount');//更新帐号
+
     Route::get('query/account','Broker\BrokerController@queryAccount');//获取所有后台帐号
     Route::post('add/role','Broker\BrokerController@addRole');//添加角色
     Route::get('query/role','Broker\BrokerController@queryRole');//查看所有角色
@@ -148,15 +160,13 @@ Route::prefix('broker')->group(function () {//经纪人管理
     
     Route::get('power', function () {
         return view('broker.power');//权限管理
-    });
+    })->name('power')->middleware('adminRoute');
 
-    Route::get('testrole', function () {
-        return view('broker.testrole');//权限管理
-    });
+
 
     Route::get('role', function () {
         return view('broker.role');//角色管理
-    })->name('broker')->middleware('adminRoute');
+    })->name('role')->middleware('adminRoute');
 });
 
 Route::prefix('work')->group(function () {//工作管理
@@ -168,9 +178,7 @@ Route::prefix('work')->group(function () {//工作管理
     Route::get('broker/list','Work\WorkController@brokerList');//获取经纪人列表
     Route::get('query/account/{account}','Work\WorkController@queryAccount');//查询经纪人
     
-    Route::get('broker-workinfo', function () {
-        return view('work.broker-workinfo');//经纪人工作详情
-    })->name('work')->middleware('adminRoute');
+    
 });
 
 Route::prefix('clean')->group(function () {//扫楼记录管理
@@ -183,7 +191,7 @@ Route::prefix('clean')->group(function () {//扫楼记录管理
     
     Route::get('record-change', function () {
         return view('clean.record-change');//按楼盘查看数据变更
-    })->name('clean')->middleware('adminRoute');
+    })->name('change')->middleware('adminRoute');
     Route::get('change/houses','Clean\CleanController@changeHouses');//按楼盘查看数据变更
 });
 

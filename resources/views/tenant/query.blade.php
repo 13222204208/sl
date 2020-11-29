@@ -57,7 +57,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">租户类型</label>
         <div class="layui-input-block">
-          <input type="text" name="tenant_type" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+          <input type="text" name="is_we_company" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
       </div>
 
@@ -125,9 +125,16 @@
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label">经纪人</label>
+        <label class="layui-form-label">经纪人姓名</label>
         <div class="layui-input-block">
-          <input type="text" name="uid" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+          <input type="text" name="broker_name" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">经纪人手机号</label>
+        <div class="layui-input-block">
+          <input type="text" name="broker_phone" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
       </div>
 
@@ -195,51 +202,42 @@
             }, {
               field: 'tenant_name',
               title: '租户名称',
-              width: 120
             }, {
               field: 'is_we_company',
               title: '租户类型',
-              width: 120
             }, {
               field: 'tenant_user',
               title: '联系人',
-              width: 120
             }, {
               field: 'company_type',
               title: '公司类型',
-              width: 160
             }, {
               field: 'start_time',
               title: '合同起始时间',
-              width: 120
             }, {
               field: 'stop_time',
               title: '合同到期时间',
-              width: 120
             }, {
               field: 'pay_type',
               title: '付款方式',
-              width: 120
             }, {
               field: 'pay_time',
               title: '下次应付款时间',
-              width: 160
             },  {
               field: 'tenant_need',
               title: '租户需求',
-              width: 120
             }, {
               field: 'remark',
               title: '备注',
-              width: 120
             }, {
-              field: 'uid',
-              title: '经纪人',
-              width: 120
-            }, {
+              field: 'broker_name',
+              title: '经纪人姓名',
+            },  {
+              field: 'broker_phone',
+              title: '经纪人手机号',
+            },{
               field: 'created_at',
               title: '创建时间',
-              width: 160
             },{
               fixed: 'right',
               title: "操作",
@@ -291,7 +289,7 @@
                 title: '租户名称',
                 width: 120
               }, {
-                field: 'tenant_type',
+                field: 'is_we_company',
                 title: '租户类型',
                 width: 120
               }, {
@@ -327,10 +325,12 @@
                 title: '备注',
                 width: 120
               }, {
-                field: 'uid',
-                title: '经纪人',
-                width: 120
-              }, {
+              field: 'broker_name',
+              title: '经纪人姓名',
+            },  {
+              field: 'broker_phone',
+              title: '经纪人手机号',
+            },{
                 field: 'created_at',
                 title: '创建时间',
                 width: 160
@@ -380,7 +380,7 @@
                 title: '租户名称',
                 width: 120
               }, {
-                field: 'tenant_type',
+                field: 'is_we_company',
                 title: '租户类型',
                 width: 120
               }, {
@@ -416,10 +416,12 @@
                 title: '备注',
                 width: 120
               }, {
-                field: 'uid',
-                title: '经纪人',
-                width: 120
-              }, {
+              field: 'broker_name',
+              title: '经纪人姓名',
+            },  {
+              field: 'broker_phone',
+              title: '经纪人手机号',
+            }, {
                 field: 'created_at',
                 title: '创建时间',
                 width: 160
@@ -482,8 +484,8 @@
                     layer.open({
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
-                        title: "修改帐号信息",
-                       area: ['600px'],
+                        title: "修改租户信息",
+                       area: ['600px','600px'],
                         content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
                     });
                     //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取

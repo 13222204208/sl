@@ -15,8 +15,8 @@ class Houses extends Migration
     {
         Schema::create('houses', function (Blueprint $table) {//楼盘表
             $table->increments('id');
-            $table->string('houses_name',50)->unique()->comment('楼盘名称');
-            $table->string('houses_address',150)->unique()->comment('楼盘地址');
+            $table->string('houses_name',50)->default('')->comment('楼盘名称');
+            $table->string('houses_address',150)->default('')->comment('楼盘地址');
             $table->string('map',20)->default('')->comment('地图位置坐标');
             $table->string('city',30)->default('')->comment('所属区县');
             $table->string('business_area',50)->default('')->comment('所属商圈');

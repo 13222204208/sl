@@ -1,156 +1,158 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
-  <title>楼盘列表</title>
+  <title>楼盘详情</title>
   <meta name="renderer" content="webkit">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css" media="all">
   <link rel="stylesheet" href="/layuiadmin/style/admin.css" media="all">
   <style>
-      
+
   </style>
 </head>
-<body> 
+
+<body>
+
  
 
+  <table class="layui-hide" id="tenant_table_user" lay-filter="user"></table>
 
- 
-<table class="layui-hide" id="LAY_table_user" lay-filter="user"></table> 
-               
-     
-  <script type="text/html" id="barDemo">
 
   
-  <!--   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="resuse">查看</a> -->
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="edit">编辑</a>
-  </script>     
 
 
-<script src="/layuiadmin/layui/layui.js"></script>
+  <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
+   <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">查看房号上的租户</a>
+  
+  </script> 
 
-<script>
- layui.use(['table', 'form', 'laydate', 'layer', 'jquery','upload'], function() {
+
+  <script src="/layuiadmin/layui/layui.js"></script>
+
+  <script>
+    layui.use(['table', 'laydate', 'jquery', 'form'], function() {
       var table = layui.table;
-      var laydate = layui.laydate;
-      var form = layui.form;
-      var util = layui.util;
-      var layer = layui.layer;
       var $ = layui.jquery;
-      var upload = layui.upload;
+      var form = layui.form;
 
 
-  
-  //方法级渲染
-  table.render({
-    elem: '#LAY_table_user'
-    ,url: 'query/platform'
-    ,cols: [[
-      {field:'id', title: 'ID', width:80, sort: true}
-      ,{field:'platform_name', title: '分期', width:180, sort: true}
-      ,{field:'show_name', title: '楼座', width:180}
-      ,{field:'platform_type', title: '单元', width:120}
-      ,{field:'platform_sort', title: '楼层', width:120}
-      ,{field:'platform_img', title: '楼号',  width:260}
-        templet: function(d) {
-                if (d.state == 1) {
-                  return "开启";
-                }else if(d.state == "on"){
-                  return "开启";
-                }else{
-                  return "关闭";
-                }
-              },}
-      ,{
+      
+
+      table.render({
+        height: 600,
+        url: "info" //数据接口
+          ,
+        page: true //开启分页
+          ,
+        elem: '#LAY_table_user',
+        cols: [
+          [
+
+            {
+              field: 'id',
+              title: 'ID',
+              width: 80,
+              sort: true
+            },{
+              field: 'houses_num',
+              title: '楼盘信息',
+            }, {
+              field: 'map',
+              title: '地图位置坐标',
+            },    {
               fixed: 'right',
-              title:"操作",
-              width: 100,
+              title: "操作",
+              width: 200,
               align: 'center',
               toolbar: '#barDemo'
-            }
-    ]]
-    ,parseData: function(res) { //res 即为原始返回的数据
+            } 
+          ]
+        ],
+        parseData: function(res) { //res 即为原始返回的数据
+          //console.log(res);
           return {
             "code": '0', //解析接口状态
             "msg": res.message, //解析提示文本
             "count": res.total, //解析数据长度
             "data": res.data //解析数据列表
           }
-        }
-    ,id: 'testReload'
-    ,page: true
-   
-  });
+        },
+        id: 'testReload',
+        title: '后台用户',
+        totalRow: true
 
-  table.on('tool(user)', function(obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-        var data = obj.data; //获得当前行数据
-        var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-        var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
-        if (layEvent === 'edit') { //编辑
-          layer.open({
-            //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            type: 1,
-            title: "编辑",
-            area: ['620px', '550px'],
-            content: $("#popUpdateTask") //引用的弹出层的页面层的方式加载修改界面表单
-          });
-           //console.log(data);return false;
-          form.val("formUpdate", data);
-          setFormValue(obj, data);
-          form.render();
-        } else if (layEvent === 'LAYTABLE_TIPS') {
-          layer.alert('Hi，头部工具栏扩展的右侧图标。');
-        }
       });
-   
-      function setFormValue(obj, data) {
-        form.on('submit(setActivity)', function(massage) {
-          massage= massage.field; 
-          massage.id = data.id;
-          $.ajax({
-            headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: "update/platform",
-            type: 'post',
-            data: massage,
-            success: function(msg) {
-              console.log(msg);
-              if (msg.status == 200) {
-                layer.closeAll('loading');
-                layer.load(2);
-                layer.msg("修改成功", {
-                  icon: 6
-                });
-                setTimeout(function() {
 
-                  obj.update({
-                    platform_name:massage.platform_name,
-                    show_name:massage.show_name,
-                    platform_type:massage.platform_type,
-                    platform_sort:massage.platform_sort,
-                    platform_img:massage.platform_img,
-                    state:massage.state,        
-                  }); //修改成功修改表格数据不进行跳转              
-                  layer.closeAll(); //关闭所有的弹出层
+      table.on('tool(user)', function (obj) {
+            var data = obj.data;
+         
+     if (obj.event === 'edit') {
+          console.log(data); 
+          table.render({
+        height: 600,
+        url: "tenant/info/"+data.houses_num 
+          ,
+        page: true //开启分页
+          ,
+        elem: '#tenant_table_user',
+        cols: [
+          [
 
-                }, 1000);
-
-              } else {
-                layer.msg("修改失败", {
-                  icon: 5
-                });
-              }
+            {
+              type: 'numbers',
+              title: '序号',
+              width: 80,
+            },{
+              field: 'tenant_name',
+              title: '租户名称',
+            },{
+              field: 'start_time',
+              title: '合同开始时间',
+            },{
+              field: 'stop_time',
+              title: '合同结束时间',
+            },{
+              field: 'state',
+              title: '在租状态',
+            },{
+              field: 'broker_name',
+              title: '所属经纪人',
+            },{
+              field: 'broker_phone',
+              title: '所属经纪人手机号',
             }
-          })
-          return false;
-        })
-      }
-  
-});
-</script>
+          ]
+        ],
+        parseData: function(res) { //res 即为原始返回的数据
+          //console.log(res);
+          return {
+            "code": '0', //解析接口状态
+            "msg": res.message, //解析提示文本
+            "count": res.total, //解析数据长度
+            "data": res.data //解析数据列表
+          }
+        },
+        id: 'testReload',
+        title: '后台用户',
+        totalRow: true
+
+      });
+
+                }
+            
+        });
+
+
+      
+
+    });
+  </script>
 
 </body>
+
 </html>

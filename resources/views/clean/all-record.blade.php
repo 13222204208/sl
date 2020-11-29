@@ -23,12 +23,7 @@
 
   <div class="layui-row" id="popUpdateTest" style="display:none;">
     <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
-    <div class="layui-form-item">
-        <label class="layui-form-label">楼盘名称</label>
-        <div class="layui-input-block">
-          <input type="text" name="houses_name" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
-        </div>
-      </div>    
+   
       
       <div class="layui-form-item">
         <label class="layui-form-label">楼盘信息</label>
@@ -36,13 +31,6 @@
           <input type="text" name="houses_info" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
       </div>    
-      
-      <div class="layui-form-item">
-        <label class="layui-form-label">房间号</label>
-        <div class="layui-input-block">
-          <input type="text" name="houses_num" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
-        </div>
-      </div>
 
 
     <div class="layui-form-item">
@@ -167,7 +155,7 @@
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
    <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">查看详情</a>
   
   </script> 
 
@@ -198,18 +186,9 @@
               title: 'ID',
               width: 80,
               sort: true
-            }, {
-              field: 'houses_name',
-              title: '楼盘名称',
-              width: 180,
-            }, {
+            },{
               field: 'houses_info',
               title: '楼盘信息',
-              width: 180,
-            }, {
-              field: 'houses_num',
-              title: '房间名称',
-              width: 120,
             }, {
               field: 'tenant_name',
               title: '租户名称',
@@ -217,59 +196,51 @@
             }, {
               field: 'is_we_company',
               title: '是否司租户',
-              width: 100,
             }, {
               field: 'company_type',
               title: '公司类型',
-              width: 120,
             }, {
               field: 'tenant_user',
               title: '联系人',
-              width: 180,
             }, {
               field: 'start_time',
               title: '合同起始时间',
-              width: 150,
+              width: 180,
             },{
               field: 'stop_time',
               title: '合同到期时间',
-              width: 150,
+              width: 180,
             }, {
               field: 'pay_type',
               title: '付款方式',
-              width: 120,
             }, {
               field: 'pay_time',
               title: '下次应付款时间',
-              width: 150,
+              width: 180,
             }, {
               field: 'tenant_need',
               title: '租户需求',
-              width: 120,
             },{
               field: 'remark',
               title: '备注',
-              width: 120,
             }, {
               field: 'broker_name',
               title: '经纪人姓名',
-              width: 120,
+              width: 180,
             }, {
               field: 'broker_phone',
               title: '经纪人手机号',
-              width: 120,
+              width: 180,
             }, {
               field: 'position',
               title: '提交位置',
-              width: 180,
             }, {
               field: 'enclosure',
               title: '附件',
-              width: 100,
             }, {
               field: 'created_at',
-              title: '创建时间',
-     
+              title: '录入时间',
+              width: 180,
             } ,    {
               fixed: 'right',
               title: "操作",
@@ -294,127 +265,6 @@
 
       });
 
-
-
-      //查询帐号
-      $('.demoTable .layui-btn').on('click', function() {
-
-        var keyWord = $('#demoReload');
-        var account_num = keyWord.val();
-
-        table.render({
-          height: 600,
-          url: "query/account" + '/' + account_num //数据接口
-            ,
-          //page: true,//开启分页
-          elem: '#LAY_table_user',
-          cols: [
-            [
-
-              {
-                field: 'id',
-                title: 'ID',
-                width: 80,
-                sort: true
-              }, {
-                field: 'account_num',
-                title: '帐号',
-                width: 120
-              }, {
-                field: 'nickname',
-                title: '昵称',
-                width: 120
-              }, {
-                field: 'role',
-                title: '角色',
-                width: 120
-              }, {
-                field: 'state',
-                title: '状态',
-                width: 160
-              }, {
-                fixed: 'right',
-                title: "操作",
-                width: 150,
-                align: 'center',
-                toolbar: '#barDemo'
-              }
-            ]
-          ],
-          parseData: function(res) { //res 即为原始返回的数据
-            //console.log(res);
-            return {
-              "code": '0', //解析接口状态
-              "msg": res.message, //解析提示文本
-              "count": res.total, //解析数据长度
-              "data": res.data //解析数据列表
-            }
-          },
-          title: '后台用户',
-          totalRow: true
-
-        });
-      });
-
-
-      form.on('select(stateSelect)', function(data) { //选择角色
-        let role = data.elem.value; //当前字段变化的值
-        url ="query/account/role/" + role //数据接口
-        console.log(url);
-        table.render({
-          height: 600,
-          url: url
-            ,
-          page: true,//开启分页
-          elem: '#LAY_table_user',
-          cols: [
-            [
-
-              {
-                field: 'id',
-                title: 'ID',
-                width: 80,
-                sort: true
-              }, {
-                field: 'account_num',
-                title: '帐号',
-                width: 120
-              }, {
-                field: 'nickname',
-                title: '昵称',
-                width: 120
-              }, {
-                field: 'role',
-                title: '角色',
-                width: 120
-              }, {
-                field: 'state',
-                title: '状态',
-                width: 160
-              }, {
-                fixed: 'right',
-                title: "操作",
-                width: 150,
-                align: 'center',
-                toolbar: '#barDemo'
-              }
-            ]
-          ],
-          parseData: function(res) { //res 即为原始返回的数据
-            //console.log(res);
-            return {
-              "code": '0', //解析接口状态
-              "msg": res.message, //解析提示文本
-              "count": res.total, //解析数据长度
-              "data": res.data //解析数据列表
-            }
-          },
-          title: '后台用户',
-          totalRow: true
-
-        });
-      });
-
       table.on('tool(user)', function (obj) {
             var data = obj.data;
          
@@ -423,7 +273,7 @@
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
                         title: "详情",
-                        area: ['600px','800px'],
+                        area: ['600px','600px'],
                         content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
                     });
                     //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取

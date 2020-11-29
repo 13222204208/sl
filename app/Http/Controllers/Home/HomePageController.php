@@ -47,6 +47,19 @@ class HomePageController extends Controller
         }
     }
 
+    public function tenantKong()//楼盘空置率
+    {
+        $num1= Tenant::where('state','是')->count();
+        $num2= Tenant::where('state','否')->count();
+        
+        $num = intval(($num1 /($num1+$num2))*100);
+        if (!is_null($num)) {
+            return response()->json(['status'=>200,'num'=>$num]);
+        }else{
+            return response()->json(['status'=>403]);
+        }
+    }
+
     public function tenantDate(Request $request)//租户范围内记录
     {
         $dateNum= Clean::whereDate('created_at','>=',$request->startTime)->whereDate('created_at','<=',$request->stopTime)->count();

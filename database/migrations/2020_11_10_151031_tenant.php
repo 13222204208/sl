@@ -21,6 +21,8 @@ class Tenant extends Migration
             $table->string('company_type',30)->default('')->comment('公司类型');
             $table->string('start_time',30)->default('')->comment('合同开始时间');
             $table->string('stop_time',30)->default('')->comment('合同结束时间,设置定时任务触发到期提醒');
+            $table->string('tenant_address')->default('')->comment('租房地址');
+
             $table->string('pay_type',30)->default('')->comment('付款方式');
             $table->string('pay_time',30)->default('')->comment('付款时间,设置定时任务触发到期提醒');
             $table->string('tenant_need',130)->default('')->comment('租户需求');
@@ -28,6 +30,7 @@ class Tenant extends Migration
             $table->string('broker_name',30)->default('')->comment('经纪人姓名');
             $table->string('broker_phone',20)->comment('经纪人手机号');
             $table->integer('uid')->unsigned()->comment('经纪人id');
+            $table->string('state')->default('是')->comment('在租状态,1代表是，0代表否');
             $table->timestamps();
 
            // $table->foreign('uid')->references('id')->on('users');

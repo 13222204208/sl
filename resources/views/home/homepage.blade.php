@@ -134,12 +134,12 @@
       <div class="layui-col-sm6 layui-col-md3">
         <div class="layui-card">
           <div class="layui-card-header">
-            扫楼完成率
+            楼盘空置率
        
           </div>
           <div class="layui-card-body layuiadmin-card-list">
-          {{--    <p>申请笔数： <span class=" layui-badge layui-bg-green " id="with_apply_num">0</span></p>  --}}
-         
+            已出租即有租户的房间<br>占总体房间数的百分比
+            <p class="layuiadmin-big-font" id="tenant_kong">0</p>
           </div>
         </div>
       </div>
@@ -275,7 +275,26 @@
           })
         });
 
-  
+        $.ajax({ 
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url: "tenant/kong",
+          method: 'get',
+          dataType: 'json',
+          success: function(res) {
+              
+            if (res.status == 200) {
+              $("#tenant_kong").html(res.num + '%');
+            } else if (res.status == 403) {
+              layer.msg('错误', {
+                offset: '15px',
+                icon: 2,
+                time: 3000
+              })
+            }
+          }
+        }); 
 
 
 

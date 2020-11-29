@@ -70,8 +70,7 @@
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
   <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">工作详情</a>
   </script>
 
 
@@ -93,13 +92,20 @@
         elem: '#LAY_table_user',
         cols: [
           [
-
             {
-              field: 'id',
-              title: 'ID',
-              width: 120,
-              sort: true
-            }, {
+              type:'numbers',
+              title:'序号',
+              algin:'center',
+              width:80
+            },
+
+            // {
+            //   field: 'id',
+            //   title: 'ID',
+            //   width: 120,
+            //   sort: true
+            // }, 
+            {
               field: 'account',
               title: '帐号',
         
@@ -149,10 +155,10 @@
             [
 
               {
-                field: 'id',
-                title: 'ID',
+                type: 'numbers',
+                title: '序号',
                 width: 120,
-                sort: true
+                algin: 'center'
               }, {
                 field: 'account',
                 title: '帐号',
@@ -160,7 +166,6 @@
               }, {
                 field: 'name',
                 title: '昵称',
-                width: 120
               }, {
                 fixed: 'right',
                 title: "操作",
@@ -190,35 +195,7 @@
       table.on('tool(user)', function (obj) {
             var data = obj.data;
          
-           if (obj.event === 'del') {
-            if (data.id == 1) {
-              layer.msg("超级管理员无法删除", {icon: 2});
-              return false;
-            }
-                layer.confirm('真的删除行么', function (index) {
-                    $.ajax({
-                        url: "del/account",
-                        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-                        type: "POST",
-                        data: {id: data.id},
-                        success: function (msg) {
-                  
-                            if (msg.status == 200) {
-                                //删除这一行
-                                obj.del();
-                                //关闭弹框
-                                layer.close(index);
-                                layer.msg("删除成功", {icon: 6});
-                            } else {
-                                layer.msg("删除失败", {icon: 5});
-                            }
-                        }
-                    });
-                    return false;
-                });
-            } else if (obj.event === 'edit') {
+       if (obj.event === 'edit') {
                     layer.open({
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,

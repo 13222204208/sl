@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Houses;
 
 
+use App\Model\Level;
+use App\Model\Tenant;
 use Illuminate\Http\Request;
+use function PHPSTORM_META\type;
+
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Model\Level;
-
-use function PHPSTORM_META\type;
 
 class HousesController extends Controller
 {
@@ -20,6 +21,25 @@ class HousesController extends Controller
 
             return $data;
       
+        }
+    }
+
+    public function info(Request $request)
+    {
+        if ($request->ajax()) {
+            $limit = $request->get('limit');
+            $datas= DB::table('houses')->paginate($limit);
+            return $datas;
+      
+        }
+    }
+
+    public function tenantInfo(Request $request,$hnum)
+    {
+        if ($request->ajax()) {
+            $limit = $request->get('limit');
+            $data= Tenant::where('tenant_address',$hnum)->orderBy('created_at','desc')->paginate($limit);
+            return $data;
         }
     }
 
