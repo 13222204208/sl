@@ -21,7 +21,7 @@ use Spatie\Permission\Models\Permission;
     Route::get('/', function () {
       
          if (session('id')==1) {
-             $per = array('数据统计','楼盘架构管理','组织架构管理','经纪人管理','工作管理','扫楼记录管理','租户管理','参数配置');
+             $per = array('统计','楼盘架构管理','组织架构管理','经纪人管理','工作管理','扫楼记录管理','租户管理','参数配置','新建楼盘','楼盘列表','编辑部门','帐号管理','角色管理','权限管理','经纪人列表','查看全部扫楼记录','按楼盘查看数据变更','表单选项配置','合同到期提醒手机');
 
              return view('index',['per'=>$per]);
          }else if (session('id')) {
@@ -33,6 +33,7 @@ use Spatie\Permission\Models\Permission;
             foreach($data as $d){
                 $per[] = $d->{'name'};
             }
+             //dd($per);exit;
             return view('index',['per'=>$per]);
         }
         

@@ -136,40 +136,47 @@
 
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
 
-           @if(in_array('数据统计',$per))
-            <li data-name="home" class="layui-nav-item layui-nav-itemed">
+           @if(in_array('统计',$per))
+            <li data-name="home" class="layui-nav-item ">
               <a href="javascript:;" lay-tips="数据统计" lay-direction="2">
                 <i class="layui-icon layui-icon-home"></i>
                 <cite>数据统计</cite>
               </a>
+              @if(in_array('统计',$per))
               <dl class="layui-nav-child">
 
                 <dd data-name="console">
                   <a lay-href="home/homepage">数据统计</a>
                 </dd>
               </dl>
+              @endif
             </li>
             @endif
 
-            @if(in_array('楼盘架构管理',$per))
+            @if(in_array('新建楼盘',$per) || in_array('楼盘列表',$per))
             <li data-name="user" class="layui-nav-item">
               <a href="javascript:;" lay-tips="楼盘架构管理" lay-direction="2">
-                <i class="layui-icon layui-icon-user"></i>
+                <i class="layui-icon layui-icon-template"></i>
                 <cite>楼盘架构管理</cite>
               </a>
               <dl class="layui-nav-child">
+                @if(in_array('新建楼盘',$per))
               <dd>
                   <a lay-href="houses/created">新建楼盘</a>
                 </dd>
+                @endif
+
+                @if(in_array('楼盘列表',$per))
                 <dd>
                   <a lay-href="houses/list">楼盘列表</a>
-                </dd>  
+                </dd> 
+                @endif 
                
               </dl>
             </li>
             @endif
 
-          @if(in_array('组织架构管理',$per))
+          @if(in_array('组织架构管理',$per)||in_array('编辑部门',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="组织架构管理" lay-direction="2">
                 <i class="layui-icon layui-icon-template"></i>
@@ -182,22 +189,30 @@
             </li>
             @endif
 
-            @if(in_array('经纪人管理',$per))
+            @if(in_array('帐号管理',$per)|| in_array('权限管理',$per) || in_array('角色管理',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="经纪人管理" lay-direction="2">
                 <i class="layui-icon layui-icon-app"></i>
                 <cite>经纪人管理</cite>
               </a>
               <dl class="layui-nav-child">
+                @if(in_array('帐号管理',$per))
                 <dd><a lay-href="broker/account">帐号管理</a></dd>
+                @endif
+
+                @if(in_array('权限管理',$per))
                 <dd><a lay-href="broker/power">权限管理</a></dd>
+                @endif
+
+                @if(in_array('角色管理',$per))
                 <dd><a lay-href="broker/role">角色管理</a></dd>
+                @endif
            
               </dl>
             </li>
             @endif
 
-            @if(in_array('工作管理',$per))
+            @if(in_array('经纪人列表',$per) )
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="工作管理" lay-direction="2">
                 <i class="layui-icon layui-icon-senior"></i>
@@ -211,15 +226,20 @@
             </li>
             @endif
 
-            @if(in_array('扫楼记录管理',$per))
+          @if(in_array('查看全部扫楼记录',$per) || in_array('按楼盘查看数据变更',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="扫楼记录管理" lay-direction="2">
                 <i class="layui-icon layui-icon-template"></i>
                 <cite>扫楼记录管理</cite>
               </a>
               <dl class="layui-nav-child">
+                @if(in_array('查看全部扫楼记录',$per))
                 <dd><a lay-href="clean/all-record">查看全部扫楼记录</a></dd>
+                @endif
+
+                @if(in_array('按楼盘查看数据变更',$per))
                 <dd><a lay-href="clean/record-change">按楼盘查看数据变更</a></dd>
+                @endif
               </dl>
             </li>
             @endif
@@ -237,14 +257,14 @@
             </li>
             @endif
 
-            @if(in_array('参数配置',$per))
+            @if(in_array('表单配置选项',$per) || in_array('合同到期提醒手机',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="参数配置" lay-direction="2">
                 <i class="layui-icon layui-icon-set"></i>
                 <cite>参数配置</cite>
               </a>
               <dl class="layui-nav-child">
-                
+                @if(in_array('表单选项配置',$per))
                 <dd>
                   <a >表单选项配置</a>
                   <dl class="layui-nav-child">
@@ -253,7 +273,11 @@
                     <dd><a lay-href="parm/paytype">付款方式配置</a></dd>
                   </dl>
                 </dd>
+                @endif
+
+                @if(in_array('合同到期提醒手机',$per))
                 <dd><a lay-href="parm/phone">合同到期提醒手机</a></dd>
+                @endif
               </dl>
             </li>
             @endif
@@ -282,7 +306,7 @@
      
         <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
           <ul class="layui-tab-title" id="LAY_app_tabsheader">
-            <li lay-id="home/homepage" lay-attr="home/homepage" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+            <li lay-id="" lay-attr="" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
           </ul>
         </div>
      
@@ -293,7 +317,7 @@
      
       <div class="layui-body" id="LAY_app_body">
         <div class="layadmin-tabsbody-item layui-show">
-           <iframe src="home/homepage" frameborder="0" class="layadmin-iframe"></iframe> 
+           <iframe src="" frameborder="0" class="layadmin-iframe"></iframe> 
         </div>
       </div>
      
