@@ -20,6 +20,7 @@ class Houses extends Migration
             $table->string('map',20)->default('')->comment('地图位置坐标');
             $table->string('city',30)->default('')->comment('所属区县');
             $table->string('business_area',50)->default('')->comment('所属商圈');
+            $table->string('property_type',50)->default('')->comment('物业类型');
             $table->string('houses_info',30)->default('')->comment('楼盘层级架构，多级');
             $table->string('houses_num',30)->default('')->comment('房间号或房间名称');
             $table->string('houses_tenant',30)->default('')->comment('房号上的租户');

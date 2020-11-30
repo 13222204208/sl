@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Carbon\Carbon;
 
 use App\Model\Clean;
+use App\Model\House;
 use App\Model\Tenant;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -42,10 +43,13 @@ class DataController extends Controller
 
         $yearcount = Clean::where('broker_phone',$user->account)->whereDate('created_at','>=',$year)->count();
         $datecount['yearcount']= $yearcount;//今年的数量 */
-        
+      
         $count = array();
-        $cleancount = Clean::where('broker_phone',$user->account)->count();//我的扫楼记录数量
+        $cleancount = Clean::where('uid',$user->id)->count();//我的扫楼记录数量
         $count['cleancount']= $cleancount;
+
+        $housecount = Clean::where('uid',intval($user->id))->groupBy('houses_name')->get()->count();//我的扫楼记录数量
+        $count['housecount']= $housecount;//我扫过的楼盘
 
         $tenantcount = Tenant::where('uid',$user->id)->count();//我的租户记录数量
         $count['tenantcount'] = $tenantcount;
@@ -54,6 +58,36 @@ class DataController extends Controller
             'code' => 1,
             'msg' => '查询成功',
             'count' =>$count 
+        ], 200);
+    }
+
+    public function loupan(Request $request)
+    {
+        $this->validate($request, [
+            'token' => 'required'
+        ]);
+
+        $user = JWTAuth::authenticate($request->token); 
+        if (!$user->account) {
+            return response()->json(['msg' =>'未登陆', 'code' => -1]);
+        }
+
+        $size = 20;
+        if($request->size){
+            $size = $request->size;
+        }
+
+        $page = 0;
+        if($request->page){
+            $page = ($request->page -1)*$size;
+        }
+
+        $data= House::where('uid',intval($user->id))->skip($page)->take($size)->get(['id','houses_name','map','city','business_area','property_type']);
+
+        return response()->json([
+            'code' => 1,
+            'msg' => '成功',
+            'data' =>$data
         ], 200);
     }
 }

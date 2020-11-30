@@ -166,6 +166,11 @@
                 </dd>
                 @endif
 
+                <dd>
+                  <a lay-href="houses/add">添加楼盘</a>
+                </dd>
+
+
                 @if(in_array('楼盘列表',$per))
                 <dd>
                   <a lay-href="houses/list">楼盘列表</a>

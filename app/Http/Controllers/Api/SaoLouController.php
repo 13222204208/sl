@@ -86,12 +86,24 @@ class SaoLouController extends Controller
             ], 200);
         }
 
+        $user = User::where('account',$request->account)->first();
+        $data = array();
 
+        if(!$permission= substr(strrchr($user->branch, ","), 1)){
+            $permission = $user->branch;
+        }
+
+        $data['account'] = $user->account;
+        $data['branch'] = $user->branch;
+        $data['name'] = $user->name;
+        $data['role'] =  $user->getRoleNames();
+        $data['permission'] =  $permission;
+        $data['token']= $jwt_token;
+        $data['img_url'] = $user->head_img;
         return response()->json([
             'code' => 1,
             'msg' =>"成功",
-            'account' => $request->account,
-            'token' => $jwt_token,
+            'data' => $data
         ],200);
     }
 
@@ -126,11 +138,46 @@ class SaoLouController extends Controller
         $month = '+'.$request->pay_type.'month';
         $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
 
+        if ($request->has('enclosre')) { 
+            $upload= new UploadController;
+            $images = $request->file('enclosre');
+            $pathUrls = [];
+            if (is_array($images)) {
+                foreach($images as $key=>$v)
+                {
+                    $namePath= $upload->uploadImg($images[$key],'saolouImg');
+                    $enclosre = $namePath;
+                    array_push($pathUrls,$enclosre);
+    
+                }
+            }else {
+                $namePath= $upload->uploadImg($images,'saolouImg');
+                    $enclosre = $namePath;
+                    array_push($pathUrls,$enclosre);
+            }
+
+            
+            if (!$namePath) {
+                return response()->json(['msg' =>'图片上传失败', 'code' => 0]);
+            }
+            $pathUrls = implode(',',$pathUrls);
+           //return $pathUrls;
+      
+        }
+
+        if($request->is_we_company == 1){
+            $is_we_company ="是";
+        }else{
+            $is_we_company ="否";
+        }
+
         $clean= new Clean;//扫楼记录表
- 
+        $clean->houses_name = $request->houses_name;//楼盘名称
         $clean->houses_info = $request->houses_info;//租户信息
+        $clean->houses_num = $request->houses_num;//房间号
+        $clean->property_type = $request->property_type;//物业类型
         $clean->tenant_name = $request->tenant_name;//租户名称
-        $clean->is_we_company = $request->is_we_company;//是否是我司租户
+        $clean->is_we_company = $is_we_company;//是否是我司租户
         $clean->company_type = $request->company_type;//公司类型
         $clean->tenant_user = $request->tenant_user;//联系人
         $clean->start_time = $request->start_time;//合同开始时间
@@ -143,14 +190,16 @@ class SaoLouController extends Controller
         $clean->broker_name = $user->name;//当前提交的经纪人的名称
         $clean->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
         $clean->position = $request->position;//当前提交的位置
-        $clean->enclosure = $request->enclosre;//附件
+        $clean->enclosure = $pathUrls;//附件扫楼记录时上传的图片
         $clean->save();
 
         $tenant = new Tenant;
 
+        $tenant->houses_name = $request->houses_name;//楼盘名称
         $tenant->tenant_name = $request->tenant_name;//租户名称
         $tenant->tenant_address = $request->houses_info;//租户地址
-        $tenant->is_we_company = $request->is_we_company;//是否是我司租户
+        $tenant->property_type = $request->property_type;//物业类型
+        $tenant->is_we_company = $is_we_company;//是否是我司租户
         $tenant->company_type = $request->company_type;//公司类型
         $tenant->tenant_user = $request->tenant_user;//联系人
         $tenant->start_time = $request->start_time;//合同开始时间
@@ -291,7 +340,7 @@ class SaoLouController extends Controller
                 'head_img'=>$namePath
             ]); */
          
-            return response()->json(['img_url' =>$namePath, 'code' => 201,'msg'=>'上传成功']);
+            return response()->json(['img_url' =>$namePath, 'code' => 1,'msg'=>'上传成功']);
         } else {
             return response()->json(['msg' =>'上传失败', 'code' => 0]);
         }
@@ -303,7 +352,7 @@ class SaoLouController extends Controller
             'token' => 'required'
         ]);
 
-        $user = JWTAuth::authenticate($request->token); 
+        $user = JWTAuth::authenticate($request->token);
         if (!$user->account) {
             return response()->json(['msg' =>'请登陆', 'code' => -1]);
         }
@@ -320,10 +369,20 @@ class SaoLouController extends Controller
             $stop_time = date('Y-m-d H:i:s');
         }
 
+        $size = 20;
+        if($request->size){
+            $size = $request->size;
+        }
+
+        $page = 0;
+        if($request->page){
+            $page = ($request->page -1)*$size;
+        }
+
         if (isset($request->houses_name)) {
-            $data= Clean::where('houses_name',$request->houses_name)->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->get();
+            $data= DB::table('clean')->where('uid',intval($user->id))->where('houses_name','like','%'.$request->houses_name.'%')->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get();
         }else{
-            $data= Clean::where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->get();
+            $data= DB::table('clean')->where('uid',intval($user->id))->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get();
         }
 
         return response()->json([

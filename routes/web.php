@@ -95,6 +95,10 @@ Route::prefix('houses')->group(function () {//楼盘管理
 
     Route::get('tenant/info/{hnum}','Houses\HousesController@tenantInfo');//楼盘上的租户信息
 
+    Route::get('add', function () {
+        return view('houses.add-house');//添加楼盘
+    });
+
     Route::get('gain/loupan/type/{id}','Houses\HousesController@gainLoupanType');//获取分类下楼盘
     Route::post('create/name','Houses\HousesController@createName');//创建分类名称
     Route::post('update/name','Houses\HousesController@updateName');//更新分类名称

@@ -239,6 +239,15 @@
     }
 
       form.on('submit(createAccount)', function(data) {
+
+        var len=$(".education2:checked").length;
+        if(len>1){
+          $(data.elem).next().attr("class","layui-unselect layui-form-checkbox");
+          $(data.elem).prop("checked",false);
+          layer.msg('最多只能选一项！',{icon:5});
+          return false;
+        }
+
         var checkData = tree.getChecked('demoId2');
 
 var list = new Array();
@@ -295,7 +304,7 @@ data['branch'] =list;
               for (var i = 0; i < role_name.length; i++) {
               var t = role_name[i];
             
-              optionData += '<input type="checkbox" name="limits[]" lay-skin="primary" title="' + t.name + '" value="' + t.name + '">';
+              optionData += '<input class="education2" type="checkbox" name="limits[]" lay-skin="primary" title="' + t.name + '" value="' + t.name + '">';
             }
 
               console.log(optionData);
@@ -511,9 +520,9 @@ data['branch'] =list;
                   }   
                 }
                 if (istrue) {
-                  optionData += '<input type="checkbox" checked  name="limits[]" lay-skin="primary" title="' + t + '" value="' + element + '">';
+                  optionData += '<input class="education" type="checkbox" checked  name="limits[]" lay-skin="primary" title="' + t + '" value="' + element + '">';
                 } else {
-                  optionData += '<input type="checkbox"  name="limits[]" lay-skin="primary" title="' + t + '" value="' + element + '">';
+                  optionData += '<input  class="education" type="checkbox"  name="limits[]" lay-skin="primary" title="' + t + '" value="' + element + '">';
                 }
               }
 
@@ -543,7 +552,14 @@ data['branch'] =list;
       
         function setFormValue(obj, data) {
         form.on('submit(editAccount)', function(massage) {
-          massage= massage.field; console.log(massage);
+          var len=$(".education:checked").length;
+          if(len>1){
+            $(massage.elem).next().attr("class","layui-unselect layui-form-checkbox");
+            $(massage.elem).prop("checked",false);
+            layer.msg('最多只能选一项！',{icon:5});
+            return false;
+          }
+          massage= massage.field;
 
           $.ajax({
             headers: {

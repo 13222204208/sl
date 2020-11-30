@@ -37,7 +37,7 @@ Route::middleware('cors')->prefix('user')->group(function (){
 });
 
 Route::middleware('cors')->prefix('sl')->group(function (){
-
+ 
     Route::group(['middleware' => 'auth.jwt'], function () {
         Route::get('houses', 'Api\SaoLouController@houses');//获取楼盘架构
 
@@ -57,6 +57,7 @@ Route::middleware('cors')->prefix('data')->group(function (){
 
     Route::group(['middleware' => 'auth.jwt'], function () {
         Route::post('refer_record', 'Api\DataController@referRecord');//提交过多少条扫楼记录
+        Route::post('loupan', 'Api\DataController@loupan');//我的楼盘数据
 
     });
 });
