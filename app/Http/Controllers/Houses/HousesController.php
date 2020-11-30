@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Houses;
 
 
+use App\Model\House;
 use App\Model\Level;
 use App\Model\Tenant;
 use Illuminate\Http\Request;
-use function PHPSTORM_META\type;
 
+use function PHPSTORM_META\type;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
@@ -18,9 +19,45 @@ class HousesController extends Controller
         if ($request->ajax()) {
             $limit = $request->get('limit');
             $data= Level::where('parent_id',null)->paginate($limit);
-
+            //$data= level::where('lpid',104)->get()->toTree();
             return $data;
       
+        }
+    }
+
+    public function lookHouse(Request $request)//查看楼盘信息
+    { 
+        if ($request->ajax()) {
+            $limit = $request->get('limit');
+            $data= House::paginate($limit);
+            return $data;
+      
+        }
+    }
+
+    public function addHouse(Request $request)//创建楼盘信息
+    {
+        if ($request->ajax()) {
+            try {
+                $request->validate([
+                    'houses_name' => 'required|unique:houses|max:50'
+                ]); 
+            } catch (\Throwable $th) {
+                return response()->json(['status'=>403]);
+            }
+
+            $house= new House;
+            $house->houses_name = $request->houses_name;
+            $house->houses_address = $request->houses_address;
+            $house->map = $request->map;
+            $house->city = $request->city;
+            $house->business_area = $request->business_area;
+            $house->property_type = $request->property_type;
+            if ($house->save()) {
+                return response()->json(['status'=>200]);
+            }else{
+                return response()->json(['status'=>403]);
+            }
         }
     }
 
@@ -62,20 +99,21 @@ class HousesController extends Controller
             $str= str_replace(" ",'',$request->type_name);
             $type_name= array_filter(explode('，',$str));
             $data= array();
-            $pid = intval($request->pid);
+            $pid = intval($request->pid); 
+            $lpid = intval($request->lpid);
             if ($pid == 0) {
                 for ($i=0; $i < count($type_name) ; $i++) { 
-                  $status=  Level::create(['type_name'=> $type_name[$i]]);
+                  $status=  Level::create(['type_name'=> $type_name[$i],'lpid'=>$lpid]);
                 }
             }else{
                
                 for ($i=0; $i < count($type_name) ; $i++) { 
-                    $status=  Level::create(['type_name'=> $type_name[$i],'parent_id'=>$pid]);
+                    $status=  Level::create(['type_name'=> $type_name[$i],'parent_id'=>$pid ,'lpid'=>$lpid]);
                   }
             }
            
            if ($status) {
-                return response()->json(['status'=>200,'pid'=>2]);
+                return response()->json(['status'=>200]);
            }else{
                 return response()->json(['status'=>403]);
            }

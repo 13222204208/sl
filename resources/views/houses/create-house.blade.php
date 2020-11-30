@@ -15,7 +15,7 @@
 <body>
 
     <div class="demoTable" style="margin:30px;">
-        <button class="layui-btn" data-type="reload" value="0" id="admin-management">添加分类</button>
+        <button class="layui-btn"  data-type="reload" value="0" id="admin-management">添加分类</button>
 
     </div>
 
@@ -40,6 +40,8 @@
           </div>
 
           <input type="hidden" name="pid" value="0" id="PId">
+          <input type="hidden" name="lpid" value="" id="lpid">
+
 
             <div class="layui-form-item ">
                 <div class="layui-input-block">
@@ -91,6 +93,16 @@
             var laydate = layui.laydate;
             var $ = layui.jquery;
             var form = layui.form;
+
+            function getParam(paramName) { 
+                paramValue = "", isFound = !1; 
+                if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) { 
+                    arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0; 
+                    while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++ 
+                } 
+                return paramValue == "" && (paramValue = null), paramValue 
+            } 
+            $("#lpid").val(getParam('id'));
 
             $(document).on('click', '#admin-management', function () {
                 layer.open({
@@ -178,7 +190,7 @@
                     ]
                 ],
                 parseData: function (res) { //res 即为原始返回的数据
-                    //console.log(res);
+                    console.log(res);return false;
                     return {
                         "code": '0', //解析接口状态
                         "msg": res.message, //解析提示文本

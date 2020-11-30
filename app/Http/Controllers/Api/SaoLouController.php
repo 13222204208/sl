@@ -237,15 +237,12 @@ class SaoLouController extends Controller
             'token' => 'required'
         ]);
 
-        if (isset($request->pid)) {
-            $pid = $request->pid;
-        }else{
-            $pid = 0;
-        }
+       
 
         $user = JWTAuth::authenticate($request->token);
         if ($user->account) {
-            $data= Level::where('parent_id',$pid)->get(['id','type_name']);
+            $lpid = $request->lpid;
+            $data= level::where('lpid',$lpid)->get()->toTree();
             return response()->json([
                 'code' => 1,
                 'msg' => '成功',

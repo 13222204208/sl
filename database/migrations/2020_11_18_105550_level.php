@@ -17,6 +17,7 @@ class Level extends Migration
         Schema::create('level', function (Blueprint $table) {//楼盘多级表
             $table->increments('id');
             $table->string('type_name',50)->default('')->comment('类型名称');
+            $table->integer('lpid')->unsigned()->comment('所属的楼盘id');
             NestedSet::columns($table);
             $table->timestamps();
         });
