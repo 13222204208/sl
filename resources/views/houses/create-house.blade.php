@@ -16,7 +16,8 @@
 
     <div class="demoTable" style="margin:30px;">
         <button class="layui-btn"  data-type="reload" value="0" id="admin-management">添加分类</button>
-
+        <div class="layui-inline" style="color:gray" id="lp_address">
+        </div>
     </div>
 
     <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
@@ -265,6 +266,7 @@
                 } else if (obj.event === 'show') {
                     console.log(data.type_name);
                     $("#typeNameId").val(data.type_name);
+                    $("#lp_address").append(data.type_name);
                     $("#PId").val(data.id);
                    var id= data.id
                     table.render({
