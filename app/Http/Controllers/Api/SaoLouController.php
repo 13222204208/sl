@@ -138,32 +138,6 @@ class SaoLouController extends Controller
         $month = '+'.$request->pay_type.'month';
         $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
 
-        if ($request->has('enclosre')) { 
-            $upload= new UploadController;
-            $images = $request->file('enclosre');
-            $pathUrls = [];
-            if (is_array($images)) {
-                foreach($images as $key=>$v)
-                {
-                    $namePath= $upload->uploadImg($images[$key],'saolouImg');
-                    $enclosre = $namePath;
-                    array_push($pathUrls,$enclosre);
-    
-                }
-            }else {
-                $namePath= $upload->uploadImg($images,'saolouImg');
-                    $enclosre = $namePath;
-                    array_push($pathUrls,$enclosre);
-            }
-
-            
-            if (!$namePath) {
-                return response()->json(['msg' =>'图片上传失败', 'code' => 0]);
-            }
-            $pathUrls = implode(',',$pathUrls);
-           //return $pathUrls;
-      
-        }
 
         if($request->is_we_company == 1){
             $is_we_company ="是";
@@ -171,6 +145,9 @@ class SaoLouController extends Controller
             $is_we_company ="否";
         }
 
+        $m = '+'.$request->contract_period.'month';
+        $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间
+       //return $request->enclosure;
         $clean= new Clean;//扫楼记录表
         $clean->houses_name = $request->houses_name;//楼盘名称
         $clean->houses_info = $request->houses_info;//租户信息
@@ -181,7 +158,8 @@ class SaoLouController extends Controller
         $clean->company_type = $request->company_type;//公司类型
         $clean->tenant_user = $request->tenant_user;//联系人
         $clean->start_time = $request->start_time;//合同开始时间
-        $clean->stop_time = $request->stop_time;//合同结束时间
+        $clean->contract_period = $request->contract_period;//合同期限多少个月
+        $clean->stop_time = $contract_period;//合同结束时间
         $clean->pay_type = $request->pay_type;//付款方式
         $clean->pay_time = $pay_time;//下次付款时间
         $clean->tenant_need = $request->tenant_need;//租户需求
@@ -190,10 +168,10 @@ class SaoLouController extends Controller
         $clean->broker_name = $user->name;//当前提交的经纪人的名称
         $clean->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
         $clean->position = $request->position;//当前提交的位置
-        $clean->enclosure = $pathUrls;//附件扫楼记录时上传的图片
+        $clean->enclosure = $request->enclosure;//附件扫楼记录时上传的图片
         $clean->save();
-
-        $tenant = new Tenant;
+return $clean;
+        $tenant = new Tenant; 
 
         $tenant->houses_name = $request->houses_name;//楼盘名称
         $tenant->tenant_name = $request->tenant_name;//租户名称
@@ -203,7 +181,7 @@ class SaoLouController extends Controller
         $tenant->company_type = $request->company_type;//公司类型
         $tenant->tenant_user = $request->tenant_user;//联系人
         $tenant->start_time = $request->start_time;//合同开始时间
-        $tenant->stop_time = $request->stop_time;//合同结束时间
+        $tenant->stop_time = $contract_period;//合同结束时间
         $tenant->pay_type = $request->pay_type;//付款方式
         $tenant->pay_time = $pay_time;//下次付款时间
         $tenant->tenant_need = $request->tenant_need;//租户需求
@@ -239,14 +217,63 @@ class SaoLouController extends Controller
 
        
 
-        $user = JWTAuth::authenticate($request->token);
+        $user = JWTAuth::authenticate($request->token); 
         if ($user->account) {
             $lpid = $request->lpid;
-            $data= level::where('lpid',$lpid)->get()->toTree();
+            $data = Level::where('parent_id',$lpid)->get(['type_name','id']);
+   
+             $arr= array();
+
+             $house = '';
+             if($request->has('cid')){
+                 $d= Level::defaultOrder()->ancestorsAndSelf($request->cid);
+               
+                 foreach($d as $h){
+                     $house .= $h['type_name'].'>';
+                 }
+                 $arr['house_info'] = $house;
+
+
+             }else{
+                $d= Level::defaultOrder()->ancestorsAndSelf($request->lpid);
+               
+                foreach($d as $h){
+                    $house .= $h['type_name'].'>';
+                }
+             }
+
+             $hnum = Clean::where('houses_info',$house)->get('houses_num');
+             $farr = array();
+             foreach($hnum as  $fj){
+                $farr[] = $fj['houses_num'];
+             }
+
+            foreach($data as $k=> $key){
+                $arr['data'][] = $key;
+              $d = Level::where('parent_id',$key['id'])->get(['type_name','id']);
+              if(empty($d[0])){
+                $arr['data'][$k]['num'] = 1;//判断当前的层级，1 为最后一层，2 为倒数第二层
+                if(in_array($arr['data'][$k]['type_name'],$farr)){
+                    $arr['data'][$k]['have'] = 1;
+                }else{
+                    $arr['data'][$k]['have'] = 0;//判断房间号是否已经录入过
+                }
+                }else{
+                    $arr['data'][$k]['num'] = 0;
+                    $st = Level::where('parent_id',$d[0]['id'])->get(['type_name','id']);
+                    if(empty($st[0])){
+                        $arr['data'][$k]['num'] = 2;
+                    }
+                }
+                
+            }
+
+
+
             return response()->json([
                 'code' => 1,
                 'msg' => '成功',
-                'data' => $data
+                'data' => $arr
             ], 200);
         }else{
             return response()->json([
@@ -272,7 +299,7 @@ class SaoLouController extends Controller
         $user = JWTAuth::authenticate($request->token);
 
         if ($user->account) {
-            $data= Company::where('parent_id',$pid)->get(['id','type_name']);
+            $data= Company::get(['id','type_name']);
             return response()->json([
                 'code' => 1,
                 'msg' => '成功',
@@ -293,16 +320,10 @@ class SaoLouController extends Controller
             'token' => 'required'
         ]);
 
-        if (isset($request->id)) {
-            $pid = $request->id;
-        }else{
-            $pid = 0;
-        }
-
         $user = JWTAuth::authenticate($request->token);
 
         if ($user->account) {
-            $data= Demand::where('parent_id',$pid)->get(['id','type_name']);
+            $data= Demand::get()->toTree();;
             return response()->json([
                 'code' => 1,
                 'msg' => '成功',
@@ -377,9 +398,13 @@ class SaoLouController extends Controller
         }
 
         if (isset($request->houses_name)) {
-            $data= DB::table('clean')->where('uid',intval($user->id))->where('houses_name','like','%'.$request->houses_name.'%')->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get();
+            $data= DB::table('clean')->where('uid',intval($user->id))->where('houses_name','like','%'.$request->houses_name.'%')->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get(['houses_name','houses_info','tenant_name','created_at','id']);
         }else{
-            $data= DB::table('clean')->where('uid',intval($user->id))->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get();
+            $data= DB::table('clean')->where('uid',intval($user->id))->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get(['houses_name','houses_info','tenant_name','created_at','id']);
+        }
+
+        if($request->has('slid')){
+            $data= DB::table('clean')->where('uid',intval($user->id))->where('id',intval($request->slid))->get();
         }
 
         return response()->json([

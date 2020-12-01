@@ -89,7 +89,7 @@ Route::prefix('houses')->group(function () {//楼盘管理
     Route::get('created', function () {
         return view('houses.create-house');//创建楼盘
     })->name('houses')->middleware('adminRoute');
-    Route::get('gain/loupan','Houses\HousesController@gainLoupan');//获取楼盘信息
+    Route::get('gain/loupan/{name}','Houses\HousesController@gainLoupan');//获取楼盘信息
 
     Route::get('info','Houses\HousesController@info');//楼盘详细信息
 
@@ -253,5 +253,10 @@ Route::prefix('parm')->group(function () {//经纪人管理
     Route::get('paytype', function () {
         return view('parm.paytype');//付款方式设置
     })->name('parm')->middleware('adminRoute');
+
+    Route::get('period', function () {
+        return view('parm.period');//合同期限设置
+    })->name('parm')->middleware('adminRoute');
     Route::post('add/paytype','Parm\DemandController@addPaytype');//添加付款方式
+    Route::post('add/period','Parm\DemandController@addPeriod');//添加合同期限
 });

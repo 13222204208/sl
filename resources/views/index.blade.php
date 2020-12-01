@@ -276,6 +276,7 @@
                     <dd><a lay-href="parm/company">公司类型配置</a></dd>
                     <dd><a lay-href="parm/demand">租户需求配置</a></dd>
                     <dd><a lay-href="parm/paytype">付款方式配置</a></dd>
+                    <dd><a lay-href="parm/period">付款方式配置</a></dd>
                   </dl>
                 </dd>
                 @endif

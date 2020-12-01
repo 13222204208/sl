@@ -6,8 +6,10 @@ use Carbon\Carbon;
 
 use App\Model\Clean;
 use App\Model\House;
+use App\Model\Level;
 use App\Model\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -82,8 +84,69 @@ class DataController extends Controller
             $page = ($request->page -1)*$size;
         }
 
+
+
         $data= House::where('uid',intval($user->id))->skip($page)->take($size)->get(['id','houses_name','map','city','business_area','property_type']);
 
+        if($request->has('houses_name')){
+            $data = House::where('uid',intval($user->id))->where('houses_name','like','%'.$request->houses_name.'%')->get(['id','houses_name','map','city','business_area','property_type']);
+        }
+ /*        $d = Level::where('type_name',$data[0]->houses_name)->get(['type_name','id']);
+        $pid =Level::where('parent_id',$d[0]->id)->get(['type_name','id']);
+        return $pid;
+        $arr= array();
+            foreach($data as $k=> $key){
+              array_push($arr,$key);
+              $d = Level::where('parent_id',$key['id'])->get(['type_name','id']);
+              if(empty($d[0])){
+                $arr[$k]['num'] = 1;
+                }else{
+                    $st = Level::where('parent_id',$d[0]['id'])->get(['type_name','id']);
+                    if(empty($st[0])){
+                        $arr[$k]['num'] = 2;
+                    }
+                }
+            }
+            return $arr; */
+
+        return response()->json([
+            'code' => 1,
+            'msg' => '成功',
+            'data' =>$data
+        ], 200);
+    }
+
+    public function payType(Request $request)
+    {
+        $this->validate($request, [
+            'token' => 'required'
+        ]);
+
+        $user = JWTAuth::authenticate($request->token); 
+        if (!$user->account) {
+            return response()->json(['msg' =>'未登陆', 'code' => -1]);
+        }
+
+        $data= DB::table('paytype')->get(['type_name','month']);
+        return response()->json([
+            'code' => 1,
+            'msg' => '成功',
+            'data' =>$data
+        ], 200);
+    }
+
+    public function period(Request $request)
+    {
+        $this->validate($request, [
+            'token' => 'required'
+        ]);
+
+        $user = JWTAuth::authenticate($request->token); 
+        if (!$user->account) {
+            return response()->json(['msg' =>'未登陆', 'code' => -1]);
+        }
+
+        $data= DB::table('period')->get(['type_name','month']);
         return response()->json([
             'code' => 1,
             'msg' => '成功',

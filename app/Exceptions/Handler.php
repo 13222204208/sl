@@ -59,9 +59,9 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception->getPrevious() instanceof TokenExpiredException) {
-            return response()->json(['msg' => '过期的token','code'=>203]);
+            return response()->json(['msg' => '过期的token','code'=>-1]);
         } else if ($exception->getPrevious() instanceof TokenInvalidException) {
-            return response()->json(['msg' => '无效的token','code'=>204]);
+            return response()->json(['msg' => '无效的token','code'=>-1]);
         } else if ($exception->getPrevious() instanceof TokenBlacklistedException) {
             return response()->json(['error' => '列入黑名单']);
         }

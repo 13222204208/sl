@@ -24,6 +24,7 @@ class Clean extends Migration
             $table->string('company_type',30)->default('')->comment('公司类型');
             $table->string('tenant_user',320)->default('')->comment('联系人，手机号，微信号');
             $table->string('start_time',30)->default('')->comment('合同开始时间');
+            $table->string('contract_period',30)->default('')->comment('合同期限多少个月');
             $table->string('stop_time',30)->default('')->comment('合同结束时间,设置定时任务触发到期提醒');
             $table->string('pay_type')->default('')->comment('付款方式');
             $table->string('pay_time',30)->default('')->comment('付款时间,设置定时任务触发到期提醒');

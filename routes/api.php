@@ -39,12 +39,12 @@ Route::middleware('cors')->prefix('user')->group(function (){
 Route::middleware('cors')->prefix('sl')->group(function (){
  
     Route::group(['middleware' => 'auth.jwt'], function () {
-        Route::get('houses', 'Api\SaoLouController@houses');//获取楼盘架构
+        Route::post('houses', 'Api\SaoLouController@houses');//获取楼盘架构
 
-        Route::get('company', 'Api\SaoLouController@company');//获取公司类型
+        Route::post('company', 'Api\SaoLouController@company');//获取公司类型
         Route::post('entering', 'Api\SaoLouController@entering');//保存提交的扫楼记录
 
-        Route::get('demand', 'Api\SaoLouController@demand');//获取租户需求名称
+        Route::post('demand', 'Api\SaoLouController@demand');//获取租户需求名称
         Route::post('sl_record', 'Api\SaoLouController@slRecord');//获取扫楼记录
 
         Route::post('tenant_record', 'Api\TenantController@tenantRecord');//获取我的租户记录
@@ -58,7 +58,8 @@ Route::middleware('cors')->prefix('data')->group(function (){
     Route::group(['middleware' => 'auth.jwt'], function () {
         Route::post('refer_record', 'Api\DataController@referRecord');//提交过多少条扫楼记录
         Route::post('loupan', 'Api\DataController@loupan');//我的楼盘数据
-
+        Route::post('pay_type', 'Api\DataController@payType');//付款方式
+        Route::post('period', 'Api\DataController@period');//获取合同期限
     });
 });
 

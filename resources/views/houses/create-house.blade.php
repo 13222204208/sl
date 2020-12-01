@@ -40,7 +40,7 @@
           </div>
 
           <input type="hidden" name="pid" value="0" id="PId">
-          <input type="hidden" name="lpid" value="" id="lpid">
+          <input type="hidden" name="lpname" value="" id="lpname">
 
 
             <div class="layui-form-item ">
@@ -79,7 +79,7 @@
     </div>
 
     <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
-    <script type="text/html" id="barDemo">
+    <script type="text/html" charset="utf-8" id="barDemo">
         <a class="layui-btn layui-btn-xs" lay-event="show">查看</a>
         <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
@@ -102,7 +102,17 @@
                 } 
                 return paramValue == "" && (paramValue = null), paramValue 
             } 
-            $("#lpid").val(getParam('id'));
+
+            function  getQueryString(name) {
+                var  reg =  new  RegExp( "(^|&)"  + name +  "=([^&]*)(&|$)" ,  "i" );
+                var  r = window.location.search.substr(1).match(reg);
+                if  ( r !=  null  ){
+                   return  unescape(r[2]);
+                } else {
+                   return  null ;
+                } 
+             }
+            $("#lpname").val(getParam('name'));
 
             $(document).on('click', '#admin-management', function () {
                 layer.open({
@@ -159,9 +169,9 @@
                 });
                 return false;
             });
-
+           var name = decodeURIComponent(getParam('name'));
             table.render({
-                url: "gain/loupan" //数据接口
+                url: "gain/loupan"+'/'+name //由楼盘表传的楼盘名称
                     ,
                 page: true //开启分页
                     ,

@@ -14,16 +14,30 @@ use App\Http\Controllers\Controller;
 
 class HousesController extends Controller
 {
-    public function gainLoupan(Request $request)
+    public function gainLoupan(Request $request ,$lpname)
     { 
+        $limit = $request->get('limit'); 
         if ($request->ajax()) {
-            $limit = $request->get('limit');
-            $data= Level::where('parent_id',null)->paginate($limit);
+           
+            $id = Level::where('type_name',$lpname)->get('id');
+           
+            if(count($id)){ 
+                $limit = $request->get('limit');
+                $data= Level::where('id',$id)->paginate($limit);
+                return $data;
+            }else{
+                Level::create(['type_name' => $lpname,'parent_id'=>0]);
+                $data= Level::where('type_name',$lpname)->paginate($limit);
+                return $data;
+            }
+        /*     $limit = $request->get('limit');
+            $data= Level::where('parent_id',null)->paginate($limit); */
             //$data= level::where('lpid',104)->get()->toTree();
-            return $data;
+            
       
         }
     }
+
 
     public function lookHouse(Request $request)//查看楼盘信息
     { 

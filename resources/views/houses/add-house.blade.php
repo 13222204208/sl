@@ -85,7 +85,7 @@
     </script>
 
     <script src="/layuiadmin/layui/layui.js"></script>
-    <script>
+    <script >
         layui.use(['table', 'laydate', 'jquery', 'form'], function () {
             var table = layui.table;
             var laydate = layui.laydate;
@@ -208,11 +208,11 @@
 
             table.on('tool(user)', function (obj) {
                 var data = obj.data;
-                console.log(data);
+                
                   if (obj.event === 'show') {
-                    console.log(data);
-                    id = data.id + 100;
-                    window.location.href = "created?id="+id;
+                    //console.log(data);console.log(data);return false;
+                    name = encodeURIComponent(data.houses_name);
+                    window.location.href = "created?name="+name;
               
                 }
 
