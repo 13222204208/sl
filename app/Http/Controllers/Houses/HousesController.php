@@ -14,16 +14,16 @@ use App\Http\Controllers\Controller;
 
 class HousesController extends Controller
 {
-    public function gainLoupan(Request $request ,$lpname)
+    public function gainLoupan(Request $request ,$id)
     { 
-        $limit = $request->get('limit'); 
+        $limit = $request->get('limit');  
         if ($request->ajax()) {
-           
+            $lpname = House::where('id',$id)->value('houses_name');
+            //$lpname = $lpname[0]->houses_name;
+           //return $lpname;
             $id = Level::where('type_name',$lpname)->get('id');
-           
             if(count($id)){ 
-                $limit = $request->get('limit');
-                $data= Level::where('id',$id)->paginate($limit);
+                $data= Level::where('type_name',$lpname)->paginate($limit);
                 return $data;
             }else{
                 Level::create(['type_name' => $lpname,'parent_id'=>0]);

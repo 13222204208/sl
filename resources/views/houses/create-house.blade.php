@@ -169,9 +169,9 @@
                 });
                 return false;
             });
-           var name = decodeURIComponent(getParam('name'));
+           var id = getParam('id');
             table.render({
-                url: "gain/loupan"+'/'+name //由楼盘表传的楼盘名称
+                url: "gain/loupan"+'/'+id //由楼盘表传的楼盘名称
                     ,
                 page: true //开启分页
                     ,
@@ -200,7 +200,7 @@
                     ]
                 ],
                 parseData: function (res) { //res 即为原始返回的数据
-                    console.log(res);return false;
+                    console.log(res);
                     return {
                         "code": '0', //解析接口状态
                         "msg": res.message, //解析提示文本

@@ -170,7 +170,7 @@ class SaoLouController extends Controller
         $clean->position = $request->position;//当前提交的位置
         $clean->enclosure = $request->enclosure;//附件扫楼记录时上传的图片
         $clean->save();
-return $clean;
+
         $tenant = new Tenant; 
 
         $tenant->houses_name = $request->houses_name;//楼盘名称
@@ -191,10 +191,7 @@ return $clean;
         $tenant->uid = $user->id;//当前提交人的id
         $tenant->save();//保存租户表信息
 
-        DB::table('houses')->insertGetId([
-            'houses_num'=> $request->houses_info,//楼盘信息
-            'map' => $request->position//当前提交的位置
-        ]);
+
 
         if ($clean->save()) {
             return response()->json([

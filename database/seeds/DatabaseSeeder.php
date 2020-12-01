@@ -13,9 +13,9 @@ class DatabaseSeeder extends Seeder
     {
 
          $this->call(BgUsersTableSeeder::class);
-         $this->call(CleanTableSeeder::class);
-         $this->call(TenantTableSeeder::class);
-         $this->call(HouseTableSeeder::class);
+        //  $this->call(CleanTableSeeder::class);
+        //  $this->call(TenantTableSeeder::class);
+        //  $this->call(HouseTableSeeder::class);
 
     }
 }

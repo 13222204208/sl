@@ -15,7 +15,7 @@
 <body>
 
     <div class="demoTable" style="margin:30px;">
-        <button class="layui-btn" data-type="reload" value="0" id="admin-management">添加分类</button>
+        <button class="layui-btn" data-type="reload" value="0" id="admin-management">创建楼盘</button>
 
     </div>
 
@@ -80,7 +80,7 @@
 
     <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
     <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-xs" lay-event="show">创建楼盘层级</a>
+        <a class="layui-btn layui-btn-xs" lay-event="show">查看楼盘层级</a>
 
     </script>
 
@@ -211,8 +211,8 @@
                 
                   if (obj.event === 'show') {
                     //console.log(data);console.log(data);return false;
-                    name = encodeURIComponent(data.houses_name);
-                    window.location.href = "created?name="+name;
+                    var id= data.id;
+                    window.location.href = "created?id="+id;
               
                 }
 
