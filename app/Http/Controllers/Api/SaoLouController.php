@@ -317,11 +317,7 @@ class SaoLouController extends Controller
             'token' => 'required'
         ]);
 
-        if (isset($request->id)) {
-            $pid = $request->id;
-        }else{
-            $pid = 0;
-        }
+   
 
         $user = JWTAuth::authenticate($request->token);
 
@@ -434,6 +430,15 @@ class SaoLouController extends Controller
 
         if($request->has('slid')){
             $data= DB::table('clean')->where('uid',intval($user->id))->where('id',intval($request->slid))->get();
+
+            $payType = DB::table('paytype')->where('id',$data[0]->pay_type)->value('type_name');
+            
+            $arr = array();
+            foreach($data[0] as $k=> $d){
+                $arr[$k] = $d;
+                $arr['pay_type'] = $payType;
+            }
+            $data = $arr;
         }
 
         return response()->json([
