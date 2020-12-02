@@ -202,42 +202,55 @@
             }, {
               field: 'tenant_name',
               title: '租户名称',
+              width: 120
             }, {
               field: 'is_we_company',
               title: '租户类型',
+              width: 120
             }, {
               field: 'tenant_user',
               title: '联系人',
+              width: 120
             }, {
               field: 'company_type',
               title: '公司类型',
+              width: 120
             }, {
               field: 'start_time',
               title: '合同起始时间',
+              width: 120
             }, {
               field: 'stop_time',
               title: '合同到期时间',
+              width: 160
             }, {
               field: 'pay_type',
               title: '付款方式',
+              width: 120
             }, {
               field: 'pay_time',
               title: '下次应付款时间',
+              width: 160
             },  {
               field: 'tenant_need',
               title: '租户需求',
+              width: 120
             }, {
               field: 'remark',
               title: '备注',
+              width: 120
             }, {
               field: 'broker_name',
               title: '经纪人姓名',
+              width: 120
             },  {
               field: 'broker_phone',
               title: '经纪人手机号',
+              width: 120
             },{
               field: 'created_at',
               title: '创建时间',
+              width: 160
             },{
               fixed: 'right',
               title: "操作",

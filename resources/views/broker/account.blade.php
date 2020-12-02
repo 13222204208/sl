@@ -80,7 +80,7 @@
         <div class="layui-input-block">
           <div class="layui-footer" style="left: 0;">
             <button class="layui-btn" lay-submit="" lay-filter="createAccount">保存</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          {{--    <button type="reset" class="layui-btn layui-btn-primary">重置</button>  --}}
           </div>
         </div>
       </div>
@@ -109,7 +109,7 @@
         <div class="layui-input-block">
           <div class="layui-footer" style="left: 0;">
             <button class="layui-btn" lay-submit="" lay-filter="updateAccount">修改</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            {{--  <button type="reset" class="layui-btn layui-btn-primary">重置</button>  --}}
           </div>
         </div>
       </div>
@@ -136,7 +136,7 @@
         <div class="layui-input-block">
           <div class="layui-footer" style="left: 0;">
             <button class="layui-btn" lay-submit="" lay-filter="editAccount">修改</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            {{--  <button type="reset" class="layui-btn layui-btn-primary">重置</button>  --}}
           </div>
         </div>
       </div>

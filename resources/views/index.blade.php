@@ -160,16 +160,16 @@
                 <cite>楼盘架构管理</cite>
               </a>
               <dl class="layui-nav-child">
-                @if(in_array('新建楼盘',$per))
+       {{--           @if(in_array('新建楼盘',$per))
               <dd>
                   <a lay-href="houses/created">新建楼盘</a>
                 </dd>
-                @endif
-
+                @endif  --}}
+                @if(in_array('新建楼盘',$per))
                 <dd>
-                  <a lay-href="houses/add">添加楼盘</a>
+                  <a lay-href="houses/add">新建楼盘</a>
                 </dd>
-
+                @endif
 
                 @if(in_array('楼盘列表',$per))
                 <dd>

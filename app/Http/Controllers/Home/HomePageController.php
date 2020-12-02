@@ -79,6 +79,7 @@ class HomePageController extends Controller
          //$data = Tenant::groupBy('tenant_type')->count('tenant_type');
 
         if (!is_null($data)) {
+
             return response()->json(['status'=>200,'data'=>$data]);
         }else{
             return response()->json(['status'=>403]);

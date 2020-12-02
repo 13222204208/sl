@@ -357,7 +357,7 @@
         method: 'get',
         dataType: 'json',
         success: function(res) {
-          console.log(res.data);
+          
           var data = res.data;
 
           if (res.status == 200) {
@@ -365,6 +365,11 @@
             peo = [];
             
             for (let i = 0; i < data.length; i++) {
+              if(data[i].is_we_company == 1){
+                data[i].is_we_company = "我司租户";
+              }else{
+                data[i].is_we_company = "外面租户";
+              }
               arr.push(data[i].is_we_company);
               peo.push({'name':data[i].is_we_company,'value':data[i].total});
             }

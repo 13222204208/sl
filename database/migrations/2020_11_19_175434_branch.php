@@ -14,7 +14,7 @@ class Branch extends Migration
      */
     public function up()
     {
-        Schema::create('branch', function (Blueprint $table) {//vip表
+        Schema::create('branch', function (Blueprint $table) {//部门表
             $table->increments('id');
             $table->string('name');
             $table->string('title');

@@ -48,6 +48,7 @@ Route::middleware('cors')->prefix('sl')->group(function (){
         Route::post('sl_record', 'Api\SaoLouController@slRecord');//获取扫楼记录
 
         Route::post('tenant_record', 'Api\TenantController@tenantRecord');//获取我的租户记录
+        Route::post('update/tenant', 'Api\TenantController@updateTenant');//修改我的租户记录
         
 
     });

@@ -185,6 +185,8 @@ Route::prefix('work')->group(function () {//工作管理
 
     Route::get('broker/list','Work\WorkController@brokerList');//获取经纪人列表
     Route::get('query/account/{account}','Work\WorkController@queryAccount');//查询经纪人
+
+    Route::post('info','Work\WorkController@info');//经纪人工作详情
     
     
 });

@@ -12,7 +12,7 @@ class TenantController extends Controller
     {
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= Tenant::paginate($limit);
+            $data= Tenant::orderBy('id','desc')->paginate($limit);
 
             return $data;
         }

@@ -127,7 +127,7 @@ class DataController extends Controller
             return response()->json(['msg' =>'未登陆', 'code' => -1]);
         }
 
-        $data= DB::table('paytype')->get(['type_name','month']);
+        $data= DB::table('paytype')->get(['type_name','month','id']);
         return response()->json([
             'code' => 1,
             'msg' => '成功',
@@ -146,7 +146,7 @@ class DataController extends Controller
             return response()->json(['msg' =>'未登陆', 'code' => -1]);
         }
 
-        $data= DB::table('period')->get(['type_name','month']);
+        $data= DB::table('period')->get(['type_name','month','id']);
         return response()->json([
             'code' => 1,
             'msg' => '成功',

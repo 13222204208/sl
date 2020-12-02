@@ -33,36 +33,21 @@
 
 
       <div class="layui-form-item">
-        <label class="layui-form-label">名称</label>
+        <label class="layui-form-label">到过多少楼盘</label>
         <div class="layui-input-block">
-          <input type="text" name="nickname" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+          <input type="text" id="comeNum" required lay-verify="required" autocomplete="off" placeholder="" value="0" class="layui-input">
         </div>
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label">角色</label>
+        <label class="layui-form-label">提交过多少记录</label>
         <div class="layui-input-block">
-          <select name="role" lay-filter="aihao">
-
-          </select>
+          <input type="text" id="cleanNum" required lay-verify="required" autocomplete="off" placeholder="" value="0" class="layui-input">
         </div>
       </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">状态</label>
-        <div class="layui-input-block">
-          <input type="text" name="state"  autocomplete="off" placeholder="" value="" class="layui-input">
-        </div>
-      </div>
 
-      <div class="layui-form-item ">
-        <div class="layui-input-block">
-          <div class="layui-footer" style="left: 0;">
-            <button class="layui-btn" lay-submit="" lay-filter="editAccount">修改</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          </div>
-        </div>
-      </div>
+   
     </form>
   </div>
 
@@ -114,6 +99,10 @@
               title: '姓名',
             
             }, {
+              field: 'branch',
+              title: '部门',
+            
+            }, {
               fixed: 'right',
               title: "操作",
               width: 150,
@@ -123,7 +112,7 @@
           ]
         ],
         parseData: function(res) { //res 即为原始返回的数据
-          console.log(res);
+      
           return {
             "code": '0', //解析接口状态
             "msg": res.message, //解析提示文本
@@ -199,67 +188,38 @@
                     layer.open({
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
-                        title: "修改帐号信息",
+                        title: "经纪人工作信息",
                         area: ['420px', '330px'],
                         content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
                     });
                     //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取
-                    form.val("formUpdate", data);
-                    setFormValue(obj,data);
+                  
+                    $.ajax({
+                      headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                      },
+                      url: "info",
+                      type: 'post',
+                      data: {
+                        id: data.id
+                      },
+                      success: function(msg) {
+                        //console.log(msg);return false;
+                   
+                        if (msg.status == 200) {
+                          $("#comeNum").val(msg.data.comeNum);
+                          $("#cleanNum").val(msg.data.cleanNum);
+          
+                        } else {
+                          layer.msg("失败", {
+                            icon: 5
+                          });
+                        }
+                      }
+                    });
                 }
             
         });
-
-        function setFormValue(obj, data) {
-        form.on('submit(editAccount)', function(massage) {
-          massage= massage.field; console.log(data.id);
-          if (data.id == 1) {
-            massage.role = "超级管理员"
-          }
-          $.ajax({
-            headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: "update/account",
-            type: 'post',
-            data: {
-              id: data.id,
-              nickname: massage.nickname,
-              role:massage.role,
-              state:massage.state
-            },
-            success: function(msg) {
-              console.log(msg);
-              if (msg.status == 200) {
-                layer.closeAll('loading');
-                layer.load(2);
-                layer.msg("修改成功", {
-                  icon: 6
-                });
-                setTimeout(function() {
-
-                  obj.update({
-                    nickname: massage.nickname,
-                    role:massage.role,
-                    state:massage.state
-                  }); //修改成功修改表格数据不进行跳转 
- 
-             
-                  layer.closeAll(); //关闭所有的弹出层
-                  //window.location.href = "/edit/horse-info";
-
-                }, 1000);
-
-              } else {
-                layer.msg("修改失败", {
-                  icon: 5
-                });
-              }
-            }
-          })
-          return false;
-        })
-      }
       
 
     });
