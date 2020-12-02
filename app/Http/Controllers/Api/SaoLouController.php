@@ -430,13 +430,19 @@ class SaoLouController extends Controller
 
         if($request->has('slid')){
             $data= DB::table('clean')->where('uid',intval($user->id))->where('id',intval($request->slid))->get();
+            $payType = DB::table('paytype')->where('id',$data[0]->pay_type)->get(['id','type_name','month']);//付款方式 
+            $cPeriod = DB::table('period')->where('id',intval($data[0]->contract_period))->get(['id','type_name','month']);//合同期限
+            $companyType = DB::table('company_type')->where('id',intval($data[0]->company_type))->get(['id','type_name']);//公司类型
 
-            $payType = DB::table('paytype')->where('id',$data[0]->pay_type)->value('type_name');
+            $demand = Demand::ancestorsAndSelf(intval($data[0]->tenant_need));//租户需求
             
             $arr = array();
             foreach($data[0] as $k=> $d){
                 $arr[$k] = $d;
                 $arr['pay_type'] = $payType;
+                $arr['contract_period'] = $cPeriod;
+                $arr['company_type'] = $companyType;
+                $arr['tenant_need'] = $demand;
             }
             $data = $arr;
         }
