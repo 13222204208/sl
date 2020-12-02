@@ -12,11 +12,12 @@ use App\Model\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Requests\HouseRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UploadController;
-use App\Http\Requests\RegisterAuthRequest;
 
+use App\Http\Requests\RegisterAuthRequest;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 
@@ -129,43 +130,14 @@ class SaoLouController extends Controller
         }
     }
 
-    public function entering(Request $request)
+    public function entering(HouseRequest $request)
     {
-        $this->validate($request, [
-            'token' => 'required'
-        ]);
+
         $user = JWTAuth::authenticate($request->token);
         
         $month = '+'.$request->pay_type.'month';
         $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
 
-        $company = $request->company_type;//公司类型接口
-        $companyName= DB::table('company_type')->where('id',intval($company))->value('type_name');
-
-        $payType=  $request->pay_type;//付款方式
-        $payTypeName = DB::table('paytype')->where('id',intval($payType))->value('type_name');
-
-        $cPeriod=  $request->contract_period;//合同期限
-        $cPeriodName = DB::table('period')->where('id',intval($cPeriod))->value('type_name');
-        
-
-        if($request->is_we_company == 1){
-            $is_we_company = 1;
-        }else{
-            $is_we_company = 0;
-        }
-
-        if($request->houses_num){//房间号
-            $h_n ="";
-            $houses_num = $request->houses_num;
-            $hnum= array_filter(explode(',',$houses_num));
-            foreach($hnum as $num){
-               $h_num=  Level::where('id',intval($num))->value('type_name');
-
-               $h_n .= ','.$h_num;
-            }
-             $h_n= substr($h_n,1);
-        }
       
         $m = '+'.$request->contract_period.'month';
         $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间
@@ -178,24 +150,37 @@ class SaoLouController extends Controller
         $clean= new Clean;//扫楼记录表
         $clean->houses_name = $request->houses_name;//楼盘名称
         $clean->houses_info = $request->houses_info;//租户信息
-        $clean->houses_num = $h_n;//房间号
+        $clean->houses_num = $request->houses_num;//房间号
         $clean->property_type = $property_type;//物业类型
+
+        $clean->business_area = $house[0]->business_area;//商圈
         $clean->tenant_name = $request->tenant_name;//租户名称
-        $clean->is_we_company = $is_we_company;//是否是我司租户
-        $clean->company_type = $companyName;//公司类型
+        $clean->is_we_company = $request->is_we_company;//是否是我司租户
+
+        if ($request->company_type) {
+            $clean->company_type = $request->company_type;//公司类型
+        }
         $clean->tenant_user = $request->tenant_user;//联系人
         $clean->start_time = $request->start_time;//合同开始时间
-        $clean->contract_period = $cPeriodName ;//合同期限多少个月
+        $clean->contract_period = $contract_period ;//合同期限多少个月
         $clean->stop_time = $contract_period;//合同结束时间
-        $clean->pay_type = $payTypeName;//付款方式
+        $clean->pay_type = $request->pay_type;//付款方式
         $clean->pay_time = $pay_time;//下次付款时间
-        $clean->tenant_need = $request->tenant_need;//租户需求
-        $clean->remark = $request->remark;//备注
+
+        if ($request->tenant_need) {
+            $clean->tenant_need = $request->tenant_need;//租户需求
+        }
+
+        if ($request->remark) {
+            $clean->remark = $request->remark;//备注
+        }
+
         $clean->position = $request->position;//当前提交的位置
         $clean->broker_name = $user->name;//当前提交的经纪人的名称
         $clean->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
-        $clean->position = $request->position;//当前提交的位置
-        $clean->enclosure = $request->enclosure;//附件扫楼记录时上传的图片
+        if ($request->enclosure) {
+            $clean->enclosure = $request->enclosure;//附件扫楼记录时上传的图片
+        }
         $clean->uid = $user->id;//当前提交人的id
         $clean->save();
 
@@ -203,10 +188,12 @@ class SaoLouController extends Controller
 
         $tenant->houses_name = $request->houses_name;//楼盘名称
         $tenant->tenant_name = $request->tenant_name;//租户名称
-        $tenant->houses_num = $h_n;//房间号
-        $tenant->houses_info = $request->houses_info;//租户地址
+        $tenant->houses_num = $request->houses_num;//房间号
+        $tenant->houses_info = $request->houses_info;//租户信息
+        $tenant->business_area = $house[0]->business_area;//商圈
+
         $tenant->property_type = $property_type;//物业类型
-        $tenant->is_we_company = $is_we_company;//是否是我司租户
+        $tenant->is_we_company = $request->is_we_company;//是否是我司租户
         $tenant->company_type = $request->company_type;//公司类型
         $tenant->tenant_user = $request->tenant_user;//联系人
         $tenant->start_time = $request->start_time;//合同开始时间
@@ -214,8 +201,15 @@ class SaoLouController extends Controller
         $tenant->contract_period = $request->contract_period;//合同期限多少个月
         $tenant->pay_type = $request->pay_type;//付款方式
         $tenant->pay_time = $pay_time;//下次付款时间
-        $tenant->tenant_need = $request->tenant_need;//租户需求
-        $tenant->remark = $request->remark;//备注
+
+        if ($request->tenant_need) {
+            $tenant->tenant_need = $request->tenant_need;//租户需求
+
+        }
+
+        if ($request->remark) {
+            $tenant->remark = $request->remark;//备注
+        }
         $tenant->broker_name = $user->name;//当前提交的经纪人的名称
         $tenant->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
         $tenant->uid = $user->id;//当前提交人的id
@@ -434,6 +428,16 @@ class SaoLouController extends Controller
             $cPeriod = DB::table('period')->where('id',intval($data[0]->contract_period))->get(['id','type_name','month']);//合同期限
             $companyType = DB::table('company_type')->where('id',intval($data[0]->company_type))->get(['id','type_name']);//公司类型
 
+            $h_n ="";
+            $houses_num = $data[0]->houses_num;
+            $hnum= array_filter(explode(',',$houses_num));
+            foreach($hnum as $num){
+               $h_num=  Level::where('id',intval($num))->value('type_name');
+
+               $h_n .= ','.$h_num;
+            }
+             $h_n= substr($h_n,1);
+
             $demand = Demand::ancestorsAndSelf(intval($data[0]->tenant_need));//租户需求
             
             $arr = array();
@@ -443,6 +447,7 @@ class SaoLouController extends Controller
                 $arr['contract_period'] = $cPeriod;
                 $arr['company_type'] = $companyType;
                 $arr['tenant_need'] = $demand;
+                $arr['houses_num'] = $h_n;
             }
             $data = $arr;
         }

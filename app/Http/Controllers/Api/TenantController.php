@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Model\Level;
+use App\Model\Demand;
 use App\Model\Tenant;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class TenantController extends Controller
 {
@@ -105,6 +107,35 @@ class TenantController extends Controller
         if($request->has('id')){
             $data= Tenant::where('uid',$user->id)->where('id',$request->id)->get();//查询租户的详情
 
+            $payType = DB::table('paytype')->where('id',intval($data[0]->pay_type))->get(['id','type_name','month']);//付款方式 
+            $cPeriod = DB::table('period')->where('id',intval($data[0]->contract_period))->get(['id','type_name','month']);//合同期限
+            $companyType = DB::table('company_type')->where('id',intval($data[0]->company_type))->get(['id','type_name']);//公司类型
+
+             $h_n ="";
+             $houses_num = $data[0]->houses_num;
+             $hnum= array_filter(explode(',',$houses_num));
+             foreach($hnum as $num){
+                $h_num=  Level::where('id',intval($num))->value('type_name');
+
+                $h_n .= ','.$h_num;
+             }
+              $h_n= substr($h_n,1);
+         
+
+            $demand = Demand::ancestorsAndSelf(intval($data[0]->tenant_need));//租户需求
+
+            $arr = array();
+            foreach($data as  $d){
+                $d['pay_type'] = $payType;
+                $d['contract_period'] = $cPeriod;
+                $d['company_type'] = $companyType;
+                $d['tenant_need'] = $demand;
+                $d['houses_num'] = $h_n;
+
+                $arr[] =$d;
+            }
+            $data = $arr;
+            
             return response()->json([
                 'code' => 1,
                 'msg' => '查询成功',
