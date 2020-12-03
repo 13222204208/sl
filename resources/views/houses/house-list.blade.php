@@ -59,12 +59,24 @@
               width: 80,
               sort: true
             },{
-              field: 'houses_num',
-              title: '楼盘信息',
+              field: 'houses_name',
+              title: '楼盘名称',
             }, {
               field: 'map',
               title: '地图位置坐标',
-            },    {
+            }, {
+              field: 'houses_address',
+              title: '地址',
+            },{
+              field: 'city',
+              title: '所属区县',
+            },{
+              field: 'business_area',
+              title: '商圈',
+            },{
+              field: 'property_type',
+              title: '物业类型',
+            },   {
               fixed: 'right',
               title: "操作",
               width: 200,

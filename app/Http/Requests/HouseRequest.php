@@ -12,7 +12,7 @@ class HouseRequest extends ApiBaseRequest
         return [
             'token'=> 'required',
             'houses_name' => 'required|max:200',
-            'houses_info' => 'required|max:200',
+            //'houses_info' => 'required|max:200',
             'houses_num' => 'required|max:200',
             'tenant_name' => 'required|max:200',
             'is_we_company' => 'required|max:200',

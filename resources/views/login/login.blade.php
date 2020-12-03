@@ -41,15 +41,15 @@
             </div>
             <div class="layui-col-xs5">
               <div style="margin-left: 10px;">
-                <img src="{{url('/admin/code?tmp=1')}}" class="layadmin-user-login-codeimg" id="refcode"   onclick="re_captcha()">
+                <img src="{{url('admin/code/1')}}" class="layadmin-user-login-codeimg" id="refcode"   onclick="re_captcha()">
               </div>
             </div>
           </div>
         </div>
         <script>
     function re_captcha() {
-            $url = "{{ URL('/admin/code')}}";
-            $url = $url + "?tmp=" + Math.random();
+            $url = "{{ URL('admin/code')}}";
+            $url = $url + "/" + Math.random();
             document.getElementById('refcode').src=$url; console.log($url);
         }
     </script>

@@ -147,4 +147,88 @@ class DemandController extends Controller
             }
         }
     }
+
+    public function gainPayType(Request $request)//查看付款方式
+    { 
+       
+        if ($request->ajax()) {
+            $limit = $request->get('limit');
+            $data= DB::table('paytype')->paginate($limit);
+
+            return $data;
+      
+        }
+    }
+
+    public function delPayType(Request $request)//删除付款方式
+    {
+        if ($request->ajax()) {
+        
+            $state= DB::table('paytype')->where('id',$request->id)->delete();
+            if ($state) {
+                return response()->json(['status'=>200]);
+            }else{
+                 return response()->json(['status'=>403]);
+            }
+        }
+        
+    }
+
+    
+    public function editPayType(Request $request)//修改付款方式
+    {
+        if ($request->ajax()) { 
+            $state= DB::table('paytype')->where('id',intval($request->id))->update([
+                'type_name' => $request->type_name,
+                'month' => $request->month
+            ]);
+            if ($state) {
+                return response()->json(['status'=>200]);
+            }else{
+                 return response()->json(['status'=>403]);
+            }
+        }
+    }
+
+    public function gainPeriod(Request $request)//查看合同期期限
+    { 
+       
+        if ($request->ajax()) {
+            $limit = $request->get('limit');
+            $data= DB::table('period')->paginate($limit);
+
+            return $data;
+      
+        }
+    }
+
+    public function delPeriod(Request $request)//删除合同期期限
+    {
+        if ($request->ajax()) {
+        
+            $state= DB::table('period')->where('id',$request->id)->delete();
+            if ($state) {
+                return response()->json(['status'=>200]);
+            }else{
+                 return response()->json(['status'=>403]);
+            }
+        }
+        
+    }
+
+    
+    public function editPeriod(Request $request)//修改合同期期限
+    {
+        if ($request->ajax()) { 
+            $state= DB::table('period')->where('id',intval($request->id))->update([
+                'type_name' => $request->type_name,
+                'month' => $request->month
+            ]);
+            if ($state) {
+                return response()->json(['status'=>200]);
+            }else{
+                 return response()->json(['status'=>403]);
+            }
+        }
+    }
 }

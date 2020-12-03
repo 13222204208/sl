@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Clean;
 
 use App\Model\Clean;
+use App\Model\GetClean;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -13,7 +14,7 @@ class CleanController extends Controller
     { 
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= Clean::orderBy('id','desc')->paginate($limit);
+            $data= GetClean::orderBy('id','desc')->paginate($limit);
 
             return $data;
       

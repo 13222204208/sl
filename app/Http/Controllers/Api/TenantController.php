@@ -126,15 +126,17 @@ class TenantController extends Controller
 
             $arr = array();
             foreach($data as  $d){
-                $d['pay_type'] = $payType;
-                $d['contract_period'] = $cPeriod;
-                $d['company_type'] = $companyType;
+                $d['pay_type'] = get_object_vars($payType[0]);
+                $d['contract_period'] = get_object_vars($cPeriod[0]);
+                $d['company_type'] = get_object_vars($companyType[0]);
                 $d['tenant_need'] = $demand;
                 $d['houses_num'] = $h_n;
+
 
                 $arr[] =$d;
             }
             $data = $arr;
+
             
             return response()->json([
                 'code' => 1,
@@ -163,9 +165,19 @@ class TenantController extends Controller
             return response()->json(['msg' =>'请登陆', 'code' => -1]);
         }
 
+        $payType = DB::table('paytype')->where('id',intval($request->pay_type))->value('month');//付款方式 
+        $month = '+'.$payType.'month';
+        $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
+
+        $cPeriod = DB::table('period')->where('id',intval($request->contract_period))->value('month');//合同期限
+        $m = '+'.$cPeriod.'month';
+        $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间
+
         $id = intval($request->id);
         $data = $request->input();
-      
+        
+        $data['pay_time'] = $pay_time;
+        $data['stop_time'] = $contract_period;
         unset($data['token']);
         unset($data['id']);
 

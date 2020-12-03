@@ -61,6 +61,8 @@ Route::middleware('cors')->prefix('data')->group(function (){
         Route::post('loupan', 'Api\DataController@loupan');//我的楼盘数据
         Route::post('pay_type', 'Api\DataController@payType');//付款方式
         Route::post('period', 'Api\DataController@period');//获取合同期限
+
+        Route::post('wechat', 'Api\WechatController@wechat');//获取合同期限
     });
 });
 

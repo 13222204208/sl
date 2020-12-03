@@ -135,13 +135,14 @@ class SaoLouController extends Controller
 
         $user = JWTAuth::authenticate($request->token);
         
-        $month = '+'.$request->pay_type.'month';
+        $payType = DB::table('paytype')->where('id',intval($request->pay_type))->value('month');//付款方式 
+        $month = '+'.$payType.'month';
         $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
 
-      
-        $m = '+'.$request->contract_period.'month';
+        $cPeriod = DB::table('period')->where('id',intval($request->contract_period))->value('month');//合同期限
+        $m = '+'.$cPeriod.'month';
         $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间
-       //return $request->enclosure;
+
         $house = House::where('houses_name',$request->houses_name)->get();
         $property_type=$house[0]->property_type;//物业类型待更改
 
@@ -149,11 +150,14 @@ class SaoLouController extends Controller
 
         $clean= new Clean;//扫楼记录表
         $clean->houses_name = $request->houses_name;//楼盘名称
-        $clean->houses_info = $request->houses_info;//租户信息
+        if($request->houses_info){
+            $clean->houses_info = $request->houses_info;//租户信息
+        }
         $clean->houses_num = $request->houses_num;//房间号
         $clean->property_type = $property_type;//物业类型
 
         $clean->business_area = $house[0]->business_area;//商圈
+        $clean->permission = $user->branch;//权限
         $clean->tenant_name = $request->tenant_name;//租户名称
         $clean->is_we_company = $request->is_we_company;//是否是我司租户
 
@@ -162,7 +166,7 @@ class SaoLouController extends Controller
         }
         $clean->tenant_user = $request->tenant_user;//联系人
         $clean->start_time = $request->start_time;//合同开始时间
-        $clean->contract_period = $contract_period ;//合同期限多少个月
+        $clean->contract_period = $request->contract_period ;//合同期限多少个月
         $clean->stop_time = $contract_period;//合同结束时间
         $clean->pay_type = $request->pay_type;//付款方式
         $clean->pay_time = $pay_time;//下次付款时间
@@ -189,9 +193,11 @@ class SaoLouController extends Controller
         $tenant->houses_name = $request->houses_name;//楼盘名称
         $tenant->tenant_name = $request->tenant_name;//租户名称
         $tenant->houses_num = $request->houses_num;//房间号
-        $tenant->houses_info = $request->houses_info;//租户信息
+        if($request->houses_info){
+            $tenant->houses_info = $request->houses_info;//租户信息
+        }
         $tenant->business_area = $house[0]->business_area;//商圈
-
+        $tenant->permission = $user->branch;//权限
         $tenant->property_type = $property_type;//物业类型
         $tenant->is_we_company = $request->is_we_company;//是否是我司租户
         $tenant->company_type = $request->company_type;//公司类型
@@ -218,6 +224,14 @@ class SaoLouController extends Controller
 
 
         if ($clean->save()) {
+
+            $houses_num = $request->houses_num;
+            $hnum= array_filter(explode(',',$houses_num));
+            foreach($hnum as $num){
+                 Level::where('id',intval($num))->update(['lpid'=>1]);
+
+            }
+
             return response()->json([
                 'code' => 1,
                 'msg' => '成功'
@@ -254,7 +268,6 @@ class SaoLouController extends Controller
                  }
                  $arr['house_info'] = $house;
 
-
              }else{
                 $d= Level::defaultOrder()->ancestorsAndSelf($request->lpid);
                
@@ -274,7 +287,8 @@ class SaoLouController extends Controller
               $d = Level::where('parent_id',$key['id'])->get(['type_name','id']);
               if(empty($d[0])){
                 $arr['data'][$k]['num'] = 1;//判断当前的层级，1 为最后一层，2 为倒数第二层
-                if(in_array($arr['data'][$k]['type_name'],$farr)){
+                $numhave= Level::where('id',$arr['data'][$k]['id'])->value('lpid');
+                if($numhave == 1){
                     $arr['data'][$k]['have'] = 1;
                 }else{
                     $arr['data'][$k]['have'] = 0;//判断房间号是否已经录入过
@@ -443,9 +457,9 @@ class SaoLouController extends Controller
             $arr = array();
             foreach($data[0] as $k=> $d){
                 $arr[$k] = $d;
-                $arr['pay_type'] = $payType;
-                $arr['contract_period'] = $cPeriod;
-                $arr['company_type'] = $companyType;
+                $arr['pay_type'] = get_object_vars($payType[0]);
+                $arr['contract_period'] = get_object_vars($cPeriod[0]);
+                $arr['company_type'] = get_object_vars($companyType[0]);
                 $arr['tenant_need'] = $demand;
                 $arr['houses_num'] = $h_n;
             }

@@ -143,7 +143,9 @@
                                 time: 1000
                             }, function () {
                               
-                              $(".layui-laypage-btn").click() 
+                                $(".layui-laypage-btn").click();
+                                layer.closeAll();
+                                tableIns.reload();
                   
                             })
                         } else if (res.status == 403) {
@@ -261,7 +263,7 @@
                     $("#PId").val(data.id);
                    
                    var id= data.id
-                    table.render({
+                  tableIns= table.render({
                       url: "gain/broker/permission"+'/'+id //数据接口
                           ,
                       page: true //开启分页

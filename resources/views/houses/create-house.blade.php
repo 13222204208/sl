@@ -18,6 +18,7 @@
         <button class="layui-btn"  data-type="reload" value="0" id="admin-management">添加分类</button>
         <div class="layui-inline" style="color:gray" id="lp_address">
         </div>
+
     </div>
 
     <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
@@ -133,7 +134,8 @@
                 }
             });
 
-
+         
+           
             //监听提交
             form.on('submit(create)', function (data) {
                 console.log(data.field);
@@ -153,10 +155,11 @@
                                 icon: 1,
                                 time: 1000
                             }, function () {
-                                layer.closeAll();
-                              $(".layui-laypage-btn").click() 
-                  
-                            })
+                                
+                              $(".layui-laypage-btn").click();
+                              layer.closeAll();
+                              tableIns.reload();
+                            });
                         } else if (res.status == 403) {
                             layer.msg('填写错误或重复', {
                                 offset: '15px',
@@ -171,7 +174,7 @@
                 return false;
             });
            var id = getParam('id');
-            table.render({
+             table.render({
                 url: "gain/loupan"+'/'+id //由楼盘表传的楼盘名称
                     ,
                 page: true //开启分页
@@ -269,7 +272,7 @@
                     $("#lp_address").append(data.type_name);
                     $("#PId").val(data.id);
                    var id= data.id
-                    table.render({
+                   tableIns =  table.render({
                       url: "gain/loupan/type"+'/'+id //数据接口
                           ,
                       page: true //开启分页

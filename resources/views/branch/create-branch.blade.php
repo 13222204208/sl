@@ -16,7 +16,8 @@
 
     <div class="demoTable" style="margin:30px;">
         <button class="layui-btn" data-type="reload" value="0" id="admin-management">添加分类</button>
-
+        <div class="layui-inline" style="color:gray" id="lp_address">
+        </div>
     </div>
 
     <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
@@ -131,7 +132,9 @@
                                 time: 1000
                             }, function () {
                               
-                              $(".layui-laypage-btn").click() 
+                                $(".layui-laypage-btn").click();
+                                layer.closeAll();
+                                tableIns.reload();
                   
                             })
                         } else if (res.status == 403) {
@@ -243,9 +246,10 @@
                 } else if (obj.event === 'show') {
                     console.log(data.name);
                     $("#typeNameId").val(data.name);
+                    $("#lp_address").append(data.name);
                     $("#PId").val(data.id);
                    var id= data.id
-                    table.render({
+                   tableIns= table.render({
                       url: "gain/branch/type"+'/'+id //数据接口
                           ,
                       page: true //开启分页

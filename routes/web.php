@@ -81,7 +81,7 @@ Route::prefix('home')->group(function () {
     Route::get('due/tenant','Home\HomePageController@dueTenant');//快到期租户
 });
 
-Route::get('admin/code','Login\LoginController@adminLogin');//后台登录验证码
+Route::get('admin/code/{tmp}','Login\LoginController@adminLogin');//后台登录验证码
 Route::post('login/login','Login\LoginController@login');//后台登录验证
 
 Route::prefix('houses')->group(function () {//楼盘管理
@@ -260,5 +260,12 @@ Route::prefix('parm')->group(function () {//经纪人管理
         return view('parm.period');//合同期限设置
     })->name('parm')->middleware('adminRoute');
     Route::post('add/paytype','Parm\DemandController@addPaytype');//添加付款方式
+    Route::get('gain/paytype','Parm\DemandController@gainPayType');//查看付款方式
+    Route::post('del/paytype','Parm\DemandController@delPayType');//删除付款方式
+    Route::post('edit/paytype','Parm\DemandController@editPayType');//编辑付款方式
+
     Route::post('add/period','Parm\DemandController@addPeriod');//添加合同期限
+    Route::get('gain/period','Parm\DemandController@gainPeriod');//查看合同期限
+    Route::post('del/period','Parm\DemandController@delPeriod');//删除合同期限
+    Route::post('edit/period','Parm\DemandController@editPeriod');//编辑合同期限
 });

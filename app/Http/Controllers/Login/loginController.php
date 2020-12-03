@@ -41,7 +41,7 @@ class loginController extends Controller
         }
     }
 
-    public function adminLogin()
+    public function adminLogin($tmp)
     {
         $builder = new CaptchaBuilder;
         $builder->build();

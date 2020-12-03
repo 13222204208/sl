@@ -251,7 +251,7 @@
           ]
         ],
         parseData: function(res) { //res 即为原始返回的数据
-          //console.log(res);
+          console.log(res);
           return {
             "code": '0', //解析接口状态
             "msg": res.message, //解析提示文本

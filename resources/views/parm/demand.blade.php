@@ -16,7 +16,8 @@
 
     <div class="demoTable" style="margin:30px;">
         <button class="layui-btn" data-type="reload" value="0" id="admin-management">添加分类</button>
-
+        <div class="layui-inline" style="color:gray" id="lp_address">
+        </div>
     </div>
 
     <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
@@ -130,8 +131,9 @@
                                 icon: 1,
                                 time: 1000
                             }, function () {
-                                layer.closeAll(); //关闭所有的弹出层
-                              $(".layui-laypage-btn").click() 
+                                $(".layui-laypage-btn").click();
+                                layer.closeAll();
+                                tableIns.reload();
                   
                             })
                         } else if (res.status == 403) {
@@ -243,9 +245,10 @@
                 } else if (obj.event === 'show') {
                     console.log(data.type_name);
                     $("#typeNameId").val(data.type_name);
+                    $("#lp_address").append(data.type_name);
                     $("#PId").val(data.id);
                    var id= data.id
-                    table.render({
+                   tableIns= table.render({
                       url: "gain/demand/type"+'/'+id //数据接口
                           ,
                       page: true //开启分页

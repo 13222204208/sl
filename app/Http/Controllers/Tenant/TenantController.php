@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Tenant;
 
-use App\Model\Tenant;
+use App\Model\GetTenant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -12,7 +12,7 @@ class TenantController extends Controller
     {
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= Tenant::orderBy('id','desc')->paginate($limit);
+            $data= GetTenant::orderBy('id','desc')->paginate($limit);
 
             return $data;
         }
@@ -22,7 +22,7 @@ class TenantController extends Controller
     {
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= Tenant::where('tenant_name',$state)->paginate($limit);
+            $data= GetTenant::where('tenant_name',$state)->paginate($limit);
 
             return $data;
         }
@@ -31,7 +31,7 @@ class TenantController extends Controller
     public function delTenant(Request $request)
     {
         if($request->ajax()){
-            $tenant= Tenant::find($request->id);
+            $tenant= GetTenant::find($request->id);
             $state= $tenant->delete();
             if ($state) {
                 return response()->json([
@@ -49,7 +49,7 @@ class TenantController extends Controller
     {
         if($request->ajax()){
 
-            $tenant= Tenant::where('id',$request->id)->update($request->data);
+            $tenant= GetTenant::where('id',$request->id)->update($request->data);
            
             if ($tenant) {
                 return response()->json([
@@ -70,7 +70,7 @@ class TenantController extends Controller
             $day = '+'.$request->day.'day';
             $date= date("Y-m-d",strtotime($day));
             $limit = $request->get('limit');
-            $data = Tenant::whereDate('stop_time','<',$date)->paginate($limit);
+            $data = GetTenant::whereDate('stop_time','<',$date)->paginate($limit);
             return $data;
         }
     }
