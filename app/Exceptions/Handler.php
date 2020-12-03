@@ -66,6 +66,10 @@ class Handler extends ExceptionHandler
             return response()->json(['error' => '列入黑名单']);
         }
 
+        if($exception->getMessage()=='The given payload is invalid.'){
+            return response()->json(['code'=>0,'msg'=>'获取失败，请重新获取']);
+        }
+
         return parent::render($request, $exception);
     }
 }
