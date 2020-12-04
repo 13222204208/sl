@@ -99,7 +99,9 @@ Route::prefix('houses')->group(function () {//楼盘管理
         return view('houses.add-house');//添加楼盘
     });
 
-    Route::post('add/house','Houses\HousesController@addHouse');//创建楼盘信息
+    Route::get('gain/house/num/{id}','Houses\HousesController@gainHouseNum');//获取分类下楼盘的房间号
+
+    Route::post('add/house','Houses\HousesController@addHouse')->middleware('adminLogin');//创建楼盘信息
     Route::get('look/house','Houses\HousesController@lookHouse');//查看楼盘信息
 
     Route::get('gain/loupan/type/{id}','Houses\HousesController@gainLoupanType');//获取分类下楼盘
@@ -266,6 +268,14 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::post('add/period','Parm\DemandController@addPeriod');//添加合同期限
     Route::get('gain/period','Parm\DemandController@gainPeriod');//查看合同期限
+    Route::post('del/period','Parm\DemandController@delPeriod');//删除合同期限
+    Route::post('edit/period','Parm\DemandController@editPeriod');//编辑合同期限
+
+    Route::get('protocol', function () {
+        return view('parm.protocol');//用户协议
+    })->name('parm')->middleware('adminRoute');
+    Route::post('create/protocol','Parm\DemandController@createProtocol');//创建用户协议
+    Route::get('gain/protocol','Parm\DemandController@gainProtocol');//查看合同期限
     Route::post('del/period','Parm\DemandController@delPeriod');//删除合同期限
     Route::post('edit/period','Parm\DemandController@editPeriod');//编辑合同期限
 });

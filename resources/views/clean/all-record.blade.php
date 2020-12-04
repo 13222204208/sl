@@ -189,34 +189,44 @@
             },{
               field: 'houses_info',
               title: '楼盘信息',
+              width: 180,
+            },{
+              field: 'houses_num',
+              title: '房间号',
+              width: 180,
             }, {
               field: 'tenant_name',
               title: '租户名称',
               width: 180,
             }, {
               field: 'is_we_company',
-              title: '是否司租户',
+              title: '是否我司租户',
+              width: 120,
             }, {
               field: 'company_type',
               title: '公司类型',
+              width: 120,
             }, {
               field: 'tenant_user',
               title: '联系人',
+              width: 220,
+              
             }, {
               field: 'start_time',
               title: '合同起始时间',
-              width: 180,
+              width: 120,
             },{
               field: 'stop_time',
               title: '合同到期时间',
-              width: 180,
+              width: 120,
             }, {
               field: 'pay_type',
               title: '付款方式',
+              width: 100,
             }, {
               field: 'pay_time',
               title: '下次应付款时间',
-              width: 180,
+              width: 120,
             }, {
               field: 'tenant_need',
               title: '租户需求',
@@ -226,11 +236,11 @@
             }, {
               field: 'broker_name',
               title: '经纪人姓名',
-              width: 180,
+              width: 100,
             }, {
               field: 'broker_phone',
               title: '经纪人手机号',
-              width: 180,
+              width: 100,
             }, {
               field: 'position',
               title: '提交位置',

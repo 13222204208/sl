@@ -67,6 +67,7 @@ class HousesController extends Controller
             $house->city = $request->city;
             $house->business_area = $request->business_area;
             $house->property_type = $request->property_type;
+            $house->uid = session('id');
             if ($house->save()) {
                 return response()->json(['status'=>200]);
             }else{
@@ -99,6 +100,30 @@ class HousesController extends Controller
        
         if ($request->ajax()) {
             $limit = $request->get('limit');
+            $data= Level::where('parent_id',$pid)->paginate($limit);
+
+            return $data;
+      
+        }
+    }
+
+    public function gainHouseNum(Request $request,$pid)
+    { 
+       
+        if ($request->ajax()) {
+
+            $data= Level::descendantsOf($pid); 
+
+            $limit = $request->get('limit');
+
+            if(empty($data[0])){
+                
+
+             $data=   Tenant::whereRaw('FIND_IN_SET(?,houses_num)',[$pid])->get();
+             // $data=  Tenant::whereHas('houses_num',$pid)->paginate($limit);
+             
+            }
+
             $data= Level::where('parent_id',$pid)->paginate($limit);
 
             return $data;

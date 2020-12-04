@@ -88,25 +88,34 @@ class SaoLouController extends Controller
             ], 200);
         }
 
-        $user = User::where('account',$request->account)->first();
-        $data = array();
-
-        if(!$permission= substr(strrchr($user->branch, ","), 1)){
-            $permission = $user->branch;
+        try {
+            $user = User::where('account',$request->account)->first();
+            $data = array();
+    
+            if(!$permission= substr(strrchr($user->branch, ","), 1)){
+                $permission = $user->branch;
+            }
+    
+            $data['account'] = $user->account;
+            $data['branch'] = $user->branch;
+            $data['name'] = $user->name;
+            $data['role'] =  $user->getRoleNames();
+            $data['permission'] =  $permission;
+            $data['token']= $jwt_token;
+            $data['img_url'] = $user->head_img;
+            return response()->json([
+                'code' => 1,
+                'msg' =>"成功",
+                'data' => $data
+            ],200);
+        } catch (JWTException $exception) {
+            return response()->json([
+                'code' => 0,
+                'msg' => '错误'
+            ], 200);
         }
 
-        $data['account'] = $user->account;
-        $data['branch'] = $user->branch;
-        $data['name'] = $user->name;
-        $data['role'] =  $user->getRoleNames();
-        $data['permission'] =  $permission;
-        $data['token']= $jwt_token;
-        $data['img_url'] = $user->head_img;
-        return response()->json([
-            'code' => 1,
-            'msg' =>"成功",
-            'data' => $data
-        ],200);
+
     }
 
     public function logout(Request $request)
@@ -134,114 +143,124 @@ class SaoLouController extends Controller
     {
 
         $user = JWTAuth::authenticate($request->token);
-        
-        $payType = DB::table('paytype')->where('id',intval($request->pay_type))->value('month');//付款方式 
-        $month = '+'.$payType.'month';
-        $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
 
-        $cPeriod = DB::table('period')->where('id',intval($request->contract_period))->value('month');//合同期限
-        $m = '+'.$cPeriod.'month';
-        $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间
-
-        $house = House::where('houses_name',$request->houses_name)->get();
-        $property_type=$house[0]->property_type;//物业类型待更改
-
-       
-
-        $clean= new Clean;//扫楼记录表
-        $clean->houses_name = $request->houses_name;//楼盘名称
-        if($request->houses_info){
-            $clean->houses_info = $request->houses_info;//租户信息
-        }
-        $clean->houses_num = $request->houses_num;//房间号
-        $clean->property_type = $property_type;//物业类型
-
-        $clean->business_area = $house[0]->business_area;//商圈
-        $clean->permission = $user->branch;//权限
-        $clean->tenant_name = $request->tenant_name;//租户名称
-        $clean->is_we_company = $request->is_we_company;//是否是我司租户
-
-        if ($request->company_type) {
-            $clean->company_type = $request->company_type;//公司类型
-        }
-        $clean->tenant_user = $request->tenant_user;//联系人
-        $clean->start_time = $request->start_time;//合同开始时间
-        $clean->contract_period = $request->contract_period ;//合同期限多少个月
-        $clean->stop_time = $contract_period;//合同结束时间
-        $clean->pay_type = $request->pay_type;//付款方式
-        $clean->pay_time = $pay_time;//下次付款时间
-
-        if ($request->tenant_need) {
-            $clean->tenant_need = $request->tenant_need;//租户需求
-        }
-
-        if ($request->remark) {
-            $clean->remark = $request->remark;//备注
-        }
-
-        $clean->position = $request->position;//当前提交的位置
-        $clean->broker_name = $user->name;//当前提交的经纪人的名称
-        $clean->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
-        if ($request->enclosure) {
-            $clean->enclosure = $request->enclosure;//附件扫楼记录时上传的图片
-        }
-        $clean->uid = $user->id;//当前提交人的id
-        $clean->save();
-
-        $tenant = new Tenant; 
-
-        $tenant->houses_name = $request->houses_name;//楼盘名称
-        $tenant->tenant_name = $request->tenant_name;//租户名称
-        $tenant->houses_num = $request->houses_num;//房间号
-        if($request->houses_info){
-            $tenant->houses_info = $request->houses_info;//租户信息
-        }
-        $tenant->business_area = $house[0]->business_area;//商圈
-        $tenant->permission = $user->branch;//权限
-        $tenant->property_type = $property_type;//物业类型
-        $tenant->is_we_company = $request->is_we_company;//是否是我司租户
-        $tenant->company_type = $request->company_type;//公司类型
-        $tenant->tenant_user = $request->tenant_user;//联系人
-        $tenant->start_time = $request->start_time;//合同开始时间
-        $tenant->stop_time = $contract_period;//合同结束时间
-        $tenant->contract_period = $request->contract_period;//合同期限多少个月
-        $tenant->pay_type = $request->pay_type;//付款方式
-        $tenant->pay_time = $pay_time;//下次付款时间
-
-        if ($request->tenant_need) {
-            $tenant->tenant_need = $request->tenant_need;//租户需求
-
-        }
-
-        if ($request->remark) {
-            $tenant->remark = $request->remark;//备注
-        }
-        $tenant->broker_name = $user->name;//当前提交的经纪人的名称
-        $tenant->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
-        $tenant->uid = $user->id;//当前提交人的id
-        $tenant->save();//保存租户表信息
-
-
-
-        if ($clean->save()) {
-
-            $houses_num = $request->houses_num;
-            $hnum= array_filter(explode(',',$houses_num));
-            foreach($hnum as $num){
-                 Level::where('id',intval($num))->update(['lpid'=>1]);
-
+        try {
+            $payType = DB::table('paytype')->where('id',intval($request->pay_type))->value('month');//付款方式 
+            $month = '+'.$payType.'month';
+            $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
+    
+            $cPeriod = DB::table('period')->where('id',intval($request->contract_period))->value('month');//合同期限
+            $m = '+'.$cPeriod.'month';
+            $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间
+    
+            $house = House::where('houses_name',$request->houses_name)->get();
+            $property_type=$house[0]->property_type;//物业类型待更改
+    
+           
+    
+            $clean= new Clean;//扫楼记录表
+            $clean->houses_name = $request->houses_name;//楼盘名称
+            if($request->houses_info){
+                $clean->houses_info = $request->houses_info;//租户信息
             }
-
-            return response()->json([
-                'code' => 1,
-                'msg' => '成功'
-            ], 200);
-        }else{
+            $clean->houses_num = $request->houses_num;//房间号
+            $clean->property_type = $property_type;//物业类型
+    
+            $clean->business_area = $house[0]->business_area;//商圈
+            $clean->permission = $user->branch;//权限
+            $clean->tenant_name = $request->tenant_name;//租户名称
+            $clean->is_we_company = $request->is_we_company;//是否是我司租户
+    
+            if ($request->company_type) {
+                $clean->company_type = $request->company_type;//公司类型
+            }
+            $clean->tenant_user = $request->tenant_user;//联系人
+            $clean->start_time = $request->start_time;//合同开始时间
+            $clean->contract_period = $request->contract_period ;//合同期限多少个月
+            $clean->stop_time = $contract_period;//合同结束时间
+            $clean->pay_type = $request->pay_type;//付款方式
+            $clean->pay_time = $pay_time;//下次付款时间
+    
+            if ($request->tenant_need) {
+                $clean->tenant_need = $request->tenant_need;//租户需求
+            }
+    
+            if ($request->remark) {
+                $clean->remark = $request->remark;//备注
+            }
+    
+            $clean->position = $request->position;//当前提交的位置
+            $clean->broker_name = $user->name;//当前提交的经纪人的名称
+            $clean->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
+            if ($request->enclosure) {
+                $clean->enclosure = $request->enclosure;//附件扫楼记录时上传的图片
+            }
+            $clean->uid = $user->id;//当前提交人的id
+            $clean->save();
+    
+            $tenant = new Tenant; 
+    
+            $tenant->houses_name = $request->houses_name;//楼盘名称
+            $tenant->tenant_name = $request->tenant_name;//租户名称
+            $tenant->houses_num = $request->houses_num;//房间号
+            if($request->houses_info){
+                $tenant->houses_info = $request->houses_info;//租户信息
+            }
+            $tenant->business_area = $house[0]->business_area;//商圈
+            $tenant->permission = $user->branch;//权限
+            $tenant->property_type = $property_type;//物业类型
+            $tenant->is_we_company = $request->is_we_company;//是否是我司租户
+            $tenant->company_type = $request->company_type;//公司类型
+            $tenant->tenant_user = $request->tenant_user;//联系人
+            $tenant->start_time = $request->start_time;//合同开始时间
+            $tenant->stop_time = $contract_period;//合同结束时间
+            $tenant->contract_period = $request->contract_period;//合同期限多少个月
+            $tenant->pay_type = $request->pay_type;//付款方式
+            $tenant->pay_time = $pay_time;//下次付款时间
+    
+            if ($request->tenant_need) {
+                $tenant->tenant_need = $request->tenant_need;//租户需求
+    
+            }
+    
+            if ($request->remark) {
+                $tenant->remark = $request->remark;//备注
+            }
+            $tenant->broker_name = $user->name;//当前提交的经纪人的名称
+            $tenant->broker_phone = $user->account;//当前提交的经纪人手机号或者帐号
+            $tenant->uid = $user->id;//当前提交人的id
+            $tenant->save();//保存租户表信息
+    
+    
+    
+            if ($clean->save()) {
+    
+                $houses_num = $request->houses_num;
+                $hnum= array_filter(explode(',',$houses_num));
+                foreach($hnum as $num){
+                     Level::where('id',intval($num))->update(['lpid'=>1]);
+    
+                }
+    
+                return response()->json([
+                    'code' => 1,
+                    'msg' => '成功'
+                ], 200);
+            }else{
+                return response()->json([
+                    'code' => 0,
+                    'msg' => '提交失败'
+                ], 200);
+            }
+        } catch (JWTException $exception) {
             return response()->json([
                 'code' => 0,
-                'msg' => '提交失败'
+                'msg' => '错误'
             ], 200);
         }
+
+        
+     
     }
 
     public function houses(Request $request)//获取楼盘架构
@@ -250,72 +269,80 @@ class SaoLouController extends Controller
             'token' => 'required'
         ]);
 
+        try {
+            $user = JWTAuth::authenticate($request->token); 
+            if ($user->account) {
+                $lpid = $request->lpid;
+                $data = Level::where('parent_id',$lpid)->get(['type_name','id']);
        
-
-        $user = JWTAuth::authenticate($request->token); 
-        if ($user->account) {
-            $lpid = $request->lpid;
-            $data = Level::where('parent_id',$lpid)->get(['type_name','id']);
-   
-             $arr= array();
-
-             $house = '';
-             if($request->has('cid')){
-                 $d= Level::defaultOrder()->ancestorsAndSelf($request->cid);
-               
-                 foreach($d as $h){
-                     $house .= $h['type_name'].'>';
-                 }
-                 $arr['house_info'] = $house;
-
-             }else{
-                $d= Level::defaultOrder()->ancestorsAndSelf($request->lpid);
-               
-                foreach($d as $h){
-                    $house .= $h['type_name'].'>';
-                }
-             }
-
-             $hnum = Clean::where('houses_info',$house)->get('houses_num');
-             $farr = array();
-             foreach($hnum as  $fj){
-                $farr[] = $fj['houses_num'];
-             }
-
-            foreach($data as $k=> $key){
-                $arr['data'][] = $key;
-              $d = Level::where('parent_id',$key['id'])->get(['type_name','id']);
-              if(empty($d[0])){
-                $arr['data'][$k]['num'] = 1;//判断当前的层级，1 为最后一层，2 为倒数第二层
-                $numhave= Level::where('id',$arr['data'][$k]['id'])->value('lpid');
-                if($numhave == 1){
-                    $arr['data'][$k]['have'] = 1;
-                }else{
-                    $arr['data'][$k]['have'] = 0;//判断房间号是否已经录入过
-                }
-                }else{
-                    $arr['data'][$k]['num'] = 0;
-                    $st = Level::where('parent_id',$d[0]['id'])->get(['type_name','id']);
-                    if(empty($st[0])){
-                        $arr['data'][$k]['num'] = 2;
+                 $arr= array();
+    
+                 $house = '';
+                 if($request->has('cid')){
+                     $d= Level::defaultOrder()->ancestorsAndSelf($request->cid);
+                   
+                     foreach($d as $h){
+                         $house .= $h['type_name'].'>';
+                     }
+                     $arr['house_info'] = $house;
+    
+                 }else{
+                    $d= Level::defaultOrder()->ancestorsAndSelf($request->lpid);
+                   
+                    foreach($d as $h){
+                        $house .= $h['type_name'].'>';
                     }
+                 }
+    
+                 $hnum = Clean::where('houses_info',$house)->get('houses_num');
+                 $farr = array();
+                 foreach($hnum as  $fj){
+                    $farr[] = $fj['houses_num'];
+                 }
+    
+                foreach($data as $k=> $key){
+                    $arr['data'][] = $key;
+                  $d = Level::where('parent_id',$key['id'])->get(['type_name','id']);
+                  if(empty($d[0])){
+                    $arr['data'][$k]['num'] = 1;//判断当前的层级，1 为最后一层，2 为倒数第二层
+                    $numhave= Level::where('id',$arr['data'][$k]['id'])->value('lpid');
+                    if($numhave == 1){
+                        $arr['data'][$k]['have'] = 1;
+                    }else{
+                        $arr['data'][$k]['have'] = 0;//判断房间号是否已经录入过
+                    }
+                    }else{
+                        $arr['data'][$k]['num'] = 0;
+                        $st = Level::where('parent_id',$d[0]['id'])->get(['type_name','id']);
+                        if(empty($st[0])){
+                            $arr['data'][$k]['num'] = 2;
+                        }
+                    }
+                    
                 }
-                
+    
+    
+    
+                return response()->json([
+                    'code' => 1,
+                    'msg' => '成功',
+                    'data' => $arr
+                ], 200);
+            }else{
+                return response()->json([
+                    'code' => -1,
+                    'msg' => '请登陆'
+                ], 200);
             }
 
-
-
+        } catch (\Throwable $th) {
             return response()->json([
-                'code' => 1,
-                'msg' => '成功',
-                'data' => $arr
-            ], 200);
-        }else{
-            return response()->json([
-                'code' => -1,
-                'msg' => '请登陆'
-            ], 200);
+                'code' => 0,
+                'msg' =>"输入错误",
+            ],200);
         }
+
+       
 
     }
 
@@ -385,10 +412,6 @@ class SaoLouController extends Controller
         $namePath = $namePath;//图片访问地址
     
         if ($namePath) {
-        /*     User::where('account',$user->account)->update([
-                'head_img'=>$namePath
-            ]); */
-         
             return response()->json(['img_url' =>$namePath, 'code' => 1,'msg'=>'上传成功']);
         } else {
             return response()->json(['msg' =>'上传失败', 'code' => 0]);
@@ -402,10 +425,13 @@ class SaoLouController extends Controller
         ]);
         
         $user = JWTAuth::authenticate($request->token);
+        
         if (!$user->account) {
             return response()->json(['msg' =>'请登陆', 'code' => -1]);
         }
 
+        try {
+            
         if (isset($request->start_time)) {
             $start_time = $request->start_time;
         }else{
@@ -471,6 +497,14 @@ class SaoLouController extends Controller
             'msg' => '查询成功',
             'data'=> $data
         ], 200);
+           
+        } catch (\Throwable $th) {
+            return response()->json([
+                'code' => 0,
+                'msg' =>"输入错误",
+            ],200);
+        }
+
     }
 
     public function pcode(Request $request)

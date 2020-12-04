@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tenant;
 
+use App\Model\Tenant;
 use App\Model\GetTenant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

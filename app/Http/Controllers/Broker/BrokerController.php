@@ -127,7 +127,7 @@ class BrokerController extends Controller
 
     public function havePermission(Request $request)//获取当前角色的权限
     {
-        $role= Role::find($request->id);
+        $role= Role::find($request->id); 
         $have = array();
         $permissions= Permission::select('name')->get();
         foreach ($permissions as $permission) {//判断角色是否拥有此权限

@@ -22,10 +22,10 @@ class WechatController extends Controller
         if (!$user->account) {
             return response()->json(['msg' =>'未登陆', 'code' => -1]);
         }
-        
+
         $config = [
-            'app_id' =>"wx25ee35ecb2421063",
-            'secret' => "4de191104e976bbbc009a420b68fcaa4",
+            'app_id' =>env('WECHAT_API_ID'),
+            'secret' => env('WECHAT_API_SECRET'),
 
             // 下面为可选项
             // 指定 API 调用返回结果的类型：array(default)/collection/object/raw/自定义类名
@@ -36,50 +36,56 @@ class WechatController extends Controller
                 'file' => __DIR__.'/wechat.log',
             ], */
         ];
-
-        $app = Factory::miniProgram($config);
-
+        
+       try {
+            $app = Factory::miniProgram($config);
        
-        $iv = $request->iv;
-        $encryptedData = $request->encryptedData;
-        $code= $request->code;
-        $session = $app->auth->session((string)$code);
+            $iv = $request->iv;
+            $encryptedData = $request->encryptedData;
+            $code= $request->code;
+            $session = $app->auth->session((string)$code);
+            
+            if(empty($session)){
+                return response()->json([
+                'code' => 0,
+                'msg' => '拉取失败，请重试',
+                ], 200);
+            }
+            
+            if(!array_key_exists('session_key',$session)){
+                 return response()->json([
+                'code' => 0,
+                'msg' => '拉取失败，请重试',
+                ], 200);
+            }
         
-        if(empty($session)){
-            return response()->json([
-            'code' => 0,
-            'msg' => '拉取失败，请重试',
-            ], 200);
-        }
         
-        if(!array_key_exists('session_key',$session)){
-             return response()->json([
-            'code' => 0,
-            'msg' => '拉取失败，请重试',
-            ], 200);
-        }
+            $decryptedData = $app->encryptor->decryptData($session['session_key'], $iv, $encryptedData);
     
-    
-        $decryptedData = $app->encryptor->decryptData($session['session_key'], $iv, $encryptedData);
-
-        $data = array();
-            $data['account'] =$user->account;
-
-        if($decryptedData['phoneNumber']){
-           $state=  User::where('account',"=",$user->account)->update(['account'=>$decryptedData['phoneNumber']]);
-        }
-
-   
-        if($state){
-            $phone = User::where('id',$user->id)->value('account');
             $data = array();
-            $data['account'] =$phone;
+                $data['account'] =$user->account;
+    
+            if($decryptedData['phoneNumber']){
+               $state=  User::where('account',"=",$user->account)->update(['account'=>$decryptedData['phoneNumber']]);
+            }
+    
+       
+            if($state){
+                $phone = User::where('id',$user->id)->value('account');
+                $data = array();
+                $data['account'] =$phone;
+                return response()->json([
+                    'code' => 1,
+                    'msg' => '成功',
+                    'data' => $data
+                ], 200);
+            }
+        } catch (\Throwable $th) {
             return response()->json([
-                'code' => 1,
-                'msg' => '成功',
-                'data' => $data
-            ], 200);
-        }
+                'code' => 0,
+                'msg' =>"输入错误",
+            ],200);
+        } 
 
     }
 

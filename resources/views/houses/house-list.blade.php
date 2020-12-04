@@ -27,7 +27,7 @@
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
    <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">查看房号上的租户</a>
+    <a class="layui-btn layui-btn-xs" lay-event="show">查看房号上的租户</a>
   
   </script> 
 
@@ -103,59 +103,56 @@
       table.on('tool(user)', function (obj) {
             var data = obj.data;
          
-     if (obj.event === 'edit') {
-          console.log(data); 
-          table.render({
-        height: 600,
-        url: "tenant/info/"+data.houses_num 
-          ,
-        page: true //开启分页
-          ,
-        elem: '#tenant_table_user',
-        cols: [
-          [
+             if (obj.event === 'show') {
+              console.log(data.type_name);
+              $("#typeNameId").val(data.type_name);
+              $("#lp_address").append(data.type_name);
+              $("#PId").val(data.id);
+             var id= data.id
+             tableIns =  table.render({
+                url: "gain/house/num"+'/'+id //数据接口
+                    ,
+                page: true //开启分页
+                    ,
+                elem: '#LAY_table_user',
+                cols: [
+                    [
 
-            {
-              type: 'numbers',
-              title: '序号',
-              width: 80,
-            },{
-              field: 'tenant_name',
-              title: '租户名称',
-            },{
-              field: 'start_time',
-              title: '合同开始时间',
-            },{
-              field: 'stop_time',
-              title: '合同结束时间',
-            },{
-              field: 'state',
-              title: '在租状态',
-            },{
-              field: 'broker_name',
-              title: '所属经纪人',
-            },{
-              field: 'broker_phone',
-              title: '所属经纪人手机号',
-            }
-          ]
-        ],
-        parseData: function(res) { //res 即为原始返回的数据
-          //console.log(res);
-          return {
-            "code": '0', //解析接口状态
-            "msg": res.message, //解析提示文本
-            "count": res.total, //解析数据长度
-            "data": res.data //解析数据列表
+                        {
+                            field: 'id',
+                            title: 'ID',
+                            width: 80,
+                            sort: true
+                        }, {
+                            field: 'type_name',
+                            title: '分类名称',
+                        }, {
+                            field: 'parent_id',
+                            title: '父类ID',
+                            width: 100
+                        }, {
+                            fixed: 'right',
+                            title: "操作",
+                            align: 'center',
+                            toolbar: '#barDemo'
+                        }
+                    ]
+                ],
+                parseData: function (res) { //res 即为原始返回的数据
+                    console.log(res);
+                    return {
+                        "code": '0', //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "count": res.total, //解析数据长度
+                        "data": res.data //解析数据列表
+                    }
+                },
+                id: 'testReload',
+                title: '后台用户',
+                totalRow: true
+
+            });
           }
-        },
-        id: 'testReload',
-        title: '后台用户',
-        totalRow: true
-
-      });
-
-                }
             
         });
 

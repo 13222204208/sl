@@ -55,7 +55,7 @@ Route::middleware('cors')->prefix('sl')->group(function (){
 });
 
 Route::middleware('cors')->prefix('data')->group(function (){
-
+    Route::post('protocol', 'Api\DataController@protocol');//获取用户协议
     Route::group(['middleware' => 'auth.jwt'], function () {
         Route::post('refer_record', 'Api\DataController@referRecord');//提交过多少条扫楼记录
         Route::post('loupan', 'Api\DataController@loupan');//我的楼盘数据
@@ -63,6 +63,8 @@ Route::middleware('cors')->prefix('data')->group(function (){
         Route::post('period', 'Api\DataController@period');//获取合同期限
 
         Route::post('wechat', 'Api\WechatController@wechat');//获取合同期限
+
+        
     });
 });
 

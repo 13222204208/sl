@@ -249,7 +249,7 @@
             </li>
             @endif
 
-            @if(in_array('租户管理',$per))
+            @if(in_array('租户',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="租户管理" lay-direction="2">
                 <i class="layui-icon layui-icon-set"></i>
@@ -277,6 +277,7 @@
                     <dd><a lay-href="parm/demand">租户需求配置</a></dd>
                     <dd><a lay-href="parm/paytype">付款方式配置</a></dd>
                     <dd><a lay-href="parm/period">合同期限配置</a></dd>
+                    <dd><a lay-href="parm/protocol">用户协议</a></dd>
                   </dl>
                 </dd>
                 @endif
