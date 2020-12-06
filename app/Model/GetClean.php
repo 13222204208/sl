@@ -78,8 +78,6 @@ class GetClean extends Model
 
         public function getPositionAttribute($value)
         {
-            $data ="";
-            
-            //foreach($value as $v)
+            return $value;
         }
 }

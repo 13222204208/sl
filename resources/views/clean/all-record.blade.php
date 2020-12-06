@@ -124,18 +124,18 @@
           <input type="text" name="broker_phone" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
       </div>
-
+{{-- 
       <div class="layui-form-item">
         <label class="layui-form-label">提交位置</label>
         <div class="layui-input-block">
           <input type="text" name="position" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
-      </div>
+      </div> --}}
 
       <div class="layui-form-item">
         <label class="layui-form-label">附件</label>
-        <div class="layui-input-block">
-          <input type="text" name="enclosure" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
+        <div class="layui-input-block" id="myImg">
+          
         </div>
       </div>
 
@@ -241,13 +241,7 @@
               field: 'broker_phone',
               title: '经纪人手机号',
               width: 100,
-            }, {
-              field: 'position',
-              title: '提交位置',
-            }, {
-              field: 'enclosure',
-              title: '附件',
-            }, {
+            },  {
               field: 'created_at',
               title: '录入时间',
               width: 180,
@@ -279,6 +273,7 @@
             var data = obj.data;
          
      if (obj.event === 'edit') {
+             
                     layer.open({
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
@@ -288,61 +283,16 @@
                     });
                     //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取
                     form.val("formUpdate", data);
-                    setFormValue(obj,data);
+                   // setFormValue(obj,data);
                 }
-            
+         
+                imgs= data.enclosure;
+              arrayList=  imgs.split(',');
+                console.log(arrayList);
+                arrayList.forEach(function(element) {
+                  $("#myImg").append('<img width="200px" src="https://saolou.com.aa.800123456.top/'+element+'">');
+              });
         });
-
-        function setFormValue(obj, data) {
-        form.on('submit(editAccount)', function(massage) {
-          massage= massage.field; console.log(data.id);
-          if (data.id == 1) {
-            massage.role = "超级管理员"
-          }
-          $.ajax({
-            headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: "update/account",
-            type: 'post',
-            data: {
-              id: data.id,
-              nickname: massage.nickname,
-              role:massage.role,
-              state:massage.state
-            },
-            success: function(msg) {
-              console.log(msg);
-              if (msg.status == 200) {
-                layer.closeAll('loading');
-                layer.load(2);
-                layer.msg("修改成功", {
-                  icon: 6
-                });
-                setTimeout(function() {
-
-                  obj.update({
-                    nickname: massage.nickname,
-                    role:massage.role,
-                    state:massage.state
-                  }); //修改成功修改表格数据不进行跳转 
- 
-             
-                  layer.closeAll(); //关闭所有的弹出层
-                  //window.location.href = "/edit/horse-info";
-
-                }, 1000);
-
-              } else {
-                layer.msg("修改失败", {
-                  icon: 5
-                });
-              }
-            }
-          })
-          return false;
-        })
-      }
       
 
     });

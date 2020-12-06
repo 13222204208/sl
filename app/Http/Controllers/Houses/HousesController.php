@@ -6,8 +6,9 @@ namespace App\Http\Controllers\Houses;
 use App\Model\House;
 use App\Model\Level;
 use App\Model\Tenant;
-use Illuminate\Http\Request;
+use App\Model\GetTenant;
 
+use Illuminate\Http\Request;
 use function PHPSTORM_META\type;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -21,13 +22,15 @@ class HousesController extends Controller
             $lpname = House::where('id',$id)->value('houses_name');
             //$lpname = $lpname[0]->houses_name;
            //return $lpname;
-            $id = Level::where('type_name',$lpname)->get('id');
-            if(count($id)){ 
-                $data= Level::where('type_name',$lpname)->paginate($limit);
+            $id = Level::where('type_name',$lpname)->value('id');
+            if($id){ 
+                $data= Level::where('parent_id',$id)->paginate($limit);
                 return $data;
             }else{
                 Level::create(['type_name' => $lpname,'parent_id'=>0]);
-                $data= Level::where('type_name',$lpname)->paginate($limit);
+                $id = Level::where('type_name',$lpname)->value('id');
+
+                $data= Level::where('parent_id',$id)->paginate($limit);
                 return $data;
             }
         /*     $limit = $request->get('limit');
@@ -107,28 +110,24 @@ class HousesController extends Controller
         }
     }
 
-    public function gainHouseNum(Request $request,$pid)
+    public function gainHouseNum()
     { 
-       
-        if ($request->ajax()) {
 
-            $data= Level::descendantsOf($pid); 
+        $data= Level::all();
+        return response()->json([
+            'code' =>0,
+            'msg' => '',
+            'data' =>$data
+        ]);
+     
+    }
 
-            $limit = $request->get('limit');
+    public function lookNum(Request $request ,$id)
+    {
+        $limit = $request->get('limit');
 
-            if(empty($data[0])){
-                
-
-             $data=   Tenant::whereRaw('FIND_IN_SET(?,houses_num)',[$pid])->get();
-             // $data=  Tenant::whereHas('houses_num',$pid)->paginate($limit);
-             
-            }
-
-            $data= Level::where('parent_id',$pid)->paginate($limit);
-
-            return $data;
-      
-        }
+        $data=   GetTenant::whereRaw('FIND_IN_SET(?,houses_num)',[$id])->paginate($limit);
+        return $data;
     }
 
     public function createName(Request $request)
