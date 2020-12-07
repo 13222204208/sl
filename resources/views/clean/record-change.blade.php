@@ -54,11 +54,11 @@
             }, {
               field: 'before',
               title: '变更前名称',
-              width: 200
+              width: 300
             }, {
               field: 'update_name',
               title: '当前名称',
-              width: 200
+              width: 300
             }, {
               field: 'pid',
               title: '父ID',
