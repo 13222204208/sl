@@ -16,10 +16,12 @@ class BranchController extends Controller
     public function gainBranch(Request $request)
     { 
         if ($request->ajax()) {
-            $limit = $request->get('limit');
-            $data= Branch::where('parent_id',null)->paginate($limit);
-
-            return $data;
+            $data= Branch::all();
+            return response()->json([
+                'code' =>0,
+                'msg' => '',
+                'data' =>$data
+            ]);
       
         }
     }

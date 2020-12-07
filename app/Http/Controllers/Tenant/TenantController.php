@@ -19,11 +19,17 @@ class TenantController extends Controller
         }
     }
 
-    public function gainInfo(Request $request,$state)
+    public function gainInfo(Request $request)
     {
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= GetTenant::where('tenant_name',$state)->paginate($limit);
+            $state = $request->get('tenant_name');
+            if($state == null){
+                $data= GetTenant::paginate($limit);
+
+                return $data;
+            }
+            $data= GetTenant::where('tenant_name','like','%'.$state.'%')->orWhere('tenant_user','like','%'.$state.'%')->paginate($limit);
 
             return $data;
         }
@@ -68,9 +74,24 @@ class TenantController extends Controller
     public function stopDate(Request $request,$day)//查询合同快到期的租户
     {
         if ($request->ajax()) {
+            $limit = $request->get('limit');
+
+            if($day == "yes" || $day =="no"){
+                if($day == "yes"){
+                    $day ="1";
+                }
+
+                if($day == "no"){
+                    $day = "0";
+                }
+
+                $data = GetTenant::where('is_we_company',$day)->paginate($limit);
+                return $data;
+            }
+
             $day = '+'.$request->day.'day';
             $date= date("Y-m-d",strtotime($day));
-            $limit = $request->get('limit');
+        
             $data = GetTenant::whereDate('stop_time','<',$date)->paginate($limit);
             return $data;
         }

@@ -17,25 +17,30 @@ class HousesController extends Controller
 {
     public function gainLoupan(Request $request ,$id)
     { 
-        $limit = $request->get('limit');  
+        //$limit = $request->get('limit');  
         if ($request->ajax()) {
             $lpname = House::where('id',$id)->value('houses_name');
-            //$lpname = $lpname[0]->houses_name;
-           //return $lpname;
+          
             $id = Level::where('type_name',$lpname)->value('id');
             if($id){ 
-                $data= Level::where('parent_id',$id)->paginate($limit);
-                return $data;
+                //$data= Level::where('parent_id',$id)->paginate($limit);
+                $data= Level::descendantsOf($id);
+                return response()->json([
+                    'code' =>0,
+                    'msg' => '',
+                    'data' =>$data
+                ]);
             }else{
                 Level::create(['type_name' => $lpname,'parent_id'=>0]);
                 $id = Level::where('type_name',$lpname)->value('id');
 
-                $data= Level::where('parent_id',$id)->paginate($limit);
-                return $data;
+                $data= Level::descendantsOf($id);
+                return response()->json([
+                    'code' =>0,
+                    'msg' => '',
+                    'data' =>$data
+                ]);
             }
-        /*     $limit = $request->get('limit');
-            $data= Level::where('parent_id',null)->paginate($limit); */
-            //$data= level::where('lpid',104)->get()->toTree();
             
       
         }
@@ -162,7 +167,14 @@ class HousesController extends Controller
     {
         if ($request->ajax()) {
             $level = Level::find($request->id);
-            $before= $level->type_name;
+            $b= $level->type_name;
+
+            $datas= Level::ancestorsOf(intval($request->id));
+            $before = "";
+         
+            foreach($datas as $data){
+                $before .= $data['type_name'];
+            }
              if($level->parent_id == null){
                  $pid = 0;
              }else{
@@ -170,10 +182,12 @@ class HousesController extends Controller
              }
             $level->type_name = $request->type_name;
 
+            
+
             if ($level->save()) {
                 $time= date('Y-m-d H:i:s');
                     DB::table('update_level_name')->insertGetId([
-                       'before'=>$before,'update_name'=>$request->type_name,
+                       'before'=>$before.$b,'update_name'=>$before.$request->type_name,
                         'pid'=>$pid,'hid'=>$request->id,'created_at'=>$time]);
                         return response()->json(['status'=>200]);
                          }else{

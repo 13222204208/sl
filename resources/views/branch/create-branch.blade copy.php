@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>添加分类 </title>
+    <title>创建部门 </title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -15,7 +15,7 @@
 <body>
 
     <div class="demoTable" style="margin:30px;">
-        <button class="layui-btn" data-type="reload" value="0" id="admin-management">添加协议</button>
+        <button class="layui-btn" data-type="reload" value="0" id="admin-management">添加分类</button>
         <div class="layui-inline" style="color:gray" id="lp_address">
         </div>
     </div>
@@ -24,27 +24,23 @@
         <form class="layui-form layui-from-pane" required lay-verify="required" style="margin:20px">
 
             <div class="layui-form-item">
-                
-               
-                    <input type="text" name="title" required lay-verify="type_name" autocomplete="off"
-                        placeholder="标题" value="" class="layui-input">
-               
+                <label class="layui-form-label">分类名称</label>
+                <div class="layui-input-block">
+                   {{--  <input type="text" name="name" required lay-verify="name" autocomplete="off"
+                        placeholder="请输入分类名称" value="" class="layui-input"> --}}
+
+                        <textarea placeholder="可以添加多条数据，用逗号 , 分隔"  name="name" class="layui-textarea"></textarea>
+                </div>
             </div>
-
-            <div class="layui-form-item">   
-              <textarea class="layui-textarea" name="content" id="LAY_demo1" style="display: none">  
-                
-              </textarea>
-            </div>  
-
             <div class="layui-form-item">
-                
-               
-                <input type="text" name="key" required lay-verify="type_name" autocomplete="off"
-                    placeholder="关键字" value="" class="layui-input">
-           
-        </div>
-              <br>      
+              <label class="layui-form-label">上级分类</label>
+              <div class="layui-input-block">
+                  <input type="text" name="level" autocomplete="off"
+                       value="最高级" id="typeNameId" class="layui-input">
+              </div>
+          </div>
+
+          <input type="hidden" name="pid" value="0" id="PId">
 
             <div class="layui-form-item ">
                 <div class="layui-input-block">
@@ -63,14 +59,14 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">分类名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="type_name" required lay-verify="type_name" autocomplete="off"
+                    <input type="text" name="name" required lay-verify="name" autocomplete="off"
                         placeholder="请输入分类名称" value="" class="layui-input">
                 </div>
             </div>
 
 
 
-<br>
+
             <div class="layui-form-item ">
                 <div class="layui-input-block">
                     <div class="layui-footer" style="left: 0;">
@@ -83,35 +79,32 @@
 
     <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
     <script type="text/html" id="barDemo">
-    
+        <a class="layui-btn layui-btn-xs" lay-event="show">查看</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 
     </script>
 
     <script src="/layuiadmin/layui/layui.js"></script>
     <script>
-        layui.use(['table', 'laydate', 'jquery', 'form','layedit'], function () {
+        layui.use(['table', 'laydate', 'jquery', 'form'], function () {
             var table = layui.table;
             var laydate = layui.laydate;
             var $ = layui.jquery;
             var form = layui.form;
-            var layedit = layui.layedit;
-
-            var layedit = layui.layedit;
-            layedit.build('LAY_demo1'); //建立编辑器
 
             $(document).on('click', '#admin-management', function () {
                 layer.open({
                     //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                     type: 1,
-                    title: "新建服务协议",
-                    area: ['600px', '600px'],
+                    title: "新建分类",
+                    area: ['600px', '300px'],
                     content: $("#layuiadmin-form-admin") //引用的弹出层的页面层的方式加载修改界面表单
                 });
             });
 
             form.verify({
-                type_name: function (value) {
+                name: function (value) {
                     if (value.length > 8) {
                         return '最多只能八个字符';
                     }
@@ -126,18 +119,19 @@
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: "create/protocol",
+                    url: "create/name",
                     method: 'POST',
                     data: data.field,
                     dataType: 'json',
                     success: function (res) {
-                        console.log(res); 
+                        console.log(res);
                         if (res.status == 200) {
                             layer.msg('创建成功', {
                                 offset: '15px',
                                 icon: 1,
                                 time: 1000
                             }, function () {
+                              
                                 $(".layui-laypage-btn").click();
                                 layer.closeAll();
                                 tableIns.reload();
@@ -158,7 +152,7 @@
             });
 
             table.render({
-                url: "gain/protocol" //数据接口
+                url: "gain/branch" //数据接口
                     ,
                 page: true //开启分页
                     ,
@@ -172,18 +166,12 @@
                             width: 80,
                             sort: true
                         }, {
-                            field: 'title',
-                            title: '标题',
-                            width:150
+                            field: 'name',
+                            title: '分类名称',
                         }, {
-                            field: 'content',
-                            title: '内容',
-                      
-                        },{
-                            field: 'key',
-                            title: '关键字',
-                            width:150
-                      
+                            field: 'parent_id',
+                            title: '父类ID',
+                            width: 100
                         }, {
                             fixed: 'right',
                             title: "操作",
@@ -256,13 +244,13 @@
                     form.val("formUpdate", data);
                     setFormValue(obj, data);
                 } else if (obj.event === 'show') {
-                    console.log(data.type_name);
-                    $("#typeNameId").val(data.type_name);
-                    $("#lp_address").append(data.type_name);
+                    console.log(data.name);
+                    $("#typeNameId").val(data.name);
+                    $("#lp_address").append(data.name);
                     $("#PId").val(data.id);
                    var id= data.id
                    tableIns= table.render({
-                      url: "gain/demand/type"+'/'+id //数据接口
+                      url: "gain/branch/type"+'/'+id //数据接口
                           ,
                       page: true //开启分页
                           ,
@@ -276,7 +264,7 @@
                                   width: 80,
                                   sort: true
                               }, {
-                                  field: 'type_name',
+                                  field: 'name',
                                   title: '分类名称',
                               }, {
                                   field: 'parent_id',
@@ -321,7 +309,7 @@
                         type: 'post',
                         data: {
                             id: data.id,
-                            type_name: massage.type_name,
+                            name: massage.name,
                         },
                         success: function (msg) {
                             console.log(msg);
@@ -334,7 +322,7 @@
                                 setTimeout(function () {
 
                                     obj.update({
-                                        type_name: massage.type_name,
+                                        name: massage.name,
                                     }); //修改成功修改表格数据不进行跳转 
 
 

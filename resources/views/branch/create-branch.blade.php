@@ -13,12 +13,11 @@
 </head>
 
 <body>
-
-    <div class="demoTable" style="margin:30px;">
+{{--      <div class="demoTable" style="margin:30px;">
         <button class="layui-btn" data-type="reload" value="0" id="admin-management">添加分类</button>
         <div class="layui-inline" style="color:gray" id="lp_address">
         </div>
-    </div>
+    </div>  --}}
 
     <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
         <form class="layui-form layui-from-pane" required lay-verify="required" style="margin:20px">
@@ -77,9 +76,12 @@
         </form>
     </div>
 
+
+    
     <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
+
     <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-xs" lay-event="show">查看</a>
+        <a class="layui-btn layui-btn-xs" lay-event="add">添加子部门</a>
         <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 
@@ -87,11 +89,33 @@
 
     <script src="/layuiadmin/layui/layui.js"></script>
     <script>
-        layui.use(['table', 'laydate', 'jquery', 'form'], function () {
-            var table = layui.table;
+        layui.config({
+            base: '/layuiadmin/modules/'  // 配置模块所在的目录
+        }).use(['table', 'laydate', 'jquery', 'treeTable','form'], function () {
+             table = layui.table;
             var laydate = layui.laydate;
             var $ = layui.jquery;
             var form = layui.form;
+             treeTable = layui.treeTable;
+
+             var  tableIns = treeTable.render({
+                elem: '#LAY_table_user',
+                url: 'gain/branch',
+                tree: {
+                    iconIndex: 2,           // 折叠图标显示在第几列
+                    isPidData: true,        // 是否是id、pid形式数据
+                    idName: 'id',  // id字段名称
+                    pidName: 'parent_id'     // pid字段名称
+                },
+                cols: [[
+                    {type: 'numbers'},
+                    {type: 'checkbox'},
+                    {field: 'name', title: '组织名称'},
+                    
+                    {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
+                ]]
+            });
+
 
             $(document).on('click', '#admin-management', function () {
                 layer.open({
@@ -105,8 +129,8 @@
 
             form.verify({
                 name: function (value) {
-                    if (value.length > 8) {
-                        return '最多只能八个字符';
+                    if (value.length > 30) {
+                        return '最多只能30个字符';
                     }
                 }
             });
@@ -132,7 +156,7 @@
                                 time: 1000
                             }, function () {
                               
-                                $(".layui-laypage-btn").click();
+                                //$(".layui-laypage-btn").click();
                                 layer.closeAll();
                                 tableIns.reload();
                   
@@ -151,52 +175,10 @@
                 return false;
             });
 
-            table.render({
-                url: "gain/branch" //数据接口
-                    ,
-                page: true //开启分页
-                    ,
-                elem: '#LAY_table_user',
-                cols: [
-                    [
-
-                        {
-                            field: 'id',
-                            title: 'ID',
-                            width: 80,
-                            sort: true
-                        }, {
-                            field: 'name',
-                            title: '分类名称',
-                        }, {
-                            field: 'parent_id',
-                            title: '父类ID',
-                            width: 100
-                        }, {
-                            fixed: 'right',
-                            title: "操作",
-                            align: 'center',
-                            toolbar: '#barDemo'
-                        }
-                    ]
-                ],
-                parseData: function (res) { //res 即为原始返回的数据
-                    console.log(res);
-                    return {
-                        "code": '0', //解析接口状态
-                        "msg": res.message, //解析提示文本
-                        "count": res.total, //解析数据长度
-                        "data": res.data //解析数据列表
-                    }
-                },
-                id: 'testReload',
-                title: '后台用户',
-                totalRow: true
-
-            });
+ 
 
 
-            table.on('tool(user)', function (obj) {
+            treeTable.on('tool(LAY_table_user)', function (obj)  {
                 var data = obj.data;
                 console.log(data);
                 if (obj.event === 'del') {
@@ -243,55 +225,22 @@
                     //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取
                     form.val("formUpdate", data);
                     setFormValue(obj, data);
-                } else if (obj.event === 'show') {
+                } else if (obj.event === 'add') {
+
+                    layer.open({
+                        //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                        type: 1,
+                        title: "新建子部门",
+                        area: ['600px', '300px'],
+                        content: $("#layuiadmin-form-admin") //引用的弹出层的页面层的方式加载修改界面表单
+                    });
+
+
                     console.log(data.name);
                     $("#typeNameId").val(data.name);
                     $("#lp_address").append(data.name);
                     $("#PId").val(data.id);
-                   var id= data.id
-                   tableIns= table.render({
-                      url: "gain/branch/type"+'/'+id //数据接口
-                          ,
-                      page: true //开启分页
-                          ,
-                      elem: '#LAY_table_user',
-                      cols: [
-                          [
-      
-                              {
-                                  field: 'id',
-                                  title: 'ID',
-                                  width: 80,
-                                  sort: true
-                              }, {
-                                  field: 'name',
-                                  title: '分类名称',
-                              }, {
-                                  field: 'parent_id',
-                                  title: '父类ID',
-                                  width: 100
-                              }, {
-                                  fixed: 'right',
-                                  title: "操作",
-                                  align: 'center',
-                                  toolbar: '#barDemo'
-                              }
-                          ]
-                      ],
-                      parseData: function (res) { //res 即为原始返回的数据
-                          console.log(res);
-                          return {
-                              "code": '0', //解析接口状态
-                              "msg": res.message, //解析提示文本
-                              "count": res.total, //解析数据长度
-                              "data": res.data //解析数据列表
-                          }
-                      },
-                      id: 'testReload',
-                      title: '后台用户',
-                      totalRow: true
-      
-                  });
+    
                 }
 
             });

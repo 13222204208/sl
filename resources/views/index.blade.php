@@ -262,7 +262,7 @@
             </li>
             @endif
 
-            @if(in_array('表单配置选项',$per) || in_array('合同到期提醒手机',$per))
+            @if(in_array('表单选项配置',$per) || in_array('合同到期提醒手机',$per))
             <li data-name="template" class="layui-nav-item">
               <a href="javascript:;" lay-tips="参数配置" lay-direction="2">
                 <i class="layui-icon layui-icon-set"></i>

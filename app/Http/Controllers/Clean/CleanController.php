@@ -31,4 +31,14 @@ class CleanController extends Controller
       
         }
     }
+
+    public function searchClean(Request $request)
+    {
+        $limit= $request->get('limit'); 
+        $startTime = $request->get('startTime');
+        $stopTime = $request->get('stopTime');
+
+        $data= GetClean::where('created_at','>',$startTime)->where('created_at','<',$stopTime)->paginate($limit);
+        return $data;
+    }
 }

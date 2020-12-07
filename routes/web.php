@@ -21,7 +21,8 @@ use Spatie\Permission\Models\Permission;
     Route::get('/', function () {
       
          if (session('id')==1) {
-             $per = array('统计','楼盘架构管理','组织架构管理','经纪人管理','工作管理','扫楼记录管理','租户管理','参数配置','新建楼盘','楼盘列表','编辑部门','帐号管理','角色管理','权限管理','经纪人列表','查看全部扫楼记录','按楼盘查看数据变更','表单选项配置','合同到期提醒手机');
+             $per = array('统计','楼盘架构管理','组织架构管理','经纪人管理','工作管理','扫楼记录管理','租户','参数配置','新建楼盘','楼盘列表','编辑部门','帐号管理','角色管理','权限管理','经纪人列表','查看全部扫楼记录','按楼盘查看数据变更',
+             '表单选项配置','合同到期提醒手机');
 
              return view('index',['per'=>$per]);
          }else if (session('id')) {
@@ -202,6 +203,8 @@ Route::prefix('clean')->group(function () {//扫楼记录管理
     })->name('clean')->middleware('adminRoute');
 
     Route::get('gain/clean','Clean\CleanController@gainClean');
+
+    Route::get('search/clean','Clean\CleanController@searchClean');//按楼盘查看数据变更
     
     Route::get('record-change', function () {
         return view('clean.record-change');//按楼盘查看数据变更
@@ -216,7 +219,7 @@ Route::prefix('tenant')->group(function () {//租户管理
     })->name('tenant')->middleware('adminRoute');
 
     Route::get('query/tenant','Tenant\TenantController@queryTenant');//租户信息列表 
-    Route::get('gain/info/{state}','Tenant\TenantController@gainInfo');//查询单个租户信息
+    Route::get('gain/info','Tenant\TenantController@gainInfo');//查询单个租户信息
 
     Route::post('del/tenant','Tenant\TenantController@delTenant');//删除租户信息
     Route::post('update/tenant','Tenant\TenantController@updateTenant');//更新租户信息
@@ -232,7 +235,7 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::get('company', function () {
         return view('parm.company-type');//公司类型
-    })->name('parm')->middleware('adminRoute');
+    })->name('form')->middleware('adminRoute');
 
     Route::get('gain/company','Parm\CompanyTypeController@gainCompany');//获取公司类型信息
     Route::get('gain/company/type/{id}','Parm\CompanyTypeController@gainCompanyType');//获取公司类型
@@ -242,7 +245,7 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::get('demand', function () {
         return view('parm.demand');//租户需求
-    })->name('parm')->middleware('adminRoute');
+    })->name('form')->middleware('adminRoute');
     Route::get('gain/demand','Parm\DemandController@gainDemand');//获取租户需求信息
     Route::get('gain/demand/type/{id}','Parm\DemandController@gainDemandType');//获取租户需求类型
     Route::post('create/name','Parm\DemandController@createName');//创建分类名称
@@ -251,18 +254,18 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::get('phone', function () {
         return view('parm.phone');//合同到期提醒手机号设置
-    })->name('parm')->middleware('adminRoute');
+    })->name('phone')->middleware('adminRoute');
 
     Route::post('update/phone','Parm\DemandController@updatePhone');//更新手机号
     Route::get('query/phone','Parm\DemandController@queryPhone');//
     
     Route::get('paytype', function () {
         return view('parm.paytype');//付款方式设置
-    })->name('parm')->middleware('adminRoute');
+    })->name('form')->middleware('adminRoute');
 
     Route::get('period', function () {
         return view('parm.period');//合同期限设置
-    })->name('parm')->middleware('adminRoute');
+    })->name('form')->middleware('adminRoute');
     Route::post('add/paytype','Parm\DemandController@addPaytype');//添加付款方式
     Route::get('gain/paytype','Parm\DemandController@gainPayType');//查看付款方式
     Route::post('del/paytype','Parm\DemandController@delPayType');//删除付款方式
@@ -275,7 +278,7 @@ Route::prefix('parm')->group(function () {//经纪人管理
 
     Route::get('protocol', function () {
         return view('parm.protocol');//用户协议
-    })->name('parm')->middleware('adminRoute');
+    })->name('form')->middleware('adminRoute');
     Route::post('create/protocol','Parm\DemandController@createProtocol');//创建用户协议
     Route::get('gain/protocol','Parm\DemandController@gainProtocol');//查看合同期限
     Route::post('del/period','Parm\DemandController@delPeriod');//删除合同期限

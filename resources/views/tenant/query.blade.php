@@ -30,13 +30,15 @@
  
   <form class="layui-form" action="">
     <div class="layui-form-item">
-        <label class="layui-form-label">到期时间:</label>
+        <label class="layui-form-label">选项:</label>
         <div class="layui-input-block">
             <select name="city" lay-verify="required" lay-filter="stateSelect">
                 <option value=""></option>
-                <option value="30">30天内</option>
-                <option value="60">60天内</option>
-                <option value="90">90天内</option>
+                <option value="yes">我司租户</option>
+                <option value="no">外面租户</option>
+                <option value="30">30天内到期</option>
+                <option value="60">60天内到期</option>
+                <option value="90">90天内到期</option>
             </select>
         </div>
     </div>
@@ -285,8 +287,11 @@
 //console.log(tenant_name);
         table.render({
           height: 600,
-          url: "gain/info" + '/' + tenant_name //数据接口
+          url: "gain/info" //数据接口
             ,
+            where:{
+              tenant_name: tenant_name,
+            },
           page: true,//开启分页
           elem: '#LAY_table_user',
           cols: [
@@ -303,7 +308,7 @@
                 width: 120
               }, {
                 field: 'is_we_company',
-                title: '租户类型',
+                title: '我司租户',
                 width: 120
               }, {
                 field: 'tenant_user',
@@ -394,7 +399,7 @@
                 width: 120
               }, {
                 field: 'is_we_company',
-                title: '租户类型',
+                title: '我司租户',
                 width: 120
               }, {
                 field: 'tenant_user',
