@@ -25,7 +25,8 @@ class WorkController extends Controller
     {
         if ($request->ajax()) {
             $limit = $request->get('limit'); 
-            $data= User::where('account',$account)->paginate($limit);
+
+            $data= User::where('account','like','%'.$account.'%')->orWhere('name','like','%'.$account.'%')->paginate($limit);
             return $data;
         }
     }

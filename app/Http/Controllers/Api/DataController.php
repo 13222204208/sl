@@ -116,75 +116,91 @@ class DataController extends Controller
                     'data' =>$data
                 ], 200); 
             }
-               
-                    $lpid = $request->lpid;
-                    $data = Level::where('parent_id',$lpid)->get(['type_name','id']);
-            
-               
-       
-                 $arr= array();
-    
-                 $house = '';
-                 if($request->has('cid')){
-                     $d= Level::defaultOrder()->ancestorsAndSelf($request->cid);
-                   
-                     foreach($d as $h){
-                         $house .= $h['type_name'].'>';
-                     }
-                     $arr['house_info'] = $house;
-    
-                 }else{
-                    $d= Level::defaultOrder()->ancestorsAndSelf($request->lpid);
-                   
-                    foreach($d as $h){
-                        $house .= $h['type_name'].'>';
-                    }
-                 }
-    
-                 $hnum = Clean::where('houses_info',$house)->get('houses_num');
-                 $farr = array();
-                 foreach($hnum as  $fj){
-                    $farr[] = $fj['houses_num'];
-                 }
-    
-                foreach($data as $k=> $key){
-                    $arr['data'][] = $key;
-                  $d = Level::where('parent_id',$key['id'])->get(['type_name','id']);
-                  if(empty($d[0])){
-                    $arr['data'][$k]['num'] = 1;//判断当前的层级，1 为最后一层，2 为倒数第二层
-                    $numhave= Level::where('id',$arr['data'][$k]['id'])->value('lpid');
-                    if($numhave == 1){
-                        $arr['data'][$k]['have'] = 1;
-                    }else{
-                        $arr['data'][$k]['have'] = 0;//判断房间号是否已经录入过
-                    }
-                    }else{
-                        $arr['data'][$k]['num'] = 0;
-                        $st = Level::where('parent_id',$d[0]['id'])->get(['type_name','id']);
-                        if(empty($st[0])){
-                            $arr['data'][$k]['num'] = 2;
-                        }
-                    }
-                    
-                }
-    
-    
-    
-                return response()->json([
-                    'code' => 1,
-                    'msg' => '成功',
-                    'data' => $arr
-                ], 200);
 
-            
+            if($request->lpid){
+                
+                $lpid = $request->lpid;
+                $data = Level::where('parent_id',$lpid)->get(['type_name','id']);
+        
+           
+   
+             $arr= array();
+
+             $house = '';
+             if($request->has('cid')){
+                 $d= Level::defaultOrder()->ancestorsAndSelf($request->cid);
+               
+                 foreach($d as $h){
+                     $house .= $h['type_name'].'>';
+                 }
+                 $arr['house_info'] = $house;
+
+             }else{
+                $d= Level::defaultOrder()->ancestorsAndSelf($request->lpid);
+               
+                foreach($d as $h){
+                    $house .= $h['type_name'].'>';
+                }
+             }
+
+             $hnum = Clean::where('houses_info',$house)->get('houses_num');
+             $farr = array();
+             foreach($hnum as  $fj){
+                $farr[] = $fj['houses_num'];
+             }
+
+            foreach($data as $k=> $key){
+                $arr['data'][] = $key;
+              $d = Level::where('parent_id',$key['id'])->get(['type_name','id']);
+              if(empty($d[0])){
+                $arr['data'][$k]['num'] = 1;//判断当前的层级，1 为最后一层，2 为倒数第二层
+                $numhave= Level::where('id',$arr['data'][$k]['id'])->value('lpid');
+                if($numhave == 1){
+                    $arr['data'][$k]['have'] = 1;
+                }else{
+                    $arr['data'][$k]['have'] = 0;//判断房间号是否已经录入过
+                }
+                }else{
+                    $arr['data'][$k]['num'] = 0;
+                    $st = Level::where('parent_id',$d[0]['id'])->get(['type_name','id']);
+                    if(empty($st[0])){
+                        $arr['data'][$k]['num'] = 2;
+                    }
+                }
+                
+            }
+
+
+
+            return response()->json([
+                'code' => 1,
+                'msg' => '成功',
+                'data' => $arr
+            ], 200);
+            }
+
 
             $data= House::where('uid',intval($user->id))->skip($page)->take($size)->get(['id','houses_name','map','city','business_area','property_type']);
+
+            $arr = array();
+            foreach($data as $d){
+               
+                $id = Level::where('type_name',$d['houses_name'])->where('parent_id',null)->value('id');
+                $d['id'] = $id;
+                $arr[] = $d;
+            }
             
             return response()->json([
                 'code' => 1,
                 'msg' => '成功',
                 'data' =>$data
             ], 200);
+
+  
+               
+
+            
+
 
 
         } catch (\Throwable $th) {

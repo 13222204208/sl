@@ -368,7 +368,7 @@
               if(data[i].is_we_company == 1){
                 data[i].is_we_company = "我司租户";
               }else{
-                data[i].is_we_company = "外面租户";
+                data[i].is_we_company = "外部租户";
               }
               arr.push(data[i].is_we_company);
               peo.push({'name':data[i].is_we_company,'value':data[i].total});

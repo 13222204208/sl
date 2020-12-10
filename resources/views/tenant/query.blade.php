@@ -57,7 +57,7 @@
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label">租户类型</label>
+        <label class="layui-form-label">是否我司</label>
         <div class="layui-input-block">
           <input type="text" name="is_we_company" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
@@ -207,7 +207,7 @@
               width: 120
             }, {
               field: 'is_we_company',
-              title: '租户类型',
+              title: '是否我司',
               width: 120
             }, {
               field: 'tenant_user',
