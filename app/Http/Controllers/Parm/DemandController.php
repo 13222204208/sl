@@ -264,9 +264,7 @@ class DemandController extends Controller
     {
         if ($request->ajax()) { 
             $state= DB::table('protocol')->where('id',intval($request->id))->update([
-                'title' => $request->title,
-                 'content' => $request->content,
-                'key' => $request->key
+                 'content' => $request->content
             ]);
             if ($state) {
                 return response()->json(['status'=>200]);

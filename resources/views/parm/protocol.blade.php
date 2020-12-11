@@ -60,21 +60,26 @@
         <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate"
             style="margin:20px">
 
+{{--  
             <div class="layui-form-item">
-                <label class="layui-form-label">分类名称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="type_name" required lay-verify="type_name" autocomplete="off"
-                        placeholder="请输入分类名称" value="" class="layui-input">
-                </div>
-            </div>
-
+                
+               
+                <input type="text" name="title" required lay-verify="type_name" autocomplete="off"
+                    placeholder="标题" value="" class="layui-input">
+           
+        </div>  --}}
+            <div class="layui-form-item">   
+                <textarea class="layui-textarea" name="content" id="p_content" style="display: none" lay-verify="content" >  
+                  
+                </textarea>
+              </div>  
 
 
 <br>
             <div class="layui-form-item ">
                 <div class="layui-input-block">
                     <div class="layui-footer" style="left: 0;">
-                        <button class="layui-btn" lay-submit="" lay-filter="editAccount">保存</button>
+                        <button class="layui-btn" lay-submit="" lay-filter="editAccount">修改</button>
                     </div>
                 </div>
             </div>
@@ -83,7 +88,7 @@
 
     <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
     <script type="text/html" id="barDemo">
-    
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 
     </script>
@@ -94,10 +99,9 @@
             var table = layui.table;
             var laydate = layui.laydate;
             var $ = layui.jquery;
-            var form = layui.form;
-            var layedit = layui.layedit;
+             form = layui.form;
+             layedit = layui.layedit;
 
-            var layedit = layui.layedit;
             layedit.build('LAY_demo1'); //建立编辑器
 
             $(document).on('click', '#admin-management', function () {
@@ -248,80 +252,42 @@
                     layer.open({
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
-                        title: "修改名称",
-                        area: ['600px', '300px'],
+                        title: "修改内容",
+                        area: ['600px', '500px'],
                         content: $("#popUpdateTest") //引用的弹出层的页面层的方式加载修改界面表单
                     });
-                    //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取
+                    index= layedit.build('p_content');
+                    layedit.setContent(index, data.content);
+                   
+                    form.verify({
+                        content: function(value) { 
+                             return layedit.sync(index);
+                            }
+                    });
+                
                     form.val("formUpdate", data);
                     setFormValue(obj, data);
-                } else if (obj.event === 'show') {
-                    console.log(data.type_name);
-                    $("#typeNameId").val(data.type_name);
-                    $("#lp_address").append(data.type_name);
-                    $("#PId").val(data.id);
-                   var id= data.id
-                   tableIns= table.render({
-                      url: "gain/demand/type"+'/'+id //数据接口
-                          ,
-                      page: true //开启分页
-                          ,
-                      elem: '#LAY_table_user',
-                      cols: [
-                          [
-      
-                              {
-                                  field: 'id',
-                                  title: 'ID',
-                                  width: 80,
-                                  sort: true
-                              }, {
-                                  field: 'type_name',
-                                  title: '分类名称',
-                              }, {
-                                  field: 'parent_id',
-                                  title: '父类ID',
-                                  width: 100
-                              }, {
-                                  fixed: 'right',
-                                  title: "操作",
-                                  align: 'center',
-                                  toolbar: '#barDemo'
-                              }
-                          ]
-                      ],
-                      parseData: function (res) { //res 即为原始返回的数据
-                          console.log(res);
-                          return {
-                              "code": '0', //解析接口状态
-                              "msg": res.message, //解析提示文本
-                              "count": res.total, //解析数据长度
-                              "data": res.data //解析数据列表
-                          }
-                      },
-                      id: 'testReload',
-                      title: '后台用户',
-                      totalRow: true
-      
-                  });
-                }
+                } 
 
             });
+
+      
 
             function setFormValue(obj, data) {
                 form.on('submit(editAccount)', function (massage) {
                     massage = massage.field;
-                    console.log(data);
+                    layedit.sync(index)
+                    console.log(massage);
 
                     $.ajax({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "update/name",
+                        url: "edit/protocol",
                         type: 'post',
                         data: {
                             id: data.id,
-                            type_name: massage.type_name,
+                            content:  massage.content,
                         },
                         success: function (msg) {
                             console.log(msg);
@@ -334,7 +300,7 @@
                                 setTimeout(function () {
 
                                     obj.update({
-                                        type_name: massage.type_name,
+                                        content: massage.content,
                                     }); //修改成功修改表格数据不进行跳转 
 
 

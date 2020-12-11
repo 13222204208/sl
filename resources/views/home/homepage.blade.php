@@ -61,7 +61,9 @@
               时间段内数量
          
             </p>
-
+            <div>
+              <table class="layui-hide" id="cleanDate"></table>
+            </div>
           </div>
         </div>
       </div>
@@ -111,7 +113,9 @@
               时间段内数量
          
             </p>
-
+            <div>
+              <table class="layui-hide" id="tenantDate"></table>
+            </div>
           </div>
         </div>
       </div>
@@ -241,6 +245,7 @@
           //  console.log(res);
           if (res.status == 200) {
             $("#register_num").html(res.num);
+
           } else if (res.status == 403) {
             layer.msg('错误', {
               offset: '15px',
@@ -262,10 +267,23 @@
             type: 'post',
             data: data,
             success: function(msg) {
-              console.log(msg);
+              //console.log(msg);
               if (msg.status == 200) {
                 $("#date_num").html(msg.dateNum);
-
+                table.render({
+                  elem: '#cleanDate'
+                  ,cols: [[ //标题栏
+                    ,{field: 'houses_info', title: '楼盘信息', width: 120}
+                    ,{field: 'broker_name', title: '录入人', minWidth: 150}
+                    ,{field: 'created_at', title: '时间', minWidth: 160}
+                  ]]
+                  ,data: msg.info
+                  //,skin: 'line' //表格风格
+                  ,even: true
+                  ,page: true //是否显示分页
+                  //,limits: [5, 7, 10]
+                  ,limit: 5 //每页默认显示的数量
+                });
               } else {
                 layer.msg("修改失败", {
                   icon: 5
@@ -283,7 +301,6 @@
           method: 'get',
           dataType: 'json',
           success: function(res) {
-              
             if (res.status == 200) {
               $("#tenant_kong").html(res.num + '%');
             } else if (res.status == 403) {
@@ -307,7 +324,6 @@
           method: 'get',
           dataType: 'json',
           success: function(res) {
-            //  console.log(res);
             if (res.status == 200) {
               $("#tenant_num").html(res.num);
             } else if (res.status == 403) {
@@ -334,7 +350,20 @@
                 console.log(msg);
                 if (msg.status == 200) {
                   $("#tenant_date_num").html(msg.dateNum);
-  
+                  table.render({
+                    elem: '#tenantDate'
+                    ,cols: [[ //标题栏
+                      ,{field: 'tenant_name', title: '租户名', width: 120}
+                      ,{field: 'broker_name', title: '录入人', minWidth: 150}
+                      ,{field: 'created_at', title: '时间', minWidth: 160}
+                    ]]
+                    ,data: msg.info
+                    //,skin: 'line' //表格风格
+                    ,even: true
+                    ,page: true //是否显示分页
+                    //,limits: [5, 7, 10]
+                    ,limit: 5 //每页默认显示的数量
+                  });
                 } else {
                   layer.msg("修改失败", {
                     icon: 5

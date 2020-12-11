@@ -223,7 +223,7 @@ Route::prefix('tenant')->group(function () {//租户管理
 
     Route::post('del/tenant','Tenant\TenantController@delTenant');//删除租户信息
     Route::post('update/tenant','Tenant\TenantController@updateTenant');//更新租户信息
-    Route::get('stop/date/{day}','Tenant\TenantController@stopDate');//合同快到期的租户
+    Route::get('stop/date','Tenant\TenantController@stopDate');//合同快到期的租户
     
     Route::get('manage', function () {
         return view('tenant.manage');//租户管理
@@ -280,6 +280,7 @@ Route::prefix('parm')->group(function () {//经纪人管理
         return view('parm.protocol');//用户协议
     })->name('form')->middleware('adminRoute');
     Route::post('create/protocol','Parm\DemandController@createProtocol');//创建用户协议
+    Route::post('edit/protocol','Parm\DemandController@editProtocol');//修改用户协议
     Route::get('gain/protocol','Parm\DemandController@gainProtocol');//查看合同期限
     Route::post('del/period','Parm\DemandController@delPeriod');//删除合同期限
     Route::post('edit/period','Parm\DemandController@editPeriod');//编辑合同期限

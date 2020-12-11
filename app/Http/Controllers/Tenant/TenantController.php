@@ -71,28 +71,32 @@ class TenantController extends Controller
     }
 
 
-    public function stopDate(Request $request,$day)//查询合同快到期的租户
+    public function stopDate(Request $request)//查询合同快到期的租户
     {
         if ($request->ajax()) {
             $limit = $request->get('limit');
+            $day = $request->get('day');
 
-            if($day == "yes" || $day =="no"){
-                if($day == "yes"){
-                    $day ="1";
-                }
-
-                if($day == "no"){
-                    $day = "0";
-                }
-
-                $data = GetTenant::where('is_we_company',$day)->paginate($limit);
-                return $data;
+            $state = true;
+            if($day == ""){
+                $state = false;
+            }
+            $is_we_company = $request->get('is_we_company');
+            if($is_we_company == 0 || $is_we_company == 1){
+                $status = true;
+            }else{
+                $status = false;
             }
 
-            $day = '+'.$request->day.'day';
+            $day = '+'.$day.'day';
             $date= date("Y-m-d",strtotime($day));
-        
-            $data = GetTenant::whereDate('stop_time','<',$date)->paginate($limit);
+            
+
+            $data = GetTenant::when($status, function ($query) use ($is_we_company) {
+                return $query->where('is_we_company',$is_we_company);
+            })->when($state, function ($query) use ($date) {
+                return $query->whereDate('stop_time','<',$date);
+            })->paginate($limit);
             return $data;
         }
     }

@@ -30,18 +30,35 @@
  
   <form class="layui-form" action="">
     <div class="layui-form-item">
-        <label class="layui-form-label">选项:</label>
+      <label class="layui-form-label">是否我司:</label>
+      <div class="layui-input-block">
+          <select name="is_we_company" id="isNo" lay-filter="stateIsNo">
+              <option value=""></option>
+              <option value="1">我司租户</option>
+              <option value="0">外部租户</option>
+          </select>
+      </div>
+  </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">到期租户:</label>
         <div class="layui-input-block">
-            <select name="city" lay-verify="required" lay-filter="stateSelect">
+            <select name="day"  lay-filter="stateSelect">
                 <option value=""></option>
-                <option value="yes">我司租户</option>
-                <option value="no">外面租户</option>
                 <option value="30">30天内到期</option>
                 <option value="60">60天内到期</option>
                 <option value="90">90天内到期</option>
             </select>
         </div>
     </div>
+
+    <div class="layui-form-item ">
+      <div class="layui-input-block">
+          <div class="layui-footer" style="left: 0;">
+              <button class="layui-btn" lay-submit="" lay-filter="create">查询</button>
+          </div>
+      </div>
+  </div>
 </form>
 
   <div class="layui-row" id="popUpdateTest" style="display:none;">
@@ -376,14 +393,18 @@
         });
       });
 
-      form.on('select(stateSelect)', function(data) { //更改帐号状态
-        let day = data.elem.value; //当前字段变化的值
-        console.log(day);
+      form.on('submit(create)', function (data) {
+       
+        console.log(data.field);
         table.render({
           height: 600,
-          url: "stop/date" + '/' + day //数据接口
+          url: "stop/date"  //数据接口
             ,
           page: true,//开启分页
+          where:{
+            day: data.field.day,
+            is_we_company:data.field.is_we_company
+          },
           elem: '#LAY_table_user',
           cols: [
             [
@@ -453,7 +474,7 @@
             ]
           ],
           parseData: function(res) { //res 即为原始返回的数据
-            //console.log(res);
+            console.log(res);
             return {
               "code": '0', //解析接口状态
               "msg": res.message, //解析提示文本
