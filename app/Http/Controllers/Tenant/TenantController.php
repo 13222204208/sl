@@ -81,8 +81,8 @@ class TenantController extends Controller
             if($day == ""){
                 $state = false;
             }
-            $is_we_company = $request->get('is_we_company');
-            if($is_we_company == 0 || $is_we_company == 1){
+            $is_we_company = intval($request->get('is_we_company'));
+            if($is_we_company === 0 || $is_we_company === 1){
                 $status = true;
             }else{
                 $status = false;
@@ -92,7 +92,7 @@ class TenantController extends Controller
             $date= date("Y-m-d",strtotime($day));
             
 
-            $data = GetTenant::when($status, function ($query) use ($is_we_company) {
+            $data = GetTenant::when($status, function ($query) use ($is_we_company){
                 return $query->where('is_we_company',$is_we_company);
             })->when($state, function ($query) use ($date) {
                 return $query->whereDate('stop_time','<',$date);

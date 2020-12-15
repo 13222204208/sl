@@ -24,7 +24,7 @@ class HousesController extends Controller
             $id = Level::where('type_name',$lpname)->value('id');
             if($id){ 
                 //$data= Level::where('parent_id',$id)->paginate($limit);
-                $data= Level::descendantsOf($id);
+                $data= Level::descendantsAndSelf($id);
                 return response()->json([
                     'code' =>0,
                     'msg' => '',
@@ -34,7 +34,7 @@ class HousesController extends Controller
                 Level::create(['type_name' => $lpname,'parent_id'=>0]);
                 $id = Level::where('type_name',$lpname)->value('id');
 
-                $data= Level::descendantsOf($id);
+                $data= Level::descendantsAndSelf($id);
                 return response()->json([
                     'code' =>0,
                     'msg' => '',
@@ -139,8 +139,9 @@ class HousesController extends Controller
     {
         if ($request->ajax()) {
 
-            $str= str_replace(" ",'',$request->type_name);
-            $type_name= array_filter(explode('，',$str));
+            
+            $str= str_replace("，",",",$request->type_name);
+            $type_name= array_filter(explode(',',$str));
             $data= array();
             $pid = intval($request->pid); 
             $lpid = intval($request->lpid);

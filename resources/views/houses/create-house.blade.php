@@ -14,14 +14,24 @@
 
 <body>
 
-{{--      <div class="demoTable" style="margin:30px;">
-        <button class="layui-btn"  data-type="reload" value="0" id="admin-management">添加分类</button>
-        <div class="layui-inline" style="color:gray" id="lp_address">
-        </div>
-
-    </div>  --}}
 
     <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
+        <br>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">范围</label>
+              <div class="layui-input-inline" style="width: 100px;">
+                <input type="number" id="min" placeholder="数字" autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid">-</div>
+              <div class="layui-input-inline" style="width: 100px;">
+                <input type="number" id="max" placeholder="数字" autocomplete="off" class="layui-input">
+              </div>
+              <button class="layui-btn" lay-submit="" lay-filter="" onclick="makenum()">生成</button>
+
+            </div>
+          </div>
+
         <form class="layui-form layui-from-pane" required lay-verify="required" style="margin:20px">
 
             <div class="layui-form-item">
@@ -30,7 +40,7 @@
                    {{--  <input type="text" name="type_name" required lay-verify="type_name" autocomplete="off"
                         placeholder="请输入分类名称" value="" class="layui-input"> --}}
 
-                        <textarea placeholder="可以添加多条数据，用中文逗号 , 分隔"  name="type_name" class="layui-textarea"></textarea>
+                        <textarea placeholder="可以添加多条数据，用中文逗号 , 分隔" id="typeNum"  name="type_name" class="layui-textarea"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -63,7 +73,7 @@
                 <label class="layui-form-label">分类名称</label>
                 <div class="layui-input-block">
                     <input type="text" name="type_name" required lay-verify="type_name" autocomplete="off"
-                        placeholder="请输入分类名称" value="" class="layui-input">
+                        placeholder="请输入分类名称" value=""  class="layui-input">
                 </div>
             </div>
 
@@ -100,6 +110,20 @@
             var $ = layui.jquery;
             var form = layui.form;
 
+            makenum= function(){
+                minnum = Number($('#min').val());
+                maxnum = Number($('#max').val());
+
+               function generateArray (min, max) {
+                return Array.from(new Array(max + 1).keys()).slice(min)
+              }
+             
+              str = generateArray(minnum,maxnum).toString();
+              console.log(str);
+              $("#typeNum").val(str);
+              //form.render();
+            }
+
             function getParam(paramName) { 
                 paramValue = "", isFound = !1; 
                 if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) { 
@@ -118,25 +142,11 @@
                    return  null ;
                 } 
              }
-            $("#lpname").val(getParam('name'));
+   
+            id = getParam('id');
 
-            $(document).on('click', '#admin-management', function () {
-                layer.open({
-                    //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-                    type: 1,
-                    title: "新建分类",
-                    area: ['600px', '300px'],
-                    content: $("#layuiadmin-form-admin") //引用的弹出层的页面层的方式加载修改界面表单
-                });
-            });
 
-            form.verify({
-                type_name: function (value) {
-                    if (value.length > 38) {
-                        return '最多只能三十八个字符';
-                    }
-                }
-            });
+        
 
          
            
@@ -177,9 +187,8 @@
                 });
                 return false;
             });
-           var id = getParam('id');
+        
 
-           
            var  tableIns = treeTable.render({
             elem: '#LAY_table_user',
             url: "gain/loupan"+'/'+id,
@@ -195,7 +204,13 @@
                 {field: 'type_name', title: '分类名称'},
                 
                 {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
-            ]]
+            ]],
+            
+            done: function () {
+                //关闭加载
+                
+                layer.closeAll('loading');
+            }
         });
 
    
@@ -252,8 +267,8 @@
                     layer.open({
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
-                        title: "新建子部门",
-                        area: ['600px', '300px'],
+                        title: "新建子分类",
+                        area: ['600px', '500px'],
                         content: $("#layuiadmin-form-admin") //引用的弹出层的页面层的方式加载修改界面表单
                     });
                  

@@ -222,6 +222,14 @@
               field: 'tenant_name',
               title: '租户名称',
               width: 120
+            },{
+              field: 'houses_name',
+              title: '楼盘名称',
+              width: 180
+            }, {
+              field: 'houses_info',
+              title: '租户详情',
+              width: 220
             }, {
               field: 'is_we_company',
               title: '是否我司',
@@ -324,6 +332,14 @@
                 title: '租户名称',
                 width: 120
               }, {
+                field: 'houses_name',
+                title: '楼盘名称',
+                width: 120
+              }, {
+                field: 'houses_info',
+                title: '租户详情',
+                width: 120
+              },{
                 field: 'is_we_company',
                 title: '我司租户',
                 width: 120
@@ -417,6 +433,14 @@
               }, {
                 field: 'tenant_name',
                 title: '租户名称',
+                width: 120
+              }, {
+                field: 'houses_name',
+                title: '楼盘名称',
+                width: 120
+              }, {
+                field: 'houses_info',
+                title: '租户详情',
                 width: 120
               }, {
                 field: 'is_we_company',

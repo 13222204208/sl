@@ -108,7 +108,6 @@ class HomePageController extends Controller
             $dueTime= date("Y-m-d",strtotime("+1 month",time()));
             $limit = $request->get('limit');
             $data= GetTenant::whereDate('stop_time','<=',$dueTime)->paginate($limit);
-
             return $data;
         }
     }
