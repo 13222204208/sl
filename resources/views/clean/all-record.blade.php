@@ -16,6 +16,13 @@
 </head>
 
 <body>
+  <div class="demoTable" style="margin:20px;">
+    搜索：
+    <div class="layui-inline">
+      <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+    </div>
+    <button class="layui-btn" type="button" data-type="reload">查询</button>
+  </div>
 
   <div class="fr"><br>
     <form class="layui-form layui-from-pane" required lay-verify="required" action="">
@@ -225,6 +232,115 @@
           date.getMinutes() + seperator2 + date.getSeconds();
         return currentdate;
       }
+
+            //楼盘名称或租户名称 
+            $('.demoTable .layui-btn').on('click', function() {
+
+              var keyWord = $('#demoReload');
+              var name = keyWord.val();
+              table.render({
+                height: 600,
+                page: true,//开启分页
+                elem: '#LAY_table_user',
+                url: "house/tenant",
+                where:{
+                  name: name
+                },
+                cols: [
+                  [
+                    {
+                      field: 'id',
+                      title: 'ID',
+                      width: 80,
+                      sort: true
+                    },{
+                      field: 'houses_name',
+                      title: '楼盘名称',
+                      width: 130,
+                    },{
+                      field: 'houses_info',
+                      title: '楼盘信息',
+                      width: 180,
+                    },{
+                      field: 'houses_num',
+                      title: '房间号',
+                      width: 180,
+                    }, {
+                      field: 'tenant_name',
+                      title: '租户名称',
+                      width: 180,
+                    },  {
+                      field: 'created_at',
+                      title: '录入时间',
+                      width: 180,
+                    }, {
+                      field: 'is_we_company',
+                      title: '是否我司租户',
+                      width: 120,
+                    }, {
+                      field: 'company_type',
+                      title: '公司类型',
+                      width: 120,
+                    }, {
+                      field: 'tenant_user',
+                      title: '联系人',
+                      width: 220,
+                      
+                    }, {
+                      field: 'start_time',
+                      title: '合同起始时间',
+                      width: 120,
+                    },{
+                      field: 'stop_time',
+                      title: '合同到期时间',
+                      width: 120,
+                    }, {
+                      field: 'pay_type',
+                      title: '付款方式',
+                      width: 100,
+                    }, {
+                      field: 'pay_time',
+                      title: '下次应付款时间',
+                      width: 120,
+                    }, {
+                      field: 'tenant_need',
+                      title: '租户需求',
+                    },{
+                      field: 'remark',
+                      title: '备注',
+                    }, {
+                      field: 'broker_name',
+                      title: '经纪人姓名',
+                      width: 100,
+                    }, {
+                      field: 'broker_phone',
+                      title: '经纪人手机号',
+                      width: 100,
+                    } ,    {
+                      fixed: 'right',
+                      title: "操作",
+                      width: 150,
+                      align: 'center',
+                      toolbar: '#barDemo'
+                    } 
+                  ]
+                ],
+                parseData: function(res) { //res 即为原始返回的数据
+                 // console.log(res);return false;
+                  return {
+                    "code": '0', //解析接口状态
+                    "msg": res.message, //解析提示文本
+                    "count": res.total, //解析数据长度
+                    "data": res.data //解析数据列表
+                  }
+                },
+                title: '后台用户',
+                totalRow: true
+      
+              });
+            });
+
+
 
       form.on('submit(search)', function(data) {
         var data = data.field;

@@ -179,8 +179,9 @@ class DataController extends Controller
             ], 200);
             }
 
+            $house_name = clean::where('uid',intval($user->id))->groupBy('houses_name')->pluck('houses_name');
 
-            $data= House::where('uid',intval($user->id))->skip($page)->take($size)->get(['id','houses_name','map','city','business_area','property_type']);
+            $data= House::whereIn('houses_name',$house_name)->skip($page)->take($size)->get(['id','houses_name','map','city','business_area','property_type']);
 
             $arr = array();
             foreach($data as $d){

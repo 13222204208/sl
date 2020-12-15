@@ -120,7 +120,13 @@
   <div class="layui-row" id="popUpdateTest" style="display:none;">
     <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
 
+      <div class="layui-form-item">
+        <label class="layui-form-label">部门选择</label>
+      <div class="layui-input-block" id="updateBranchName" >
 
+
+      </div>
+      </div>
 
 
       <div class="layui-form-item">
@@ -148,7 +154,7 @@
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
   <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs" lay-event="update">编辑</a>
-    <a class="layui-btn layui-btn-xs" lay-event="edit">分配角色</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">分配</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
   </script>
 
@@ -182,10 +188,7 @@
         
           });
           if (res.status == 200) {
-             
-
            
-            //$("#updateRoleScope").html(res);
             form.render();            
               
 
@@ -235,7 +238,7 @@
                 name = name + "," + i;
             }
         });
-        return name;
+        return id;
     }
 
       form.on('submit(createAccount)', function(data) {
@@ -249,7 +252,7 @@
         }
 
         var checkData = tree.getChecked('demoId2');
-
+//console.log(checkData); return false;
 var list = new Array();
 
 list = getChecked_list(checkData);
@@ -297,14 +300,14 @@ data['branch'] =list;
         method: 'get',
         dataType: 'json',
         success: function(res) {
+          //console.log(res); return false;
           status = res.status;
-          role_name = res.role_name;
+           role_name = res.role_name; //console.log( role_name[0].name); return false
           if (res.status == 200) {
             optionData = "";
               for (var i = 0; i < role_name.length; i++) {
               var t = role_name[i];
-            
-              optionData += '<input class="education2" type="checkbox" name="limits[]" lay-skin="primary" title="' + t.name + '" value="' + t.name + '">';
+              optionData += '<input class="education2" type="checkbox" name="limits[]" lay-skin="primary" title="' + t.name + '" value="' + t.id+ '">';
             }
 
               console.log(optionData);
@@ -482,9 +485,58 @@ data['branch'] =list;
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
                         title: "分配帐号角色",
-                        area: ['420px', '330px'],
+                        area: ['420px', '530px'],
                         content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
                     });
+
+                                                  //获取部门名称
+                                                  $.ajax({
+                                                    headers: {
+                                                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                                    },
+                                                    url: "user/branch",
+                                                    method: 'post',
+                                                    data:{
+                                                      id:data.id
+                                                    },
+                                                    dataType: 'json',
+                                                    success: function(res) {
+                                                      // console.log(res); return false;
+                                                      tree.render({
+                                                        elem: '#updateBranchName'
+                                                        ,data: res.data.pers
+                                                        ,showCheckbox: true  //是否显示复选框
+                                                        ,showLine:false
+                                                        ,checked:false
+                                                        ,id: 'demoId3'
+                                                    
+                                                      });
+
+                                                      branch=  res.data.branch[0].branch;
+                                                      branchid= branch.split(',').map(Number);
+                                                      branchid.shift();
+                                                  
+                                                      tree.setChecked('demoId3',branchid);
+                                                     
+                                                      form.render();     
+
+                                                      if (res.status == 200) {
+                                                       
+                                                        form.render();            
+                                                          
+                                            
+                                                        }else if (res.status == 403) {
+                                                        layer.msg('填写错误或角色名重复', {
+                                                          offset: '15px',
+                                                          icon: 2,
+                                                          time: 3000
+                                                        }, function() {
+                                                          location.href = 'power';
+                                                        })
+                                                      }
+                                                    }
+                                                  });
+
 
                            //获取权限名称
                            $.ajax({
@@ -503,7 +555,7 @@ data['branch'] =list;
              array= new Array();
              zh = new Array();
             $("#updateRoleScope input[type='checkbox']").each(function(){
-                var permission = $(this).val();
+                var permission = $(this).attr("title");
                 array.push(permission);
               });
 
@@ -520,9 +572,9 @@ data['branch'] =list;
                   }   
                 }
                 if (istrue) {
-                  optionData += '<input class="education" type="checkbox" checked  name="limits[]" lay-skin="primary" title="' + t + '" value="' + element + '">';
+                  optionData += '<input class="education" type="checkbox" checked  name="limits" lay-skin="primary" title="' + t + '" value="' + element + '">';
                 } else {
-                  optionData += '<input  class="education" type="checkbox"  name="limits[]" lay-skin="primary" title="' + t + '" value="' + element + '">';
+                  optionData += '<input  class="education" type="checkbox"  name="limits" lay-skin="primary" title="' + t + '" value="' + element + '">';
                 }
               }
 
@@ -552,6 +604,15 @@ data['branch'] =list;
       
         function setFormValue(obj, data) {
         form.on('submit(editAccount)', function(massage) {
+         
+          var checkData = tree.getChecked('demoId3');
+        
+          //console.log(checkData); return false;
+          var list = new Array();
+          
+          list = getChecked_list(checkData);
+         
+
           var len=$(".education:checked").length;
           if(len>1){
             $(massage.elem).next().attr("class","layui-unselect layui-form-checkbox");
@@ -559,7 +620,7 @@ data['branch'] =list;
             layer.msg('最多只能选一项！',{icon:5});
             return false;
           }
-          massage= massage.field;
+          massage= massage.field.limits;
 
           $.ajax({
             headers: {
@@ -569,7 +630,8 @@ data['branch'] =list;
             type: 'post',
             data: {
               id: data.id,
-              role:massage
+              role:massage,
+              branch:list
             },
             success: function(msg) {
               console.log(msg);

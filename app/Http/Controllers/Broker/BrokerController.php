@@ -85,13 +85,14 @@ class BrokerController extends Controller
     {
         $user= User::find($request->id);
         $have = array();
-        $roles= Role::select('name')->get();
+        $roles= Role::select(['name'])->get();
 
         foreach ($roles as $role) {//判断角色是否拥有此权限
 
             $state= $user->hasAnyRole($role['name']);
             if ($state) {
-                $have[]= $role['name'];
+                $have['name']= $role['name'];
+               // $have['id']= $role['id'];
             }
         }
         return response()->json(['status'=>200,'data'=>$have]);
@@ -99,17 +100,16 @@ class BrokerController extends Controller
     }
 
     public function updateRole(Request $request)//更新用户的角色
-    {  
+    { 
         $user= User::find($request->id);
         $roles= $request->role;
+        $user->branch = $request->branch;
 
         if (isset($roles)) {    
             $user->roles()->detach(); // 如果没有选择任何与用户关联的角色则将之前关联角色解除
-            foreach ($roles as $role) {
-                $user->assignRole($role);
-            }
+                $user->assignRole($roles);
         } 
-
+        $user->save();
 
         return response()->json(['status'=>200]);
       
@@ -122,6 +122,19 @@ class BrokerController extends Controller
         $pers = Branch::get()->toTree();
         
       return $pers;
+
+    }
+
+    public function userBranch(Request $request)//获取当前部门
+    {  
+        $branch = DB::table('users')->where('id',intval($request->id))->get(['branch']);
+       // return $branch[0];
+        $pers = Branch::get()->toTree();
+         $pers[0]['checked']=false;
+         //return $pers;
+        $data['pers'] = $pers;
+        $data['branch'] = $branch;
+        return response()->json(['status'=>200,'data'=>$data]);
 
     }
 
@@ -216,6 +229,9 @@ class BrokerController extends Controller
             $role->givePermissionTo($permission);
         }
 
+        $role->name = $request->name;
+        $role->save();
+
         return response()->json(['status'=>200]);
       
     }
@@ -260,7 +276,7 @@ class BrokerController extends Controller
     public function queryAccount(Request $request)
     {
         $limit = $request->get('limit');
-        $data= DB::table('users')->where('id','>',1)->select('id','branch','account','name')->paginate($limit);
+        $data= User::where('id','>',1)->select('id','branch','account','name')->paginate($limit);
         return $data;
     }
 
@@ -322,7 +338,7 @@ class BrokerController extends Controller
 
     public function gainRole()//获取所有角色名
     {
-        $role_name= Role::select('name')->get();
+        $role_name= Role::select(['name','id'])->get();
 
         if ($role_name) {
             return response()->json(['role_name'=>$role_name,'status'=>200]);

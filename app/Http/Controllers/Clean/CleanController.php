@@ -41,4 +41,14 @@ class CleanController extends Controller
         $data= GetClean::where('created_at','>',$startTime)->where('created_at','<',$stopTime)->paginate($limit);
         return $data;
     }
+
+    public function houseTenant(Request $request)
+    {   
+        $limit= $request->get('limit'); 
+        $name=  $request->get('name');
+
+        $data= GetClean::where('houses_name','like','%'.$name.'%')->orWhere('tenant_name','like','%'.$name.'%')->paginate($limit);
+
+        return $data;
+    }
 }

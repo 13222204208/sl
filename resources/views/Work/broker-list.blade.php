@@ -28,6 +28,36 @@
 
 
   <div class="layui-row" id="popUpdateTest" style="display:none;">
+<br>
+    <form class="layui-form layui-from-pane" required lay-verify="required" action="">
+      <div class="layui-form-item">
+   
+        <div class="layui-inline">
+          <label class="layui-form-label">开始时间：</label>
+          <div class="layui-input-inline">
+  
+            <input type="text" name="startTime" class="layui-input" id="startTime" placeholder="yyyy-MM-dd HH:mm:ss">
+          </div>
+  
+        </div>
+        <input type="hidden" value="" name="broker_id" id="userId">
+        <div class="layui-inline">
+          <label class="layui-form-label">结束时间：</label>
+          <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="stopTime" id="stopTime" placeholder="yyyy-MM-dd HH:mm:ss">
+          </div>
+  
+        </div>
+        <div class="layui-inline">
+          <div class="layui-input-inline" style="margin-right: -120px">
+            <button type="button" class="layui-btn layui-btn-blue" lay-submit=""  lay-filter="search">查询</button>
+          </div>
+        </div>
+      </div>
+  
+    </form>
+
+    
     <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
 
 
@@ -66,6 +96,40 @@
       var table = layui.table;
       var $ = layui.jquery;
       var form = layui.form;
+      laydate = layui.laydate;
+
+      laydate.render({
+        elem: '#startTime',
+        type: 'datetime',
+        max: getNowFormatDate()
+      });
+      //日期时间范围
+      laydate.render({
+        elem: '#stopTime',
+        type: 'datetime',
+        max: getNowFormatDate()
+      });
+
+      
+      function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+          month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+          strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month +
+          seperator1 + strDate + " " + date.getHours() + seperator2 +
+          date.getMinutes() + seperator2 + date.getSeconds();
+        return currentdate;
+      }
+
+
 
 
       table.render({
@@ -189,10 +253,36 @@
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
                         title: "经纪人工作信息",
-                        area: ['420px', '330px'],
+                        area: ['520px', '430px'],
                         content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
                     });
                     //动态向表传递赋值可以参看文章进行修改界面的更新前数据的显示，当然也是异步请求的要数据的修改数据的获取
+                    $('#userId').val(data.id);
+                    form.on('submit(search)', function(data) {
+                      var data = data.field;
+                       
+                        $.ajax({
+                          headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                          },
+                          url: "broker/record",
+                          type: 'post',
+                          data: data,
+                          success: function(msg) {
+                            console.log(msg);
+                            if (msg.status == 200) {
+                              $("#comeNum").val(msg.data.comeNum);
+                          $("#cleanNum").val(msg.data.cleanNum);
+                          
+                            } else {
+                              layer.msg("修改失败", {
+                                icon: 5
+                              });
+                            }
+                          }
+                        })
+                      });
+
                   
                     $.ajax({
                       headers: {
@@ -204,7 +294,7 @@
                         id: data.id
                       },
                       success: function(msg) {
-                        //console.log(msg);return false;
+                        console.log(msg);
                    
                         if (msg.status == 200) {
                           $("#comeNum").val(msg.data.comeNum);

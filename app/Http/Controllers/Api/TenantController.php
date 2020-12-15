@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Model\Level;
 use App\Model\Demand;
 use App\Model\Tenant;
+use App\Model\FollowUp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -25,7 +26,7 @@ class TenantController extends Controller
             return response()->json(['msg' =>'请登陆', 'code' => -1]);
         }
 
-        try {
+        //try {
 
             $size = 20;
             if($request->size){
@@ -106,8 +107,9 @@ class TenantController extends Controller
             }
     
             if($request->has('id')){
-                $data= Tenant::where('uid',$user->id)->where('id',$request->id)->get();//查询租户的详情
-    
+                $data= Tenant::where('id',$request->id)->get();//查询租户的详情
+                $follow = FollowUp::where('tenant_id',$request->id)->get(['content','created_at']);//查询租户跟进信息
+
                 $payType = DB::table('paytype')->where('id',intval($data[0]->pay_type))->get(['id','type_name','month']);//付款方式 
                 $cPeriod = DB::table('period')->where('id',intval($data[0]->contract_period))->get(['id','type_name','month']);//合同期限
                 $companyType = DB::table('company_type')->where('id',intval($data[0]->company_type))->get(['id','type_name']);//公司类型
@@ -132,17 +134,23 @@ class TenantController extends Controller
                     $d['company_type'] = get_object_vars($companyType[0]);
                     $d['tenant_need'] = $demand;
                     $d['houses_num'] = $h_n;
+
+                    
+                    if($follow->count()){ 
+                        $d['follow_up'] = $follow;
+                    }else{
+                        $d['follow_up'] = '';
+                    }
     
     
                     $arr[] =$d;
                 }
-                $data = $arr;
-    
+
                 
                 return response()->json([
                     'code' => 1,
                     'msg' => '查询成功',
-                    'data'=> $data
+                    'data'=> $arr
                 ], 200);
             }
     
@@ -154,12 +162,12 @@ class TenantController extends Controller
                 'data'=> $data
             ], 200);
          
-        } catch (\Throwable $th) {
+/*         } catch (\Throwable $th) {
             return response()->json([
                 'code' => 0,
                 'msg' =>"输入错误",
             ],200);
-        }
+        } */
 
        
     }
@@ -186,11 +194,19 @@ class TenantController extends Controller
     
             $id = intval($request->id);
             $data = $request->input();
+
+            if($request->follow_up != ''){
+                FollowUp::create([
+                    'tenant_id' => $id,
+                    'content' => $request->follow_up
+                ]);
+            }
             
             $data['pay_time'] = $pay_time;
             $data['stop_time'] = $contract_period;
             unset($data['token']);
             unset($data['id']);
+            unset($data['follow_up']);
     
             $state= Tenant::where('id',$id)->update($data);
     

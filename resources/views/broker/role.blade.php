@@ -45,9 +45,18 @@
     </form>
   </div>
 
+ 
+
 
   <div class="layui-row" id="popUpdateTest" style="display:none;">
     <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">角色名称</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" required lay-verify="role_name" autocomplete="off" placeholder="请输入角色名称" value="" class="layui-input">
+        </div>
+      </div>
 
        <div class="layui-form-item">
         <label class="layui-form-label">权限范围</label>
@@ -71,7 +80,8 @@
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
  <script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-xs" lay-event="edit">分配权限</a>
+
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
   </script> 
 
@@ -265,7 +275,7 @@
       
       table.on('tool(user)', function (obj) {
             var data = obj.data;
-         console.log(data);
+     
            if (obj.event === 'del') {
      
                 layer.confirm('真的删除么', function (index) {
@@ -350,6 +360,7 @@
 
         function setFormValue(obj, data) {
         form.on('submit(editAccount)', function(massage) {
+          console.log(massage); 
           var checkData = tree.getChecked('demoId2');
 
           var list = new Array();
@@ -364,7 +375,8 @@
             type: 'post',
             data: {
               id: data.id,
-              permission: list
+              permission: list,
+              name:massage.field.name
             },
             success: function(msg) {
               console.log(msg);

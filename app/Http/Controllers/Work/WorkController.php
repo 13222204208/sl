@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Work;
 
+use App\Model\User;
 use App\Model\Clean;
 use App\Model\House;
 use App\Model\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\User;
 
 class WorkController extends Controller
 {
@@ -37,6 +37,21 @@ class WorkController extends Controller
             $id = $request->id;//经纪人id
             $cleanNum = Clean::where('uid',$id)->count();//经纪人扫楼记录条数
             $comeNum = Clean::where('uid',$id)->groupBy('houses_name')->count();//经纪人扫楼记录条数
+           
+            $data['cleanNum'] = $cleanNum;
+            $data['comeNum'] = $comeNum;
+            return response()->json(['status'=>200,'data'=>$data]);
+        }
+    }
+
+    public function brokerRecord(Request $request)
+    {
+        if($request->ajax()){
+            $id = $request->broker_id;//经纪人id
+            $startTime = $request->startTime;
+            $stopTime = $request->stopTime;
+            $cleanNum = Clean::where('uid',$id)->where('created_at','>',$startTime)->where('created_at','<',$stopTime)->count();//经纪人扫楼记录条数
+            $comeNum = Clean::where('uid',$id)->where('created_at','>',$startTime)->where('created_at','<',$stopTime)->groupBy('houses_name')->count();//经纪人扫楼记录条数
            
             $data['cleanNum'] = $cleanNum;
             $data['comeNum'] = $comeNum;

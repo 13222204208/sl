@@ -131,8 +131,23 @@ class HousesController extends Controller
     {
         $limit = $request->get('limit');
 
-        $data=   GetTenant::whereRaw('FIND_IN_SET(?,houses_num)',[$id])->paginate($limit);
-        return $data;
+        $state= true;
+        $data= Level::descendantsAndSelf($id)->where('lpid',1);
+        $arr = array();
+        foreach($data as $d){
+            $arr[] = $d['id'];
+        }
+        //$result= GetTenant::whereRaw('FIND_IN_SET(?,houses_num)',$arr)->paginate($limit);
+        if(empty($arr)){ 
+            return [];
+        }
+        $res = GetTenant::when($state,function ($q) use ($arr) {
+            foreach ($arr as $d) { 
+            $q->orWhereRaw('FIND_IN_SET(?,houses_num)',[$d]);
+            }
+        })->paginate($limit);
+       
+        return $res;
     }
 
     public function createName(Request $request)
@@ -174,7 +189,7 @@ class HousesController extends Controller
             $before = "";
          
             foreach($datas as $data){
-                $before .= $data['type_name'];
+                $before .= $data['type_name'].' —— ';
             }
              if($level->parent_id == null){
                  $pid = 0;

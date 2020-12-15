@@ -3,10 +3,11 @@
 namespace App\Model;
 
 use App\Model\Traits\Timestamp;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -36,5 +37,17 @@ class User extends Authenticatable implements JWTSubject
         public function getJWTCustomClaims()
         {
             return [];
+        }
+
+        public function getBranchAttribute($value)
+        {
+            $bid = explode(',',$value);
+
+            $bname ="";
+            foreach($bid as $id){
+                $str = DB::table('branch')->where('id',$id)->value('name');
+                $bname .= $str.'，';
+            }
+            return $bname;
         }
 }

@@ -143,6 +143,8 @@ Route::prefix('broker')->group(function () {//经纪人管理
     Route::post('add/account','Broker\BrokerController@addAccount');//添加后台帐号
     Route::post('have/branch','Broker\BrokerController@haveBranch');//选择部门
 
+    Route::post('user/branch','Broker\BrokerController@userBranch');//给用户分配部门
+
     Route::post('del/account','Broker\BrokerController@delAccount');//删除一个帐号
     Route::post('update/account','Broker\BrokerController@updateAccount');//更新帐号
 
@@ -192,6 +194,7 @@ Route::prefix('work')->group(function () {//工作管理
     Route::get('query/account/{account}','Work\WorkController@queryAccount');//查询经纪人
 
     Route::post('info','Work\WorkController@info');//经纪人工作详情
+    Route::post('broker/record','Work\WorkController@BrokerRecord');//经纪人时间段内提交的数据
     
     
 });
@@ -203,6 +206,9 @@ Route::prefix('clean')->group(function () {//扫楼记录管理
     })->name('clean')->middleware('adminRoute');
 
     Route::get('gain/clean','Clean\CleanController@gainClean');
+
+    Route::get('house/tenant','Clean\CleanController@houseTenant');//搜索扫楼信息
+
 
     Route::get('search/clean','Clean\CleanController@searchClean');//按楼盘查看数据变更
     
