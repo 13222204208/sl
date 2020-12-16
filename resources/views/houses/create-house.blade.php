@@ -152,7 +152,7 @@
            
             //监听提交
             form.on('submit(create)', function (data) {
-                console.log(data.field);
+                console.log(data);
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -172,7 +172,7 @@
                                 
                               $(".layui-laypage-btn").click();
                               layer.closeAll();
-                              tableIns.reload();
+                              //tableIns.reload();
                             });
                         } else if (res.status == 403) {
                             layer.msg('填写错误或重复', {

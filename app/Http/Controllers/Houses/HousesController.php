@@ -189,7 +189,7 @@ class HousesController extends Controller
             $before = "";
          
             foreach($datas as $data){
-                $before .= $data['type_name'].' —— ';
+                $before .= $data['type_name'].' ，';
             }
              if($level->parent_id == null){
                  $pid = 0;

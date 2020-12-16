@@ -36,7 +36,7 @@ class WorkController extends Controller
         if($request->ajax()){
             $id = $request->id;//经纪人id
             $cleanNum = Clean::where('uid',$id)->count();//经纪人扫楼记录条数
-            $comeNum = Clean::where('uid',$id)->groupBy('houses_name')->count();//经纪人扫楼记录条数
+            $comeNum = Clean::where('uid',$id)->groupBy('houses_name')->pluck('houses_name')->count();//经纪人扫楼记录条数
            
             $data['cleanNum'] = $cleanNum;
             $data['comeNum'] = $comeNum;
@@ -51,7 +51,7 @@ class WorkController extends Controller
             $startTime = $request->startTime;
             $stopTime = $request->stopTime;
             $cleanNum = Clean::where('uid',$id)->where('created_at','>',$startTime)->where('created_at','<',$stopTime)->count();//经纪人扫楼记录条数
-            $comeNum = Clean::where('uid',$id)->where('created_at','>',$startTime)->where('created_at','<',$stopTime)->groupBy('houses_name')->count();//经纪人扫楼记录条数
+            $comeNum = Clean::where('uid',$id)->where('created_at','>',$startTime)->where('created_at','<',$stopTime)->groupBy('houses_name')->pluck('houses_name')->count();//经纪人扫楼记录条数
            
             $data['cleanNum'] = $cleanNum;
             $data['comeNum'] = $comeNum;

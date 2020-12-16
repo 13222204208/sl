@@ -75,22 +75,25 @@ class TenantController extends Controller
     {
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $day = $request->get('day');
+            $day = strval($request->get('day'));
 
             $state = true;
             if($day == ""){
                 $state = false;
+            }  
+          
+            $status = false;
+            if($request->has('is_we_company')){
+                $is_we_company = $request->get('is_we_company'); 
+                if($is_we_company === 0 || $is_we_company === 1){
+                    $status = true;
+                }
             }
-            $is_we_company = intval($request->get('is_we_company'));
-            if($is_we_company === 0 || $is_we_company === 1){
-                $status = true;
-            }else{
-                $status = false;
-            }
+
 
             $day = '+'.$day.'day';
             $date= date("Y-m-d",strtotime($day));
-            
+          
 
             $data = GetTenant::when($status, function ($query) use ($is_we_company){
                 return $query->where('is_we_company',$is_we_company);
