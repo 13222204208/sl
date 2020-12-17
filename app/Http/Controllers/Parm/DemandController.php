@@ -45,6 +45,12 @@ class DemandController extends Controller
            
             $pid = intval($request->pid);
 
+            $result= Demand::withDepth()->find($pid);
+            $depth= $result->depth; 
+            if($depth >= 2){
+                return response()->json(['status'=>403]);
+            }
+
             if ($pid == 0) {
                 for ($i=0; $i < count($type_name) ; $i++) { 
                   $status=  Demand::create(['type_name'=> $type_name[$i]]);

@@ -149,6 +149,15 @@ class SaoLouController extends Controller
             $month = '+'.$payType.'month';
             $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
     
+            //支付时间不能小于今天
+            $todayTime = date('Y-m-d');
+            if(strtotime($todayTime) > strtotime($pay_time)){
+                return response()->json([
+                    'code' => 0,
+                    'msg' => '付款时间必须大于今天'
+                ], 200);
+            }
+
             $cPeriod = DB::table('period')->where('id',intval($request->contract_period))->value('month');//合同期限
             $m = '+'.$cPeriod.'month';
             $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间

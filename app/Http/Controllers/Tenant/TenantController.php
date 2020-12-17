@@ -83,8 +83,8 @@ class TenantController extends Controller
             }  
           
             $status = false;
-            if($request->has('is_we_company')){
-                $is_we_company = $request->get('is_we_company'); 
+            if($request->is_we_company !=''){
+                $is_we_company = intval($request->get('is_we_company')); 
                 if($is_we_company === 0 || $is_we_company === 1){
                     $status = true;
                 }

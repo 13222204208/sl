@@ -137,12 +137,12 @@
                   
                             })
                         } else if (res.status == 403) {
-                            layer.msg('填写错误或重复', {
+                            layer.msg('最多只能三级', {
                                 offset: '15px',
                                 icon: 2,
                                 time: 3000
                             }, function () {
-                                location.href = 'created';
+                                location.href = 'demand';
                             })
                         }
                     }

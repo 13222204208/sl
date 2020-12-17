@@ -79,7 +79,7 @@ class DataController extends Controller
 
         try {
             
-            if($request->has('houses_name')){
+            if($request->houses_name != ''){
                 $data = House::where('houses_name','like','%'.$request->houses_name.'%')->get(['id','houses_name','map','city','business_area','property_type']);
                 
                 $arr = array();
