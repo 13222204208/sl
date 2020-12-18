@@ -276,7 +276,7 @@ class BrokerController extends Controller
     public function queryAccount(Request $request)
     {
         $limit = $request->get('limit');
-        $data= User::where('id','>',1)->select('id','branch','account','name')->paginate($limit);
+        $data= User::where('id','>',1)->select('id','branch','account','name')->orderBy('id','desc')->paginate($limit);
         return $data;
     }
 

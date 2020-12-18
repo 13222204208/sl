@@ -57,10 +57,10 @@ class loginController extends Controller
     {
         if (session('id')) {
             $user = User::find(session('id'));
-            if (!$user || decrypt($user->password) != $request->oldPassword) {
+            if (!$user ) {
                 return response()->json(['status'=>403]);
             }
-            $user->password = encrypt($request->password);
+            $user->password = bcrypt($request->password);
             $state = $user->save();
             if ($state) {
                 return response()->json(['status'=>200]); 

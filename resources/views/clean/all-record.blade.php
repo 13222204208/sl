@@ -241,6 +241,7 @@
               table.render({
                 height: 600,
                 page: true,//开启分页
+                limit:15,
                 elem: '#LAY_table_user',
                 url: "house/tenant",
                 where:{
@@ -443,6 +444,7 @@
         },
         id: 'testReload',
         page: true,
+        limit:15,
       });
         return false;
       });
@@ -454,6 +456,7 @@
           ,
         page: true //开启分页
           ,
+          limit:15,
         elem: '#LAY_table_user',
         cols: [
           [

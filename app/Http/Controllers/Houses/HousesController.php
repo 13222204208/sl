@@ -36,8 +36,8 @@ class HousesController extends Controller
 
                 $data= Level::descendantsAndSelf($id);
                 return response()->json([
-                    'code' =>0,
-                    'msg' => '',
+                    'code' =>200,
+                    //'msg' => '',
                     'data' =>$data
                 ]);
             }

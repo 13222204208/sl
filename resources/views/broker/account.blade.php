@@ -331,6 +331,7 @@ data['branch'] =list;
         height: 600,
         url: "query/account" //数据接口
           ,
+        limit:15,
         page: true //开启分页
           ,
         elem: '#LAY_table_user',

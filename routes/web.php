@@ -91,7 +91,7 @@ Route::prefix('houses')->group(function () {//楼盘管理
         return view('houses.create-house');//创建楼盘
     })->name('houses')->middleware('adminRoute');
     Route::get('gain/loupan/{id}','Houses\HousesController@gainLoupan');//获取楼盘信息
-
+    Route::get('testa/{id}','Houses\HousesController@testa');//获取楼盘信息
     Route::get('info','Houses\HousesController@info');//楼盘详细信息
 
     Route::get('tenant/info/{hnum}','Houses\HousesController@tenantInfo');//楼盘上的租户信息

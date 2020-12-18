@@ -17,18 +17,18 @@
 
 <body>
 
-  <div class="demoTable" style="margin:20px;">
-       <label class="layui-form-label">  租户名称：</label>
+  <form class="layui-form" action="">
+    <br>
+    <div class="layui-form-item">
+       <label class="layui-form-label">  租户名称:</label>
 
     <div class="layui-inline">
-      <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+      <input class="layui-input" name="tenant_name" id="demoReload" autocomplete="off">
     </div>
-    <button class="layui-btn" type="button" data-type="reload">查询</button>
-
     
   </div>
  
-  <form class="layui-form" action="">
+
     <div class="layui-form-item">
       <label class="layui-form-label">是否我司:</label>
       <div class="layui-input-block">
@@ -304,122 +304,22 @@
 
 
 
-      //查询帐号
-      $('.demoTable .layui-btn').on('click', function() {
-
-        var keyWord = $('#demoReload');
-        var tenant_name = keyWord.val();
-//console.log(tenant_name);
-        table.render({
-          height: 600,
-          url: "gain/info" //数据接口
-            ,
-            where:{
-              tenant_name: tenant_name,
-            },
-          page: true,//开启分页
-          elem: '#LAY_table_user',
-          cols: [
-            [
-
-              {
-                field: 'id',
-                title: 'ID',
-                width: 80,
-                sort: true
-              }, {
-                field: 'tenant_name',
-                title: '租户名称',
-                width: 120
-              }, {
-                field: 'houses_name',
-                title: '楼盘名称',
-                width: 120
-              }, {
-                field: 'houses_info',
-                title: '租户详情',
-                width: 120
-              },{
-                field: 'is_we_company',
-                title: '我司租户',
-                width: 120
-              }, {
-                field: 'tenant_user',
-                title: '联系人',
-                width: 120
-              }, {
-                field: 'company_type',
-                title: '公司类型',
-                width: 160
-              }, {
-                field: 'start_time',
-                title: '合同起始时间',
-                width: 120
-              }, {
-                field: 'stop_time',
-                title: '合同到期时间',
-                width: 120
-              }, {
-                field: 'pay_type',
-                title: '付款方式',
-                width: 120
-              }, {
-                field: 'pay_time',
-                title: '下次应付款时间',
-                width: 160
-              },  {
-                field: 'tenant_need',
-                title: '租户需求',
-                width: 120
-              }, {
-                field: 'remark',
-                title: '备注',
-                width: 120
-              }, {
-              field: 'broker_name',
-              title: '经纪人姓名',
-            },  {
-              field: 'broker_phone',
-              title: '经纪人手机号',
-            },{
-                field: 'created_at',
-                title: '创建时间',
-                width: 160
-              },{
-                fixed: 'right',
-                title: "操作",
-                width: 150,
-                align: 'center',
-                toolbar: '#barDemo'
-              }
-            ]
-          ],
-          parseData: function(res) { //res 即为原始返回的数据
-            //console.log(res);
-            return {
-              "code": '0', //解析接口状态
-              "msg": res.message, //解析提示文本
-              "count": res.total, //解析数据长度
-              "data": res.data //解析数据列表
-            }
-          },
-          title: '后台用户',
-          totalRow: true
-
-        });
-      });
-
       form.on('submit(create)', function (data) {
-       
-        console.log(data.field);
+       console.log(data.field); 
+        if(data.field.is_we_company == ''){
+          data.field.is_we_company =3;
+        }
+       console.log(data.field.is_we_company);
         table.render({
           height: 600,
           url: "stop/date"  //数据接口
             ,
           page: true,//开启分页
+          limit:15,
           where:{
             day: data.field.day,
-            is_we_company:data.field.is_we_company
+            is_we_company:data.field.is_we_company,
+            tenant_name:data.field.tenant_name
           },
           elem: '#LAY_table_user',
           cols: [

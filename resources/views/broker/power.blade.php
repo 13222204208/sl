@@ -167,6 +167,7 @@
                     ,
                 page: true //开启分页
                     ,
+                limit:15,
                 elem: '#LAY_table_user',
                 cols: [
                     [

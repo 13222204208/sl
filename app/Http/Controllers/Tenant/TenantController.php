@@ -83,22 +83,24 @@ class TenantController extends Controller
             }  
           
             $status = false;
-            if($request->is_we_company !=''){
-                $is_we_company = intval($request->get('is_we_company')); 
-                if($is_we_company === 0 || $is_we_company === 1){
-                    $status = true;
-                }
+            $is_we_company= '';
+            if($request->get('is_we_company') == 0 || $request->get('is_we_company') == 1){
+                $is_we_company = $request->get('is_we_company');
+                $status = true;
             }
 
 
             $day = '+'.$day.'day';
             $date= date("Y-m-d",strtotime($day));
-          
 
+            $tt = $request->get('tenant_name');
+          
             $data = GetTenant::when($status, function ($query) use ($is_we_company){
                 return $query->where('is_we_company',$is_we_company);
             })->when($state, function ($query) use ($date) {
                 return $query->whereDate('stop_time','<',$date);
+            })->when($tt, function ($query) use ($tt) {
+                return $query->where('tenant_name','like','%'.$tt.'%')->orWhere('tenant_user','like','%'.$tt.'%');
             })->paginate($limit);
             return $data;
         }

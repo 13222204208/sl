@@ -39,23 +39,28 @@
             var form = layui.form;
             var $ = layui.jquery;
         // 渲染树形表格
-        var insTb = treeTable.render({
-            elem: '#demoTb1',
-            url: 'gain/house/num',
-            tree: {
-                iconIndex: 2,           // 折叠图标显示在第几列
-                isPidData: true,        // 是否是id、pid形式数据
-                idName: 'id',  // id字段名称
-                pidName: 'parent_id'     // pid字段名称
-            },
-            cols: [[
-                {type: 'numbers'},
-                {type: 'checkbox'},
-                {field: 'type_name', title: '楼盘信息'},
+     
+                treeTable.render({
+                elem: '#demoTb1',
+                treeDefaultClose: false,
+                treeLinkage: false,	
+                url: 'gain/house/num',
+                tree: {
+                    iconIndex: 2,           // 折叠图标显示在第几列
+                    isPidData: true,        // 是否是id、pid形式数据
+                    idName: 'id',  // id字段名称
+                    pidName: 'parent_id'     // pid字段名称
+                },
+                cols: [[
+                    {type: 'numbers'},
+                    {type: 'checkbox'},
+                    {field: 'type_name', title: '楼盘信息'},
+                    
+                    {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
+                ]],
                 
-                {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
-            ]]
-        });
+            });
+     
 
         treeTable.on('tool(demoTb1)', function (obj) {
             var event = obj.event;
