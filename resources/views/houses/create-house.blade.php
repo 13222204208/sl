@@ -18,6 +18,19 @@
     <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
         <br>
         <div class="layui-form-item">
+
+            <div class="layui-inline">
+                <label class="layui-form-label">前缀后缀</label>
+                <div class="layui-input-inline" style="width: 100px;">
+                  <input type="text" id="before" placeholder="0也是前缀" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline" style="width: 100px;">
+                  <input type="text" id="after" placeholder="后缀" autocomplete="off" class="layui-input">
+                </div> 
+              </div>
+
+
             <div class="layui-inline">
               <label class="layui-form-label">范围</label>
               <div class="layui-input-inline" style="width: 100px;">
@@ -113,12 +126,22 @@
             makenum= function(){
                 minnum = Number($('#min').val());
                 maxnum = Number($('#max').val());
+                before = $('#before').val();
+                after = $('#after').val();
 
-               function generateArray (min, max) {
-                return Array.from(new Array(max + 1).keys()).slice(min)
+               function generateArray (min, max,before,after) {
+                //return Array.from(new Array(max + 1).keys()).slice(min)
+                arr = new Array();
+                length = max-min;
+                strNum = '';
+                for(var i=0;i<length;i++){
+                    min++;
+                   strNum = before+min+after;
+                   arr[i] = strNum;
+                    }
+                    return arr;
               }
-             
-              str = generateArray(minnum,maxnum).toString();
+              str = generateArray(minnum,maxnum,before,after).toString();
               console.log(str);
               $("#typeNum").val(str);
               //form.render();

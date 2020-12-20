@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('head_img');//头像
             $table->string('branch');//部门
             $table->integer('role_id')->unsigned()->default(0)->comment('角色id');
+            $table->integer('status')->unsigned()->default(1)->comment('1正常，2停用');
             $table->timestamps();
         });
     }

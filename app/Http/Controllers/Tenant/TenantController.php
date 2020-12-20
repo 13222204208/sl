@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tenant;
 
+use App\Model\User;
 use App\Model\Tenant;
 use App\Model\GetTenant;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class TenantController extends Controller
     {
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= GetTenant::orderBy('id','desc')->paginate($limit);
+            $data= GetTenant::whereIn('permission',$this->userPermission())->orderBy('id','desc')->paginate($limit);
 
             return $data;
         }
@@ -29,7 +30,7 @@ class TenantController extends Controller
 
                 return $data;
             }
-            $data= GetTenant::where('tenant_name','like','%'.$state.'%')->orWhere('tenant_user','like','%'.$state.'%')->paginate($limit);
+            $data= GetTenant::whereIn('permission',$this->userPermission())->where('tenant_name','like','%'.$state.'%')->orWhere('tenant_user','like','%'.$state.'%')->paginate($limit);
 
             return $data;
         }
@@ -95,14 +96,54 @@ class TenantController extends Controller
 
             $tt = $request->get('tenant_name');
           
-            $data = GetTenant::when($status, function ($query) use ($is_we_company){
+            $data = GetTenant::whereIn('permission',$this->userPermission())->when($status, function ($query) use ($is_we_company){
                 return $query->where('is_we_company',$is_we_company);
             })->when($state, function ($query) use ($date) {
                 return $query->whereDate('stop_time','<',$date);
             })->when($tt, function ($query) use ($tt) {
-                return $query->where('tenant_name','like','%'.$tt.'%')->orWhere('tenant_user','like','%'.$tt.'%');
+                return $query->where('tenant_name','like','%'.$tt.'%')->orWhere('tenant_user','like','%'.$tt.'%')->orWhere('broker_name','like','%'.$tt.'%');
             })->paginate($limit);
             return $data;
         }
+    }
+
+    public function queryAccount(Request $request)
+    {
+        $limit = $request->get('limit');
+        $data= User::where('id','>',1)->select('id','branch','account','name','status')->orderBy('id','desc')->paginate($limit);
+        return $data;
+    }
+
+    public function updateBroker(Request $request)
+    {
+        $tid = $request->tid;//租户信息id
+        $bid = $request->id;//经纪人id
+        $arr = array_filter(explode(',',$tid));
+
+        $user = User::find($bid);
+        $state =Tenant::whereIn('id',$arr)->update([
+            'uid' => $bid,
+            'broker_name' => $user->name,
+            'broker_phone' => $user->account
+        ]);
+
+        if ($state) {
+            return response()->json([
+                'status'=>200,
+            ]);
+        }else{
+            return response()->json([
+                'status'=>403,
+            ]);
+        }
+
+    }
+
+    public function userPermission()
+    {
+        $id = session('id');//用户id
+        $user = User::find($id);
+        $arr = explode(',',$user->branch);
+        return $arr;
     }
 }

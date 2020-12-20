@@ -26,6 +26,10 @@ class loginController extends Controller
             $account_num= $request->username;
         
             $user = User::where('account', $account_num)->first();
+
+            if ($user->status == 2) {
+                return response()->json(['status'=>403]);
+            }
         
             if (!Hash::check($request->password,$user->password)) {
                 return response()->json(['status'=>403]);

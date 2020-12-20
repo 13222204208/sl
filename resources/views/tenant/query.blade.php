@@ -143,19 +143,6 @@
         </div>
       </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">经纪人姓名</label>
-        <div class="layui-input-block">
-          <input type="text" name="broker_name" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label class="layui-form-label">经纪人手机号</label>
-        <div class="layui-input-block">
-          <input type="text" name="broker_phone" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
-        </div>
-      </div>
 
       <div class="layui-form-item ">
         <div class="layui-input-block">
@@ -168,9 +155,22 @@
     </form>
   </div>
 
+  <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
 
+    <table class="layui-hide" id="LAY_table_change" lay-filter="changeUser"></table>
+    <script type="text/html" id="tooChange">
+      <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="changeData">确定转移</button>
+      </div>
+    </script>
+  </div>
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
+  <script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+      <button class="layui-btn layui-btn-sm" lay-event="getCheckData">转移经纪人</button>
+    </div>
+  </script>
   <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
@@ -210,9 +210,10 @@
         page: true //开启分页
           ,
         elem: '#LAY_table_user',
+        toolbar: '#toolbarDemo',
         cols: [
           [
-
+            {type:'checkbox'},
             {
               field: 'id',
               title: 'ID',
@@ -258,14 +259,6 @@
               field: 'pay_time',
               title: '下次应付款时间',
               width: 160
-            },  {
-              field: 'tenant_need',
-              title: '租户需求',
-              width: 120
-            }, {
-              field: 'remark',
-              title: '备注',
-              width: 120
             }, {
               field: 'broker_name',
               title: '经纪人姓名',
@@ -274,7 +267,15 @@
               field: 'broker_phone',
               title: '经纪人手机号',
               width: 120
-            },{
+            }, {
+              field: 'tenant_need',
+              title: '租户需求',
+              width: 120
+            }, {
+              field: 'remark',
+              title: '备注',
+              width: 120
+            }, {
               field: 'created_at',
               title: '创建时间',
               width: 160
@@ -302,7 +303,138 @@
 
       });
 
+ //头工具栏事件
+ table.on('toolbar(user)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id);
 
+    if(obj.event == 'getCheckData'){
+      var data = checkStatus.data;
+       //cdata = JSON.stringify(data);
+       if(data.length < 1){
+        layer.msg("请选择要更改的信息", {icon: 5});
+        return false;
+       }
+       strid = "";
+       for(i=0; i<data.length; i++){
+          strid += data[i].id+','; 
+       }
+       console.log(strid);
+       layer.open({
+                        //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                        type: 1,
+                        title: "经纪人信息",
+                       area: ['800px','600px'],
+                        content: $("#layuiadmin-form-admin")//引用的弹出层的页面层的方式加载修改界面表单
+                    });
+                    table.render({
+        height: 600,
+        url: "query/account" //数据接口
+          ,
+        limit:15,
+        page: true //开启分页
+          ,
+        elem: '#LAY_table_change',
+        toolbar: '#tooChange',
+        cols: [
+          [
+            {type:'checkbox'},
+            {
+              type:'numbers',
+              title:'序号',
+              algin:'center',
+              width:80,
+            },
+            {
+              field: 'account',
+              title: '帐号',
+              width:120,
+          
+            }, {
+              field: 'name',
+              title: '名称',
+              width:120,
+            }, {
+              field: 'branch',
+              title: '部门',
+              width:120,
+            },{
+                            field: 'status',
+                            title: '状态',
+                            templet: function(d) {
+                                if (d.status == 1) {
+                                  return '正常';
+                                }else{
+                                    return '已禁用';
+                                }
+                              }
+                        }
+          ]
+        ],
+        parseData: function(res) { //res 即为原始返回的数据
+          //console.log(res);
+          return {
+            "code": '0', //解析接口状态
+            "msg": res.message, //解析提示文本
+            "count": res.total, //解析数据长度
+            "data": res.data //解析数据列表
+          }
+        },
+        id: 'testReload',
+        title: '后台用户',
+        totalRow: true
+
+      });
+
+      table.on('toolbar(changeUser)', function(obj){
+        var checkStatus = table.checkStatus(obj.config.id);
+
+        if(obj.event == 'changeData'){
+          var data = checkStatus.data;
+          //cdata = JSON.stringify(data);
+          if(data.length != 1){
+            layer.msg("一次只能分配给一个经纪人", {icon: 5});
+            return false;
+          }
+          brokerId = data[0].id;
+         $.ajax({
+            headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "update/broker",
+            type: 'post',
+            data: {
+              id: brokerId,
+              tid:strid
+            },
+            success: function(msg) {
+              
+              if (msg.status == 200) {
+                layer.closeAll('loading');
+                layer.load(2);
+                layer.msg("修改成功", {
+                  icon: 6,
+                  time:2000
+                }, function () {
+                  layer.closeAll(); //关闭所有的弹出层
+
+                            });
+ 
+             
+                  //window.location.href = "/edit/horse-info";
+
+              } else {
+                layer.msg("修改失败", {
+                  icon: 5
+                });
+              }
+            }
+          });
+
+        }
+      });
+
+    }
+  });
 
       form.on('submit(create)', function (data) {
        console.log(data.field); 
@@ -322,9 +454,10 @@
             tenant_name:data.field.tenant_name
           },
           elem: '#LAY_table_user',
+          toolbar: '#toolbarDemo',
           cols: [
             [
-
+              {type:'checkbox'},
               {
                 field: 'id',
                 title: 'ID',

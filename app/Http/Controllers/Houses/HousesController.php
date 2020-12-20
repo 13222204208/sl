@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Houses;
 
 
+use App\Model\Clean;
 use App\Model\House;
 use App\Model\Level;
 use App\Model\Tenant;
-use App\Model\GetTenant;
 
+use App\Model\GetTenant;
 use Illuminate\Http\Request;
 use function PHPSTORM_META\type;
 use Illuminate\Support\Facades\DB;
@@ -229,5 +230,36 @@ class HousesController extends Controller
             }
         }
         
+    }
+
+    public function updateHouse(Request $request)//修改楼盘信息
+    {
+        DB::beginTransaction();
+        try {
+            if ($request->ajax()) {
+                $data = $request->data;
+                $before_name = $request->before;
+                House::where('id',$request->id)->update($data);
+
+                Level::where('type_name',$before_name)->where('parent_id',null)->update([
+                    'type_name'=>$data['houses_name']
+                ]);
+
+                // Clean::where('houses_name',$before_name)->update([
+                //     'houses_name'=>$data['houses_name']
+                // ]);
+
+                Tenant::where('houses_name',$before_name)->update([
+                    'houses_name'=>$data['houses_name']
+                ]);
+
+                DB::commit();//提交至数据库
+                return response()->json(['status'=>200]);
+            }
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json(['status'=>403]);
+        }
+
     }
 }

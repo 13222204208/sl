@@ -46,7 +46,6 @@ Route::get('login', function () {
     return view('login.login');
 });
 
-
 //后台退出
 Route::get('logout', function (Illuminate\Http\Request $request) {
     $request->session()->flush();
@@ -93,6 +92,8 @@ Route::prefix('houses')->group(function () {//楼盘管理
     Route::get('gain/loupan/{id}','Houses\HousesController@gainLoupan');//获取楼盘信息
     Route::get('testa/{id}','Houses\HousesController@testa');//获取楼盘信息
     Route::get('info','Houses\HousesController@info');//楼盘详细信息
+    Route::post('update/house','Houses\HousesController@updateHouse');//楼盘详细信息
+
 
     Route::get('tenant/info/{hnum}','Houses\HousesController@tenantInfo');//楼盘上的租户信息
 
@@ -147,6 +148,7 @@ Route::prefix('broker')->group(function () {//经纪人管理
 
     Route::post('del/account','Broker\BrokerController@delAccount');//删除一个帐号
     Route::post('update/account','Broker\BrokerController@updateAccount');//更新帐号
+    Route::patch('account/status/{id}','Broker\BrokerController@accountStatus');//更新帐号状态
 
     Route::get('query/account','Broker\BrokerController@queryAccount');//获取所有后台帐号
     Route::post('add/role','Broker\BrokerController@addRole');//添加角色
@@ -230,6 +232,11 @@ Route::prefix('tenant')->group(function () {//租户管理
     Route::post('del/tenant','Tenant\TenantController@delTenant');//删除租户信息
     Route::post('update/tenant','Tenant\TenantController@updateTenant');//更新租户信息
     Route::get('stop/date','Tenant\TenantController@stopDate');//合同快到期的租户
+
+    Route::get('query/account','Tenant\TenantController@queryAccount');//转移租户
+    Route::post('update/broker','Tenant\TenantController@updateBroker');//确定转移租户
+
+
     
     Route::get('manage', function () {
         return view('tenant.manage');//租户管理

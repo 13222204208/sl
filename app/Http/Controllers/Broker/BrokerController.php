@@ -276,7 +276,7 @@ class BrokerController extends Controller
     public function queryAccount(Request $request)
     {
         $limit = $request->get('limit');
-        $data= User::where('id','>',1)->select('id','branch','account','name')->orderBy('id','desc')->paginate($limit);
+        $data= User::where('id','>',1)->select('id','branch','account','name','status')->orderBy('id','desc')->paginate($limit);
         return $data;
     }
 
@@ -356,6 +356,21 @@ class BrokerController extends Controller
         }else{
             return response()->json(['role_name'=>$role_name,'status'=>403]);
         }
+    }
+
+    public function accountStatus(Request $request,$id)
+    {
+        $state= User::where('id',$id)->update([
+            'status' => $request->status
+        ]);
+
+        if ($state) {
+            return response()->json([ 'status' => 200]);
+
+        } else {
+
+            return response()->json([ 'status' => 403]);
+        }  
     }
 
   

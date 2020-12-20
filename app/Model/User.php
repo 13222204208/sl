@@ -15,6 +15,7 @@ class User extends Authenticatable implements JWTSubject
     use HasRoles, Timestamp;
     protected $table = 'users';
     protected $guarded = [];
+    protected $appends = ['branch_value'];
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
@@ -39,8 +40,9 @@ class User extends Authenticatable implements JWTSubject
             return [];
         }
 
-        public function getBranchAttribute($value)
+        public function getBranchValueAttribute()
         {
+            $value = $this->attributes['branch'];
             $bid = explode(',',$value);
 
             $bname ="";

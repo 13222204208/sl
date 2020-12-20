@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Clean;
 
+use App\Model\User;
 use App\Model\Clean;
 use App\Model\GetClean;
 use Illuminate\Http\Request;
@@ -14,7 +15,8 @@ class CleanController extends Controller
     { 
         if ($request->ajax()) {
             $limit = $request->get('limit');
-            $data= GetClean::orderBy('id','desc')->paginate($limit);
+
+            $data= GetClean::whereIn('permission',$this->userPermission())->orderBy('id','desc')->paginate($limit);
 
             return $data;
       
@@ -38,7 +40,7 @@ class CleanController extends Controller
         $startTime = $request->get('startTime');
         $stopTime = $request->get('stopTime');
 
-        $data= GetClean::where('created_at','>',$startTime)->where('created_at','<',$stopTime)->paginate($limit);
+        $data= GetClean::whereIn('permission',$this->userPermission())->where('created_at','>',$startTime)->where('created_at','<',$stopTime)->paginate($limit);
         return $data;
     }
 
@@ -47,8 +49,16 @@ class CleanController extends Controller
         $limit= $request->get('limit'); 
         $name=  $request->get('name');
 
-        $data= GetClean::where('houses_name','like','%'.$name.'%')->orWhere('tenant_name','like','%'.$name.'%')->paginate($limit);
+        $data= GetClean::whereIn('permission',$this->userPermission())->where('houses_name','like','%'.$name.'%')->orWhere('tenant_name','like','%'.$name.'%')->paginate($limit);
 
         return $data;
+    }
+
+    public function userPermission()
+    {
+        $id = session('id');//用户id
+        $user = User::find($id);
+        $arr = explode(',',$user->branch);
+        return $arr;
     }
 }

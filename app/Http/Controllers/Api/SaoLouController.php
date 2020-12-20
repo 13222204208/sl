@@ -91,13 +91,20 @@ class SaoLouController extends Controller
         try {
             $user = User::where('account',$request->account)->first();
             $data = array();
+
+            if ($user->status == 2) {
+                return response()->json([
+                    'code' => 0,
+                    'msg' => '帐号已禁用',
+                ], 200);
+            }
     
             if(!$permission= substr(strrchr($user->branch, ","), 1)){
-                $permission = $user->branch;
+                $permission = $user->branch_value;
             }
     
             $data['account'] = $user->account;
-            $data['branch'] = $user->branch;
+            $data['branch'] = $user->branch_value;
             $data['name'] = $user->name;
             $data['role'] =  $user->getRoleNames();
             $data['permission'] =  $permission;
@@ -164,7 +171,9 @@ class SaoLouController extends Controller
     
             $house = House::where('houses_name',$request->houses_name)->get();
             $property_type=$house[0]->property_type;//物业类型待更改
-    
+            
+            $arr = explode(',',$user->branch);
+            $my_permission = end($arr);//取组织中最后一个id为门店Id
            
     
             $clean= new Clean;//扫楼记录表
@@ -176,7 +185,7 @@ class SaoLouController extends Controller
             $clean->property_type = $property_type;//物业类型
     
             $clean->business_area = $house[0]->business_area;//商圈
-            $clean->permission = $user->branch;//权限
+            $clean->permission = $my_permission;//权限
             $clean->tenant_name = $request->tenant_name;//租户名称
             $clean->is_we_company = $request->is_we_company;//是否是我司租户
     
@@ -216,7 +225,7 @@ class SaoLouController extends Controller
                 $tenant->houses_info = $request->houses_info;//租户信息
             }
             $tenant->business_area = $house[0]->business_area;//商圈
-            $tenant->permission = $user->branch;//权限
+            $tenant->permission = $my_permission;//权限
             $tenant->property_type = $property_type;//物业类型
             $tenant->is_we_company = $request->is_we_company;//是否是我司租户
             $tenant->company_type = $request->company_type;//公司类型
@@ -466,7 +475,7 @@ class SaoLouController extends Controller
     
 
         if (isset($request->houses_name)) {
-            $data= DB::table('clean')->where('uid',intval($user->id))->where('houses_name','like','%'.$request->houses_name.'%')->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get(['houses_name','houses_info','tenant_name','created_at','id']);
+            $data= DB::table('clean')->where('uid',intval($user->id))->where('houses_name','like','%'.$request->houses_name.'%')->orWhere('tenant_name','like','%'.$request->houses_name.'%')->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get(['houses_name','houses_info','tenant_name','created_at','id']);
         }else{
             $data= DB::table('clean')->where('uid',intval($user->id))->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get(['houses_name','houses_info','tenant_name','created_at','id']);
         }
