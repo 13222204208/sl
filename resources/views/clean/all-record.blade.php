@@ -569,13 +569,16 @@
                     form.val("formUpdate", data);
                    // setFormValue(obj,data);
                 }
-         
+                url = window.location.protocol+"//"+window.location.host+"/";
                 imgs= data.enclosure;
               arrayList=  imgs.split(',');
+              photo ="";
                 console.log(arrayList);
                 arrayList.forEach(function(element) {
-                  $("#myImg").append('<img width="200px" src="https://saolou.com.aa.800123456.top/'+element+'">');
+                  photo += '<img width="200px" src="'+url+element+'">';
+                  
               });
+              $("#myImg").html(photo);
         });
       
 

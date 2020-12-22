@@ -151,19 +151,17 @@ class SaoLouController extends Controller
 
         $user = JWTAuth::authenticate($request->token);
 
-        try {
-            $payType = DB::table('paytype')->where('id',intval($request->pay_type))->value('month');//付款方式 
-            $month = '+'.$payType.'month';
-            $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
-    
-            //支付时间不能小于今天
+        try { 
+
+            $payType = DB::table('paytype')->where('id',intval($request->pay_type))->value('month');//付款方式 \
             $todayTime = date('Y-m-d');
-            if(strtotime($todayTime) > strtotime($pay_time)){
-                return response()->json([
-                    'code' => 0,
-                    'msg' => '付款时间必须大于今天'
-                ], 200);
-            }
+            do{         
+                $month = '+'.$payType.'month';
+                $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
+                //支付时间不能小于今天
+                $payType += $payType;
+         
+            }while(strtotime($pay_time) < strtotime($todayTime));
 
             $cPeriod = DB::table('period')->where('id',intval($request->contract_period))->value('month');//合同期限
             $m = '+'.$cPeriod.'month';
