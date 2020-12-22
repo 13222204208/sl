@@ -6,6 +6,7 @@ use App\Model\User;
 use App\Model\Clean;
 use App\Model\House;
 use App\Model\Level;
+use App\Model\Branch;
 use App\Model\Demand;
 use App\Model\Tenant;
 use App\Model\Company;
@@ -15,8 +16,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\HouseRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\UploadController;
 
+use App\Http\Controllers\UploadController;
 use App\Http\Requests\RegisterAuthRequest;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
@@ -98,13 +99,35 @@ class SaoLouController extends Controller
                     'msg' => '帐号已禁用',
                 ], 200);
             }
-    
-            if(!$permission= substr(strrchr($user->branch, ","), 1)){
+/*     
+            if(!$permission= substr(strrchr($user->branch_value, ","), 1)){
                 $permission = $user->branch_value;
+            } */
+
+            $branchArr = explode(',',$user->branch);
+        
+            $arr = array();
+            foreach ($branchArr as $id) {
+                $allId = Branch::descendantsOf($id)->pluck('id')->toArray();
+                $arr[] = $id;
+                array_shift($branchArr);
+                
+
+                if($allId == $branchArr){
+                    break;
+                }
+          
+            }
+            
+            $permission = '';
+           
+            foreach ($arr as $id) {
+                $name = Branch::where('id',intval($id))->get('name')->first();
+                $permission .= $name->name.',';
             }
     
             $data['account'] = $user->account;
-            $data['branch'] = $user->branch_value;
+            $data['branch'] = $permission;
             $data['name'] = $user->name;
             $data['role'] =  $user->getRoleNames();
             $data['permission'] =  $permission;
@@ -153,19 +176,27 @@ class SaoLouController extends Controller
 
         try { 
 
-            $payType = DB::table('paytype')->where('id',intval($request->pay_type))->value('month');//付款方式 \
-            $todayTime = date('Y-m-d');
-            do{         
-                $month = '+'.$payType.'month';
-                $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
-                //支付时间不能小于今天
-                $payType += $payType;
-         
-            }while(strtotime($pay_time) < strtotime($todayTime));
+            $pay_time = '';
+            if($request->pay_type){
+                $payType = DB::table('paytype')->where('id',intval($request->pay_type))->value('month');//付款方式 \
+                $todayTime = date('Y-m-d');
+                do{         
+                    $month = '+'.$payType.'month';
+                    $pay_time = date("Y-m-d",strtotime($month,strtotime($request->start_time)));
+                    //支付时间不能小于今天
+                    $payType += $payType;
+             
+                }while(strtotime($pay_time) < strtotime($todayTime));
+            }
 
-            $cPeriod = DB::table('period')->where('id',intval($request->contract_period))->value('month');//合同期限
-            $m = '+'.$cPeriod.'month';
-            $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间
+
+            $contract_period ='';
+            if($request->contract_period){
+                $cPeriod = DB::table('period')->where('id',intval($request->contract_period))->value('month');//合同期限
+                $m = '+'.$cPeriod.'month';
+                $contract_period = date("Y-m-d",strtotime($m,strtotime($request->start_time)));//由合同期限得出合同到期时间
+            }
+
     
             $house = House::where('houses_name',$request->houses_name)->get();
             $property_type=$house[0]->property_type;//物业类型待更改
@@ -190,11 +221,12 @@ class SaoLouController extends Controller
             if ($request->company_type) {
                 $clean->company_type = $request->company_type;//公司类型
             }
-            $clean->tenant_user = $request->tenant_user;//联系人
-            $clean->start_time = $request->start_time;//合同开始时间
-            $clean->contract_period = $request->contract_period ;//合同期限多少个月
+
+            $clean->tenant_user = $request->tenant_user?$request->tenant_user:'';//联系人
+            $clean->start_time = $request->start_time?$request->start_time:'';//合同开始时间
+            $clean->contract_period = $request->contract_period?$request->contract_period:'' ;//合同期限多少个月
             $clean->stop_time = $contract_period;//合同结束时间
-            $clean->pay_type = $request->pay_type;//付款方式
+            $clean->pay_type = $request->pay_type?$request->pay_type:'';//付款方式
             $clean->pay_time = $pay_time;//下次付款时间
     
             if ($request->tenant_need) {
@@ -226,12 +258,12 @@ class SaoLouController extends Controller
             $tenant->permission = $my_permission;//权限
             $tenant->property_type = $property_type;//物业类型
             $tenant->is_we_company = $request->is_we_company;//是否是我司租户
-            $tenant->company_type = $request->company_type;//公司类型
-            $tenant->tenant_user = $request->tenant_user;//联系人
-            $tenant->start_time = $request->start_time;//合同开始时间
+            $tenant->company_type = $request->company_type?$request->company_type:'';//公司类型
+            $tenant->tenant_user = $request->tenant_user?$request->tenant_user:'';//联系人
+            $tenant->start_time = $request->start_time?$request->start_time:'';//合同开始时间
             $tenant->stop_time = $contract_period;//合同结束时间
-            $tenant->contract_period = $request->contract_period;//合同期限多少个月
-            $tenant->pay_type = $request->pay_type;//付款方式
+            $tenant->contract_period = $request->contract_period?$request->contract_period:'';//合同期限多少个月
+            $tenant->pay_type = $request->pay_type?$request->pay_type:'';//付款方式
             $tenant->pay_time = $pay_time;//下次付款时间
     
             if ($request->tenant_need) {
@@ -478,32 +510,73 @@ class SaoLouController extends Controller
             $data= DB::table('clean')->where('uid',intval($user->id))->where('created_at','>=',$start_time)->where('created_at','<=',$stop_time)->skip($page)->take($size)->get(['houses_name','houses_info','tenant_name','created_at','id']);
         }
 
-        if($request->has('slid')){
+        $payType = array();
+        $cPeriod = array();
+        $companyType = array();
+        $demand = array();
+        $h_n = '';
+        if($request->slid != ''){
             $data= DB::table('clean')->where('uid',intval($user->id))->where('id',intval($request->slid))->get();
-            $payType = DB::table('paytype')->where('id',$data[0]->pay_type)->get(['id','type_name','month']);//付款方式 
-            $cPeriod = DB::table('period')->where('id',intval($data[0]->contract_period))->get(['id','type_name','month']);//合同期限
-            $companyType = DB::table('company_type')->where('id',intval($data[0]->company_type))->get(['id','type_name']);//公司类型
 
-            $h_n ="";
-            $houses_num = $data[0]->houses_num;
-            $hnum= array_filter(explode(',',$houses_num));
-            foreach($hnum as $num){
-               $h_num=  Level::where('id',intval($num))->value('type_name');
-
-               $h_n .= ','.$h_num;
+            if($data[0]->pay_type != ''){
+                $payType = DB::table('paytype')->where('id',$data[0]->pay_type)->get(['id','type_name','month']);//付款方式 
             }
-             $h_n= substr($h_n,1);
 
-            $demand = Demand::ancestorsAndSelf(intval($data[0]->tenant_need));//租户需求
-            
+            if($data[0]->contract_period != ''){
+                $cPeriod = DB::table('period')->where('id',intval($data[0]->contract_period))->get(['id','type_name','month']);//合同期限
+            }
+
+            if($data[0]->company_type != ''){
+                $companyType = DB::table('company_type')->where('id',intval($data[0]->company_type))->get(['id','type_name']);//公司类型
+            }
+
+            if($data[0]->houses_num != ''){
+                $h_n ="";
+                $houses_num = $data[0]->houses_num;
+                $hnum= array_filter(explode(',',$houses_num));
+                foreach($hnum as $num){
+                   $h_num=  Level::where('id',intval($num))->value('type_name');
+    
+                   $h_n .= ','.$h_num;
+                }
+                 $h_n= substr($h_n,1);
+    
+                $demand = Demand::ancestorsAndSelf(intval($data[0]->tenant_need));//租户需求
+            }
+
+           if(count($payType)){
+            $payType =get_object_vars($payType[0]);
+           }else{
+               $payType ='';
+           }
+
+           if(count($cPeriod)){
+            $cPeriod =get_object_vars($cPeriod[0]);
+           }else{
+               $cPeriod ='';
+           }
+
+           
+           if(count($companyType)){
+            $companyType =get_object_vars($companyType[0]);
+           }else{
+               $companyType ='';
+           }
+
+           if(count($demand)){
+            $demand =get_object_vars($demand[0]);
+           }else{
+               $demand ='';
+           }
+           
             $arr = array();
             foreach($data[0] as $k=> $d){
                 $arr[$k] = $d;
-                $arr['pay_type'] = get_object_vars($payType[0]);
-                $arr['contract_period'] = get_object_vars($cPeriod[0]);
-                $arr['company_type'] = get_object_vars($companyType[0]);
+                $arr['pay_type'] = $payType;
+                $arr['contract_period'] = $cPeriod;
+                $arr['company_type'] = $companyType;
                 $arr['tenant_need'] = $demand;
-                $arr['houses_num'] = $h_n;
+                $arr['houses_num'] = $h_n?$h_n:'';
             }
             $data = $arr;
         }
@@ -518,6 +591,7 @@ class SaoLouController extends Controller
             return response()->json([
                 'code' => 0,
                 'msg' =>"输入错误",
+                'error' => $th->getMessage()
             ],200);
         }
 

@@ -359,7 +359,7 @@ data['branch'] =list;
               title: '名称',
            
             }, {
-              field: 'branch',
+              field: 'branch_value',
               title: '部门',
            
             },{
