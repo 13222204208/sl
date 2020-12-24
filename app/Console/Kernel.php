@@ -39,7 +39,7 @@ class Kernel extends ConsoleKernel
 
                 try {
                     $sms->send($data['broker_phone'], [
-                        'template' => 'SMS_171855867',
+                        'template' => 'SMS_195575357',
                         'data' => [
                             'code' => $str
                         ],    
@@ -53,7 +53,7 @@ class Kernel extends ConsoleKernel
                 }
             }
  
-         })->dailyAt('17:15');
+         })->dailyAt('18:05');
 
     }
 

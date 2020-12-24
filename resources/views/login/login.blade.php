@@ -155,6 +155,13 @@
                 icon: 2,
                 time: 3000
               })
+            }else if (res.status == 405) {
+              console.log(res);
+              layer.msg('账户已停用，请联系管理员', {
+                offset: '15px',
+                icon: 2,
+                time: 3000
+              })
             }
           },
           error: function(error) { console.log(error);

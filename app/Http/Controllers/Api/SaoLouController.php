@@ -96,7 +96,7 @@ class SaoLouController extends Controller
             if ($user->status == 2) {
                 return response()->json([
                     'code' => 0,
-                    'msg' => '帐号已禁用',
+                    'msg' => '账户已停用，请联系管理员',
                 ], 200);
             }
 /*     

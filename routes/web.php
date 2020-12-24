@@ -58,7 +58,7 @@ Route::get('logout', function (Illuminate\Http\Request $request) {
 Route::get('user/upassword', function () {
     return view('user.upassword');
 });
-
+Route::get('testsms','TestController@testsms');
 Route::post('user/set/mypass','Login\LoginController@setMypass');//修改登陆密码
 
 Route::prefix('home')->group(function () {
