@@ -336,7 +336,11 @@
                   }
                 },
                 title: '后台用户',
-                totalRow: true
+                totalRow: true,
+                initSort:{
+                  field: 'id',
+                  type:'desc'
+                }
       
               });
             });

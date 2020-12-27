@@ -21,7 +21,7 @@ return [
         'aliyun' => [
             'access_key_id' => env('ALIYUN_API_ID'),
             'access_key_secret' => env('ALIYUN_API_SECRET'),
-            'sign_name' => '旭光图文',
+            'sign_name' => '瑞宇扫楼',
         ],
     ],
 ];

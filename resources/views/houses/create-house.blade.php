@@ -134,10 +134,10 @@
                 arr = new Array();
                 length = max-min;
                 strNum = '';
-                for(var i=0;i<length;i++){
-                    min++;
+                for(var i=0;i<= length;i++){
                    strNum = before+min+after;
                    arr[i] = strNum;
+                   min++;
                     }
                     return arr;
               }
