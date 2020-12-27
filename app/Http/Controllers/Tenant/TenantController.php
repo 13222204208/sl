@@ -108,9 +108,17 @@ class TenantController extends Controller
     }
 
     public function queryAccount(Request $request)
-    {
+    { 
+        $state = false;
+        $broker = '';
+        if($request->has('broker')){
+            $state = true;
+         $broker =$request->get('broker');
+        }
         $limit = $request->get('limit');
-        $data= User::where('id','>',1)->select('id','branch','account','name','status')->orderBy('id','desc')->paginate($limit);
+        $data= User::where('id','>',1)->when($state, function ($query) use ($broker) {
+            return $query->where('name','like','%'.$broker.'%');
+        })->select('id','branch','account','name','status')->orderBy('id','desc')->paginate($limit);
         return $data;
     }
 

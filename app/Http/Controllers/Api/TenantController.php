@@ -107,31 +107,76 @@ class TenantController extends Controller
             }
     
             if($request->has('id')){
+                $payType = array();
+                $cPeriod = array();
+                $companyType = array();
+                $demand = array();
+                $h_n = '';
+
                 $data= Tenant::where('id',$request->id)->get();//查询租户的详情
                 $follow = FollowUp::where('tenant_id',$request->id)->get(['content','created_at']);//查询租户跟进信息
 
-                $payType = DB::table('paytype')->where('id',intval($data[0]->pay_type))->get(['id','type_name','month']);//付款方式 
-                $cPeriod = DB::table('period')->where('id',intval($data[0]->contract_period))->get(['id','type_name','month']);//合同期限
-                $companyType = DB::table('company_type')->where('id',intval($data[0]->company_type))->get(['id','type_name']);//公司类型
+
+                if($data[0]->pay_type != ''){
+                    $payType = DB::table('paytype')->where('id',$data[0]->pay_type)->get(['id','type_name','month']);//付款方式 
+                }
     
-                 $h_n ="";
-                 $houses_num = $data[0]->houses_num;
-                 $hnum= array_filter(explode(',',$houses_num));
-                 foreach($hnum as $num){
-                    $h_num=  Level::where('id',intval($num))->value('type_name');
+                if($data[0]->contract_period != ''){
+                    $cPeriod = DB::table('period')->where('id',intval($data[0]->contract_period))->get(['id','type_name','month']);//合同期限
+                }
     
-                    $h_n .= ','.$h_num;
-                 }
-                  $h_n= substr($h_n,1);
-             
+                if($data[0]->company_type != ''){
+                    $companyType = DB::table('company_type')->where('id',intval($data[0]->company_type))->get(['id','type_name']);//公司类型
+                }
     
-                $demand = Demand::ancestorsAndSelf(intval($data[0]->tenant_need));//租户需求
+                if($data[0]->houses_num != ''){
+                    $h_n ="";
+                    $houses_num = $data[0]->houses_num;
+                    $hnum= array_filter(explode(',',$houses_num));
+                    foreach($hnum as $num){
+                       $h_num=  Level::where('id',intval($num))->value('type_name');
+        
+                       $h_n .= ','.$h_num;
+                    }
+                     $h_n= substr($h_n,1);
+        
+                    $demand = Demand::ancestorsAndSelf(intval($data[0]->tenant_need));//租户需求
+                }
+
+                if(count($payType)){
+                    $payType =get_object_vars($payType[0]);
+                   }else{
+                       $payType ='';
+                   }
+      
+                   if(count($cPeriod)){
+                    $cPeriod =get_object_vars($cPeriod[0]);
+                   }else{
+                       $cPeriod ='';
+                   }
+        
+                   
+                   if(count($companyType)){
+                    $companyType =get_object_vars($companyType[0]);
+                   }else{
+                       $companyType ='';
+                   }
+        
+                   if(count($demand)){
+                    $demand =get_object_vars($demand[0]);
+                   }else{
+                       $demand ='';
+                   }
+                   
+                   if($data[0]['stop_time'] == ''){
+                       $data[0]['stop_time'] ='未录入';
+                   }
     
                 $arr = array();
                 foreach($data as  $d){
-                    $d['pay_type'] = get_object_vars($payType[0]);
-                    $d['contract_period'] = get_object_vars($cPeriod[0]);
-                    $d['company_type'] = get_object_vars($companyType[0]);
+                    $d['pay_type'] = $payType;
+                    $d['contract_period'] =  $cPeriod;
+                    $d['company_type'] = $companyType;
                     $d['tenant_need'] = $demand;
                     $d['houses_num'] = $h_n;
 

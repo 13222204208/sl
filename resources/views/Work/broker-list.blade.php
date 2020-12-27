@@ -163,7 +163,7 @@
               title: '姓名',
             
             }, {
-              field: 'branch',
+              field: 'branch_value',
               title: '部门',
             
             }, {

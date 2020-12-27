@@ -156,11 +156,23 @@
   </div>
 
   <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
+    <div class="demoTable" style="margin:20px;">
+      搜索：
+      <div class="layui-inline">
+        <input class="layui-input" name="id" id="demoReloadUser" autocomplete="off">
+      </div>
+      <button class="layui-btn" type="button" data-type="reload">查询</button>
+    </div>
 
     <table class="layui-hide" id="LAY_table_change" lay-filter="changeUser"></table>
     <script type="text/html" id="tooChange">
+ 
+
       <div class="layui-btn-container">
+      
         <button class="layui-btn layui-btn-sm" lay-event="changeData">确定转移</button>
+
+      
       </div>
     </script>
   </div>
@@ -326,11 +338,82 @@
                        area: ['800px','600px'],
                         content: $("#layuiadmin-form-admin")//引用的弹出层的页面层的方式加载修改界面表单
                     });
+
+                    $('.demoTable .layui-btn').on('click', function() {
+
+                      var keyWord = $('#demoReloadUser');
+                      var name = keyWord.val();
+                   
+                      table.render({
+                        height: 600,
+                        url: "query/account" //数据接口
+                          ,
+                        limit:10,
+                        where:{
+                          broker:name
+                        },
+                        page: true //开启分页
+                          ,
+                        elem: '#LAY_table_change',
+                        toolbar: '#tooChange',
+                        cols: [
+                          [
+                            {type:'checkbox'},
+                            {
+                              type:'numbers',
+                              title:'序号',
+                              algin:'center',
+                              width:80,
+                            },
+                            {
+                              field: 'account',
+                              title: '帐号',
+                              width:120,
+                          
+                            }, {
+                              field: 'name',
+                              title: '名称',
+                              width:120,
+                            }, {
+                              field: 'branch_value',
+                              title: '部门',
+                              width:120,
+                            },{
+                                            field: 'status',
+                                            title: '状态',
+                                            templet: function(d) {
+                                                if (d.status == 1) {
+                                                  return '正常';
+                                                }else{
+                                                    return '已禁用';
+                                                }
+                                              }
+                                        }
+                          ]
+                        ],
+                        parseData: function(res) { //res 即为原始返回的数据
+                          console.log(res);
+                          return {
+                            "code": '0', //解析接口状态
+                            "msg": res.message, //解析提示文本
+                            "count": res.total, //解析数据长度
+                            "data": res.data //解析数据列表
+                          }
+                        },
+                        id: 'testReload',
+                        title: '后台用户',
+                        totalRow: true
+                
+                      });
+                  return false;
+                    });
+
+
                     table.render({
         height: 600,
         url: "query/account" //数据接口
           ,
-        limit:15,
+        limit:10,
         page: true //开启分页
           ,
         elem: '#LAY_table_change',
@@ -354,7 +437,7 @@
               title: '名称',
               width:120,
             }, {
-              field: 'branch',
+              field: 'branch_value',
               title: '部门',
               width:120,
             },{
