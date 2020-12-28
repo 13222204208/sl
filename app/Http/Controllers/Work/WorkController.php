@@ -16,8 +16,18 @@ class WorkController extends Controller
     {
         if ($request->ajax()) {  
             $limit = $request->get('limit'); 
+            $permission = $this->userPermission();
             $data= User::where('id','>',1)->paginate($limit);
-            return $data; 
+           
+            $newData= array();
+            foreach ($data as $user) {
+               $arr = explode(',',$user->branch);
+               $str= $arr[count($arr)-1];
+               if(in_array($str,$permission)){
+                   $newData[] = $user;
+               } 
+           } 
+           return response()->json(['status'=>200,'data'=>$newData]);
         }
     }
 
@@ -25,9 +35,17 @@ class WorkController extends Controller
     {
         if ($request->ajax()) {
             $limit = $request->get('limit'); 
-
+            $permission = $this->userPermission();
             $data= User::where('account','like','%'.$account.'%')->orWhere('name','like','%'.$account.'%')->paginate($limit);
-            return $data;
+            $newData= array();
+            foreach ($data as $user) {
+               $arr = explode(',',$user->branch);
+               $str= $arr[count($arr)-1];
+               if(in_array($str,$permission)){
+                   $newData[] = $user;
+               } 
+           } 
+           return response()->json(['status'=>200,'data'=>$newData]);
         }
     }
     
@@ -60,5 +78,13 @@ class WorkController extends Controller
             $data['comeNum'] = $comeNum;
             return response()->json(['status'=>200,'data'=>$data]);
         }
+    }
+
+    public function userPermission()
+    {
+        $id = session('id');//用户id
+        $user = User::find($id);
+        $arr = explode(',',$user->branch);
+        return $arr;
     }
 }

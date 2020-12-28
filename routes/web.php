@@ -93,7 +93,7 @@ Route::prefix('houses')->group(function () {//楼盘管理
     Route::get('testa/{id}','Houses\HousesController@testa');//获取楼盘信息
     Route::get('info','Houses\HousesController@info');//楼盘详细信息
     Route::post('update/house','Houses\HousesController@updateHouse');//楼盘详细信息
-
+    Route::get('search/{hname}','Houses\HousesController@search');//搜索楼盘
 
     Route::get('tenant/info/{hnum}','Houses\HousesController@tenantInfo');//楼盘上的租户信息
 
@@ -211,6 +211,7 @@ Route::prefix('clean')->group(function () {//扫楼记录管理
 
     Route::get('house/tenant','Clean\CleanController@houseTenant');//搜索扫楼信息
 
+    Route::get('get/permission','Clean\CleanController@getPermission');//是否有权限
 
     Route::get('search/clean','Clean\CleanController@searchClean');//按楼盘查看数据变更
     

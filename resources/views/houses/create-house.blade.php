@@ -104,7 +104,11 @@
     </div>
 
     <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
-
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+        
+        </div>
+      </script>
     <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-xs" lay-event="add">添加子分类</a>
         <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
@@ -213,6 +217,7 @@
         
 
            var  tableIns = treeTable.render({
+            toolbar: '#toolbarDemo',
             elem: '#LAY_table_user',
             url: "gain/loupan"+'/'+id,
             tree: {

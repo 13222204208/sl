@@ -116,10 +116,20 @@ class TenantController extends Controller
          $broker =$request->get('broker');
         }
         $limit = $request->get('limit');
+        $permission = $this->userPermission();
         $data= User::where('id','>',1)->when($state, function ($query) use ($broker) {
             return $query->where('name','like','%'.$broker.'%');
         })->select('id','branch','account','name','status')->orderBy('id','desc')->paginate($limit);
-        return $data;
+        
+        $newData= array();
+        foreach ($data as $user) {
+           $arr = explode(',',$user->branch);
+           $str= $arr[count($arr)-1];
+           if(in_array($str,$permission)){
+               $newData[] = $user;
+           } 
+       } 
+       return response()->json(['status'=>200,'data'=>$newData]);
     }
 
     public function updateBroker(Request $request)

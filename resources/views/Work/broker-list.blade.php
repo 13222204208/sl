@@ -131,116 +131,135 @@
 
 
 
-
-      table.render({
-        height: 600,
-        url: "broker/list" //数据接口
-          ,
-        page: true //开启分页
-          ,
-        elem: '#LAY_table_user',
-        cols: [
-          [
-            {
-              type:'numbers',
-              title:'序号',
-              algin:'center',
-              width:80
-            },
-
-            // {
-            //   field: 'id',
-            //   title: 'ID',
-            //   width: 120,
-            //   sort: true
-            // }, 
-            {
-              field: 'account',
-              title: '帐号',
-        
-            }, {
-              field: 'name',
-              title: '姓名',
-            
-            }, {
-              field: 'branch_value',
-              title: '部门',
-            
-            }, {
-              fixed: 'right',
-              title: "操作",
-              width: 150,
-              align: 'center',
-              toolbar: '#barDemo'
-            }
-          ]
-        ],
-        parseData: function(res) { //res 即为原始返回的数据
-      
-          return {
-            "code": '0', //解析接口状态
-            "msg": res.message, //解析提示文本
-            "count": res.total, //解析数据长度
-            "data": res.data //解析数据列表
-          }
+      $.ajax({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        id: 'testReload',
-        title: '后台用户',
-        totalRow: true
-
+        url: "broker/list",
+        method: 'get',
+        dataType: 'json',
+        success: function(res) {
+          if (res.status == 200) {
+           
+            table.render({
+              height: 600,
+              page: true //开启分页
+                ,
+              elem: '#LAY_table_user',
+              data:res.data,
+              cols: [
+                [
+                  {
+                    type:'numbers',
+                    title:'序号',
+                    algin:'center',
+                    width:80
+                  },
+    
+                  {
+                    field: 'account',
+                    title: '帐号',
+              
+                  }, {
+                    field: 'name',
+                    title: '姓名',
+                  
+                  }, {
+                    field: 'branch_value',
+                    title: '部门',
+                  
+                  }, {
+                    fixed: 'right',
+                    title: "操作",
+                    width: 150,
+                    align: 'center',
+                    toolbar: '#barDemo'
+                  }
+                ]
+              ],
+              id: 'testReload',
+              title: '后台用户',
+              totalRow: true
+      
+            });
+  
+            }else if (res.status == 403) {
+            layer.msg('错误', {
+              offset: '15px',
+              icon: 2,
+              time: 3000
+            })
+          }
+        }
       });
 
 
 
+    
+
       //查询帐号
       $('.demoTable .layui-btn').on('click', function() {
-
         var keyWord = $('#demoReload');
         var account_num = keyWord.val();
-
-        table.render({
-          height: 600,
-          url: "query/account" + '/' + account_num //数据接口
-            ,
-          page: true,//开启分页
-          elem: '#LAY_table_user',
-          cols: [
-            [
-
-              {
-                type: 'numbers',
-                title: '序号',
-                width: 120,
-                algin: 'center'
-              }, {
-                field: 'account',
-                title: '帐号',
-      
-              }, {
-                field: 'name',
-                title: '昵称',
-              }, {
-                fixed: 'right',
-                title: "操作",
-                width: 150,
-                align: 'center',
-                toolbar: '#barDemo'
-              }
-            ]
-          ],
-          parseData: function(res) { //res 即为原始返回的数据
-            //console.log(res);
-            return {
-              "code": '0', //解析接口状态
-              "msg": res.message, //解析提示文本
-              "count": res.total, //解析数据长度
-              "data": res.data //解析数据列表
-            }
+        $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
-          title: '后台用户',
-          totalRow: true
+          url:  "query/account" + '/' + account_num, //数据接口
+          method: 'get',
+          dataType: 'json',
+          success: function(res) {
+            if (res.status == 200) {
+              table.render({
+                height: 600,
+     
+                page: true,//开启分页
+                data:res.data,
+                elem: '#LAY_table_user',
+                cols: [
+                  [      
+                    {
+                      type: 'numbers',
+                      title: '序号',
+                      width: 120,
+                      algin: 'center'
+                    }, {
+                      field: 'account',
+                      title: '帐号',
+            
+                    }, {
+                      field: 'name',
+                      title: '昵称',
+                    }, {
+                      field: 'branch_value',
+                      title: '部门',
+                    
+                    }, {
+                      fixed: 'right',
+                      title: "操作",
+                      width: 150,
+                      align: 'center',
+                      toolbar: '#barDemo'
+                    }
+                  ]
+                ],
 
+                title: '后台用户',
+                totalRow: true
+      
+              });
+    
+              }else if (res.status == 403) {
+              layer.msg('错误', {
+                offset: '15px',
+                icon: 2,
+                time: 3000
+              })
+            }
+          }
         });
+
+
       });
 
 

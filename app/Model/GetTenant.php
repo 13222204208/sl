@@ -78,4 +78,20 @@ class GetTenant extends Model
             return $h_n;
         }
 
+        public function getBrokerNameAttribute()
+        {
+            return $this->userinfo()->name;
+        }
+
+        public function getBrokerPhoneAttribute()
+        {
+            return $this->userinfo()->account;
+        }
+
+        public function userinfo()
+        {
+            $user = User::find($this->attributes['uid']);
+            return $user;
+        }
+
 }

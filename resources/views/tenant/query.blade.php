@@ -223,6 +223,7 @@
           ,
         elem: '#LAY_table_user',
         toolbar: '#toolbarDemo',
+    
         cols: [
           [
             {type:'checkbox'},
@@ -409,64 +410,79 @@
                     });
 
 
-                    table.render({
-        height: 600,
-        url: "query/account" //数据接口
-          ,
-        limit:10,
-        page: true //开启分页
-          ,
-        elem: '#LAY_table_change',
-        toolbar: '#tooChange',
-        cols: [
-          [
-            {type:'checkbox'},
-            {
-              type:'numbers',
-              title:'序号',
-              algin:'center',
-              width:80,
-            },
-            {
-              field: 'account',
-              title: '帐号',
-              width:120,
-          
-            }, {
-              field: 'name',
-              title: '名称',
-              width:120,
-            }, {
-              field: 'branch_value',
-              title: '部门',
-              width:120,
-            },{
-                            field: 'status',
-                            title: '状态',
-                            templet: function(d) {
-                                if (d.status == 1) {
-                                  return '正常';
-                                }else{
-                                    return '已禁用';
-                                }
-                              }
+                    $.ajax({
+                      headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                      },
+                      url: "query/account",
+                      method: 'get',
+                      dataType: 'json',
+                      success: function(res) {
+                        if (res.status == 200) {
+                         
+                          table.render({
+                            height: 600,
+                            data:res.data
+                              ,
+                            limit:10,
+                            page: true //开启分页
+                              ,
+                            elem: '#LAY_table_change',
+                            toolbar: '#tooChange',
+                            cols: [
+                              [
+                                {type:'checkbox'},
+                                {
+                                  type:'numbers',
+                                  title:'序号',
+                                  algin:'center',
+                                  width:80,
+                                },
+                                {
+                                  field: 'account',
+                                  title: '帐号',
+                                  width:120,
+                              
+                                }, {
+                                  field: 'name',
+                                  title: '名称',
+                                  width:120,
+                                }, {
+                                  field: 'branch_value',
+                                  title: '部门',
+                                  width:120,
+                                },{
+                                                field: 'status',
+                                                title: '状态',
+                                                templet: function(d) {
+                                                    if (d.status == 1) {
+                                                      return '正常';
+                                                    }else{
+                                                        return '已禁用';
+                                                    }
+                                                  }
+                                            }
+                              ]
+                            ],
+                            id: 'testReload',
+                            title: '后台用户',
+                            totalRow: true
+                    
+                          });
+                            
+              
+                          }else if (res.status == 403) {
+                          layer.msg('错误', {
+                            offset: '15px',
+                            icon: 2,
+                            time: 3000
+                          })
                         }
-          ]
-        ],
-        parseData: function(res) { //res 即为原始返回的数据
-          //console.log(res);
-          return {
-            "code": '0', //解析接口状态
-            "msg": res.message, //解析提示文本
-            "count": res.total, //解析数据长度
-            "data": res.data //解析数据列表
-          }
-        },
-        id: 'testReload',
-        title: '后台用户',
-        totalRow: true
+                      }
+                    });
 
-      });
+                    
+                  
 
       table.on('toolbar(changeUser)', function(obj){
         var checkStatus = table.checkStatus(obj.config.id);

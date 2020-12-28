@@ -188,6 +188,11 @@
 
 
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
+  <script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+    
+    </div>
+  </script>
    <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs" lay-event="edit">查看详情</a>
   
@@ -238,111 +243,165 @@
 
               var keyWord = $('#demoReload');
               var name = keyWord.val();
-              table.render({
-                height: 600,
-                page: true,//开启分页
-                limit:15,
-                elem: '#LAY_table_user',
-                url: "house/tenant",
-                where:{
-                  name: name
+
+              $.ajax({
+                headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                cols: [
-                  [
-                    {
-                      field: 'id',
-                      title: 'ID',
-                      width: 80,
-                      sort: true
-                    },{
-                      field: 'houses_name',
-                      title: '楼盘名称',
-                      width: 130,
-                    },{
-                      field: 'houses_info',
-                      title: '楼盘信息',
-                      width: 180,
-                    },{
-                      field: 'houses_num',
-                      title: '房间号',
-                      width: 180,
-                    }, {
-                      field: 'tenant_name',
-                      title: '租户名称',
-                      width: 180,
-                    },  {
-                      field: 'created_at',
-                      title: '录入时间',
-                      width: 180,
-                    }, {
-                      field: 'is_we_company',
-                      title: '是否我司租户',
-                      width: 120,
-                    }, {
-                      field: 'company_type',
-                      title: '公司类型',
-                      width: 120,
-                    }, {
-                      field: 'tenant_user',
-                      title: '联系人',
-                      width: 220,
-                      
-                    }, {
-                      field: 'start_time',
-                      title: '合同起始时间',
-                      width: 120,
-                    },{
-                      field: 'stop_time',
-                      title: '合同到期时间',
-                      width: 120,
-                    }, {
-                      field: 'pay_type',
-                      title: '付款方式',
-                      width: 100,
-                    }, {
-                      field: 'pay_time',
-                      title: '下次应付款时间',
-                      width: 120,
-                    }, {
-                      field: 'tenant_need',
-                      title: '租户需求',
-                    },{
-                      field: 'remark',
-                      title: '备注',
-                    }, {
-                      field: 'broker_name',
-                      title: '经纪人姓名',
-                      width: 100,
-                    }, {
-                      field: 'broker_phone',
-                      title: '经纪人手机号',
-                      width: 100,
-                    } ,    {
-                      fixed: 'right',
-                      title: "操作",
-                      width: 150,
-                      align: 'center',
-                      toolbar: '#barDemo'
-                    } 
-                  ]
-                ],
-                parseData: function(res) { //res 即为原始返回的数据
-                 // console.log(res);return false;
-                  return {
-                    "code": '0', //解析接口状态
-                    "msg": res.message, //解析提示文本
-                    "count": res.total, //解析数据长度
-                    "data": res.data //解析数据列表
-                  }
-                },
-                title: '后台用户',
-                totalRow: true,
-                initSort:{
-                  field: 'id',
-                  type:'desc'
-                }
+                url: "get/permission",
+                method: 'get',
+                dataType: 'json',
+                success: function(res) {
+                  console.log(res); 
+                  if (res.status == 200) {
+                      toolbar = '';
+                      if(res.state == true){
+                        toolbar = '#toolbarDemo';
+                      }   
       
+                      table.render({
+                        toolbar: toolbar,
+                        height: 600,
+                        page: true,//开启分页
+                        limit:15,
+                        elem: '#LAY_table_user',
+                        url: "house/tenant",
+                        where:{
+                          name: name
+                        },
+                        cols: [
+                          [
+                            {
+                              field: 'id',
+                              title: 'ID',
+                              width: 80,
+                              sort: true
+                            },{
+                              field: 'houses_name',
+                              title: '楼盘名称',
+                              width: 130,
+                            },{
+                              field: 'houses_info',
+                              title: '楼盘信息',
+                              width: 180,
+                            },{
+                              field: 'houses_num',
+                              title: '房间号',
+                              width: 180,
+                            }, {
+                              field: 'tenant_name',
+                              title: '租户名称',
+                              width: 180,
+                            },  {
+                              field: 'created_at',
+                              title: '录入时间',
+                              width: 180,
+                            }, {
+                              field: 'is_we_company',
+                              title: '是否我司租户',
+                              width: 120,
+                            }, {
+                              field: 'company_type',
+                              title: '公司类型',
+                              templet: function(d) {
+                                if(d.companytype != null){
+                                  return d.companytype.type_name
+                                }else{
+                                  return '';
+                                }
+                               
+                              },
+                              width: 120,
+                            }, {
+                              field: 'tenant_user',
+                              title: '联系人',
+                              width: 220,
+                              
+                            }, {
+                              field: 'start_time',
+                              title: '合同起始时间',
+                              width: 120,
+                            },{
+                              field: 'stop_time',
+                              title: '合同到期时间',
+                              width: 120,
+                            }, {
+                              field: 'pay_type',
+                              title: '付款方式',
+                              templet: function(d) {
+                     
+                                if(d.paytype != null){
+                                  return d.paytype.type_name
+                               }else{
+                                 return '';
+                               }
+                               },
+                              width: 100,
+                            }, {
+                              field: 'pay_time',
+                              title: '下次应付款时间',
+                              width: 120,
+                            }, {
+                              field: 'tenant_need',
+                              title: '租户需求',
+                              templet: function(d) {
+                                if(d.tenantneed != null){
+                                 return d.tenantneed.type_name
+                              }else{
+                                return '';
+                              }
+                               },
+                            },{
+                              field: 'remark',
+                              title: '备注',
+                            }, {
+                              field: 'broker_name',
+                              title: '经纪人姓名',
+                              width: 100,
+                            }, {
+                              field: 'broker_phone',
+                              title: '经纪人手机号',
+                              width: 100,
+                            } ,    {
+                              fixed: 'right',
+                              title: "操作",
+                              width: 150,
+                              align: 'center',
+                              toolbar: '#barDemo'
+                            } 
+                          ]
+                        ],
+                        parseData: function(res) { //res 即为原始返回的数据
+                         // console.log(res);return false;
+                          return {
+                            "code": '0', //解析接口状态
+                            "msg": res.message, //解析提示文本
+                            "count": res.total, //解析数据长度
+                            "data": res.data //解析数据列表
+                          }
+                        },
+                        title: '后台用户',
+                        totalRow: true,
+                        initSort:{
+                          field: 'id',
+                          type:'desc'
+                        }
+              
+                      });
+           
+        
+                    }else if (res.status == 403) {
+                    layer.msg('错误', {
+                      offset: '15px',
+                      icon: 2,
+                      time: 3000
+                    })
+                  }
+                }
               });
+
+
+
             });
 
 
@@ -350,8 +409,25 @@
       form.on('submit(search)', function(data) {
         var data = data.field;
         console.log(data);
-        //return false;
+
+        $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url: "get/permission",
+          method: 'get',
+          dataType: 'json',
+          success: function(res) {
+            console.log(res); 
+            if (res.status == 200) {
+                toolbar = '';
+                if(res.state == true){
+                  toolbar = '#toolbarDemo';
+                }   
+
+                   //return false;
         table.render({
+          toolbar: toolbar,
         elem: '#LAY_table_user',
         url: 'search/clean',
         where:{
@@ -393,6 +469,14 @@
             }, {
               field: 'company_type',
               title: '公司类型',
+              templet: function(d) {
+                if(d.companytype != null){
+                  return d.companytype.type_name
+                }else{
+                  return '';
+                }
+               
+              },
               width: 120,
             }, {
               field: 'tenant_user',
@@ -410,6 +494,14 @@
             }, {
               field: 'pay_type',
               title: '付款方式',
+              templet: function(d) {
+                     
+                if(d.paytype != null){
+                  return d.paytype.type_name
+               }else{
+                 return '';
+               }
+               },
               width: 100,
             }, {
               field: 'pay_time',
@@ -418,6 +510,13 @@
             }, {
               field: 'tenant_need',
               title: '租户需求',
+              templet: function(d) {
+                if(d.tenantneed != null){
+                 return d.tenantneed.type_name
+              }else{
+                return '';
+              }
+               },
             },{
               field: 'remark',
               title: '备注',
@@ -450,112 +549,164 @@
         page: true,
         limit:15,
       });
+     
+  
+              }else if (res.status == 403) {
+              layer.msg('错误', {
+                offset: '15px',
+                icon: 2,
+                time: 3000
+              })
+            }
+          }
+        });
         return false;
       });
+     
       
-
-      table.render({
-        height: 600,
-        url: "gain/clean" //数据接口
-          ,
-        page: true //开启分页
-          ,
-          limit:15,
-        elem: '#LAY_table_user',
-        cols: [
-          [
-
-            {
-              field: 'id',
-              title: 'ID',
-              width: 80,
-              sort: true
-            },{
-              field: 'houses_name',
-              title: '楼盘名称',
-              width: 130,
-            },{
-              field: 'houses_info',
-              title: '楼盘信息',
-              width: 180,
-            },{
-              field: 'houses_num',
-              title: '房间号',
-              width: 180,
-            }, {
-              field: 'tenant_name',
-              title: '租户名称',
-              width: 180,
-            },  {
-              field: 'created_at',
-              title: '录入时间',
-              width: 180,
-            }, {
-              field: 'is_we_company',
-              title: '是否我司租户',
-              width: 120,
-            }, {
-              field: 'company_type',
-              title: '公司类型',
-              width: 120,
-            }, {
-              field: 'tenant_user',
-              title: '联系人',
-              width: 220,
-              
-            }, {
-              field: 'start_time',
-              title: '合同起始时间',
-              width: 120,
-            },{
-              field: 'stop_time',
-              title: '合同到期时间',
-              width: 120,
-            }, {
-              field: 'pay_type',
-              title: '付款方式',
-              width: 100,
-            }, {
-              field: 'pay_time',
-              title: '下次应付款时间',
-              width: 120,
-            }, {
-              field: 'tenant_need',
-              title: '租户需求',
-            },{
-              field: 'remark',
-              title: '备注',
-            }, {
-              field: 'broker_name',
-              title: '经纪人姓名',
-              width: 100,
-            }, {
-              field: 'broker_phone',
-              title: '经纪人手机号',
-              width: 100,
-            } ,    {
-              fixed: 'right',
-              title: "操作",
-              width: 150,
-              align: 'center',
-              toolbar: '#barDemo'
-            } 
-          ]
-        ],
-        parseData: function(res) { //res 即为原始返回的数据
-          console.log(res);
-          return {
-            "code": '0', //解析接口状态
-            "msg": res.message, //解析提示文本
-            "count": res.total, //解析数据长度
-            "data": res.data //解析数据列表
-          }
+      $.ajax({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        id: 'testReload',
-        title: '后台用户',
-        totalRow: true
+        url: "gain/clean",
+        method: 'get',
+        dataType: 'json',
+        success: function(res) {
+         // console.log(res.data); return false;
+          if (res.status == 200) {
+              toolbar = '';
+              if(res.state == true){
+                toolbar = '#toolbarDemo';
+              }
+            table.render({
+              height: 600,
+              page: true //开启分页
+                ,
+                toolbar: toolbar,
+                limit:15,
+                data:res.data,
+              elem: '#LAY_table_user',
+              cols: [
+                [
+      
+                  {
+                    field: 'id',
+                    title: 'ID',
+                    width: 80,
+                    sort: true
+                  },{
+                    field: 'houses_name',
+                    title: '楼盘名称',
+                    width: 130,
+                  },{
+                    field: 'houses_info',
+                    title: '楼盘信息',
+                    width: 180,
+                  },{
+                    field: 'houses_num',
+                    title: '房间号',
+                    width: 180,
+                  }, {
+                    field: 'tenant_name',
+                    title: '租户名称',
+                    width: 180,
+                  },  {
+                    field: 'created_at',
+                    title: '录入时间',
+                    width: 180,
+                  }, {
+                    field: 'is_we_company',
+                    title: '是否我司租户',
+                    width: 120,
+                  }, {
+                    field: 'company_type',
+                    title: '公司类型',
+                    templet: function(d) {
+                      if(d.companytype != null){
+                        return d.companytype.type_name
+                      }else{
+                        return '';
+                      }
+                     
+                    },
+                    width: 120,
+                  }, {
+                    field: 'tenant_user',
+                    title: '联系人',
+                    width: 220,
+                    
+                  }, {
+                    field: 'start_time',
+                    title: '合同起始时间',
+                    width: 120,
+                  },{
+                    field: 'stop_time',
+                    title: '合同到期时间',
+                    width: 120,
+                  }, {
+                    field: 'pay_type',
+                    title: '付款方式',
+                    templet: function(d) {
+                     
+                     if(d.paytype != null){
+                       return d.paytype.type_name
+                    }else{
+                      return '';
+                    }
+                    },
+                    width: 100,
+                  }, {
+                    field: 'pay_time',
+                    title: '下次应付款时间',
+                    width: 120,
+                  }, {
+                    field: 'tenant_need',
+                    title: '租户需求',
+                    templet: function(d) {
+                     if(d.tenantneed != null){
+                      return d.tenantneed.type_name
+                   }else{
+                     return '';
+                   }
+                    },
+                  },{
+                    field: 'remark',
+                    title: '备注',
+                  }, {
+                    field: 'broker_name',
+                    title: '经纪人姓名',
+                    width: 100,
+                  }, {
+                    field: 'broker_phone',
+                    title: '经纪人手机号',
+                    width: 100,
+                  } ,    {
+                    fixed: 'right',
+                    title: "操作",
+                    width: 150,
+                    align: 'center',
+                    toolbar: '#barDemo'
+                  } 
+                ]
+              ],
+          
+              id: 'testReload',
+              title: '后台用户',
+              totalRow: true
+      
+            });
+              
 
+            }else if (res.status == 403) {
+            layer.msg('错误', {
+              offset: '15px',
+              icon: 2,
+              time: 3000
+            })
+          }
+        }
       });
+    
 
       table.on('tool(user)', function (obj) {
             var data = obj.data;

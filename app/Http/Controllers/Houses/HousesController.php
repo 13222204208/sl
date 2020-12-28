@@ -262,4 +262,15 @@ class HousesController extends Controller
         }
 
     }
+
+    public function search(Request $request, $hname)//  搜索楼盘   
+    {
+        $data = House::where('houses_name','like','%'.$hname.'%')->get();
+
+        if ($data) {
+            return response()->json(['status'=>200,'data'=>$data]);
+        }else{
+             return response()->json(['status'=>403]);
+        }
+    }
 }

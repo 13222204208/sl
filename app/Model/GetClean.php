@@ -2,6 +2,10 @@
 
 namespace App\Model;
 
+use App\Model\Demand;
+use App\Model\Company;
+use App\Model\PayType;
+use App\App\Model\TenantNeed;
 use App\Model\Traits\Timestamp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +21,21 @@ class GetClean extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
 
+        public function companytype()
+        {
+            return $this->belongsTo(Company::class, 'company_type','id');
+        }
+
+        public function paytype()
+        {
+            return $this->belongsTo(PayType::class, 'pay_type','id');
+        }
+
+        public function tenantneed()
+        {
+            return $this->belongsTo(Demand::class, 'tenant_need','id');
+        }
+
         public function getIsWeCompanyAttribute($value){
             if($value == 1){
                 return '是';
@@ -24,21 +43,7 @@ class GetClean extends Model
                 return "否";
             }      
         } 
-    
-        public function getCompanyTypeAttribute($value){
-            $companyType = DB::table('company_type')->where('id',intval($value))->value('type_name');
-            return $companyType;   
-        }
-    
-        public function getPayTypeAttribute($value){
-            $payType = DB::table('paytype')->where('id',intval($value))->value('type_name');
-            return $payType;   
-        }
-    
-        public function getTenantNeedAttribute($value){
-            $payType = DB::table('demand')->where('id',intval($value))->value('type_name');
-            return $payType;   
-        } 
+
     
         public function getTenantUserAttribute($value){
             $values = json_decode($value,true); 

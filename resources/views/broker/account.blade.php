@@ -327,80 +327,88 @@ data['branch'] =list;
         }
       });
 
-      table.render({
-        height: 600,
-        url: "query/account" //数据接口
-          ,
-        limit:15,
-        page: true //开启分页
-          ,
-        elem: '#LAY_table_user',
-        cols: [
-          [
-            {
-              type:'numbers',
-              title:'序号',
-              algin:'center',
-              width:80,
-            },
 
-            // {
-            //   field: 'id',
-            //   title: 'ID',
-            //   width: 120,
-            //   sort: true
-            // }, 
-            {
-              field: 'account',
-              title: '帐号',
-          
-            }, {
-              field: 'name',
-              title: '名称',
-           
-            }, {
-              field: 'branch_value',
-              title: '部门',
-           
-            },{
-                            field: 'status',
-                            title: '状态',
-                            //width:150,
-                            templet: function(d) {
-                                if (d.status == 1) {
-                                  return '<div class="layui-input-block">'+
-                                    '<input type="checkbox" class="switch_checked" lay-filter="switchGoodsID"'+ 'switch_goods_id="'+ d.id+
-                                     '" lay-skin="switch" checked '+ 'lay-text="正常|已禁用">'+
-                                  '</div>';
-                                }else{
-                                    return '<div class="layui-input-block">'+
-                                        '<input type="checkbox" class="switch_checked" lay-filter="switchGoodsID"'+ 'switch_goods_id="'+ d.id+
-                                         '" lay-skin="switch" lay-text="正常|已禁用">'+
-                                      '</div>';
-                                }
-                              }
-                        },  {
-              fixed: 'right',
-              title: "操作",
-              align: 'center',
-              toolbar: '#barDemo'
-            }
-          ]
-        ],
-        parseData: function(res) { //res 即为原始返回的数据
-          console.log(res);
-          return {
-            "code": '0', //解析接口状态
-            "msg": res.message, //解析提示文本
-            "count": res.total, //解析数据长度
-            "data": res.data //解析数据列表
-          }
+      $.ajax({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        id: 'testReload',
-        title: '后台用户',
-        totalRow: true
+        url: "query/account",
+        method: 'get',
+        dataType: 'json',
+        success: function(res) {
+          if (res.status == 200) {
+           
+            table.render({
+              height: 600,
+              limit:15,
+              page: true //开启分页
+                ,
+              elem: '#LAY_table_user',
+              data:res.data,
+              cols: [
+                [
+                  {
+                    type:'numbers',
+                    title:'序号',
+                    algin:'center',
+                    width:80,
+                  },
+      
+                  {
+                    field: 'account',
+                    title: '帐号',
+                
+                  }, {
+                    field: 'name',
+                    title: '名称',
+                 
+                  }, {
+                    field: 'branch_value',
+                    title: '部门',
+                 
+                  },{
+                                  field: 'status',
+                                  title: '状态',
+                                  //width:150,
+                                  templet: function(d) {
+                                      if (d.status == 1) {
+                                        return '<div class="layui-input-block">'+
+                                          '<input type="checkbox" class="switch_checked" lay-filter="switchGoodsID"'+ 'switch_goods_id="'+ d.id+
+                                           '" lay-skin="switch" checked '+ 'lay-text="正常|已禁用">'+
+                                        '</div>';
+                                      }else{
+                                          return '<div class="layui-input-block">'+
+                                              '<input type="checkbox" class="switch_checked" lay-filter="switchGoodsID"'+ 'switch_goods_id="'+ d.id+
+                                               '" lay-skin="switch" lay-text="正常|已禁用">'+
+                                            '</div>';
+                                      }
+                                    }
+                              },  {
+                    fixed: 'right',
+                    title: "操作",
+                    align: 'center',
+                    toolbar: '#barDemo'
+                  }
+                ]
+              ],
+              id: 'testReload',
+              title: '后台用户',
+              totalRow: true
+      
+            });
+              
 
+            }else if (res.status == 403) {
+            layer.msg('错误', {
+              offset: '15px',
+              icon: 2,
+              time: 3000
+            })
+          }
+        }
       });
+
+
 
       form.on('switch(switchGoodsID)',function (data) {
                 

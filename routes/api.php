@@ -27,7 +27,7 @@ Route::middleware('cors')->prefix('user')->group(function (){
     Route::post('pcode', 'Api\SaoLouController@pcode');//发送手机验证码
     Route::get('paytype', 'Api\SaoLouController@paytype');//获取付款方式
 
-    Route::group(['middleware' => 'auth.jwt'], function () {
+    Route::group(['middleware' => ['auth.jwt','trueAccount']], function () {
         Route::post('logout', 'Api\SaoLouController@logout');//退出登录
 
         Route::post('upload_img', 'Api\SaoLouController@uploadImg');//图片上传
@@ -38,7 +38,7 @@ Route::middleware('cors')->prefix('user')->group(function (){
 
 Route::middleware('cors')->prefix('sl')->group(function (){
  
-    Route::group(['middleware' => 'auth.jwt'], function () {
+    Route::group(['middleware' => ['auth.jwt','trueAccount']], function () {
         Route::post('houses', 'Api\SaoLouController@houses');//获取楼盘架构
 
         Route::post('company', 'Api\SaoLouController@company');//获取公司类型
@@ -56,7 +56,7 @@ Route::middleware('cors')->prefix('sl')->group(function (){
 
 Route::middleware('cors')->prefix('data')->group(function (){
     Route::post('protocol', 'Api\DataController@protocol');//获取用户协议
-    Route::group(['middleware' => 'auth.jwt'], function () {
+    Route::group(['middleware' => ['auth.jwt','trueAccount']], function () {
         Route::post('refer_record', 'Api\DataController@referRecord');//提交过多少条扫楼记录
         Route::post('loupan', 'Api\DataController@loupan');//我的楼盘数据
         Route::post('pay_type', 'Api\DataController@payType');//付款方式

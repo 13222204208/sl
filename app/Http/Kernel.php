@@ -75,6 +75,8 @@ class Kernel extends HttpKernel
         'adminRoute' => \App\Http\Middleware\AdminMiddleware::class,//判断是否登陆
         'auth' => App\Http\Middleware\Authenticate::class,
 
+        'trueAccount' => Middleware\CheackAccount::class,
+
 
         //'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         //'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class

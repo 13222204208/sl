@@ -19,6 +19,14 @@
 
     </div>
 
+    <div class="demoTable" style="margin:20px;">
+      搜索楼盘：
+      <div class="layui-inline">
+        <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+      </div>
+      <button class="layui-btn" type="button" data-type="reload">查询</button>
+    </div>
+
     <div class="layui-row" id="layuiadmin-form-admin" style="display:none;">
         <form class="layui-form layui-from-pane" required lay-verify="required" style="margin:20px">
 
@@ -136,6 +144,11 @@
     </div>
 
     <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
+    <script type="text/html" id="toolbarDemo">
+      <div class="layui-btn-container">
+      
+      </div>
+    </script>
     <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑楼盘</a>
         <a class="layui-btn layui-btn-xs" lay-event="show">查看楼盘层级</a>
@@ -160,14 +173,82 @@
                 });
             });
 
-            form.verify({
-                type_name: function (value) {
-                    if (value.length > 8) {
-                        return '最多只能八个字符';
-                    }
-                }
-            });
+   
 
+                  //查询帐号
+      $('.demoTable .layui-btn').on('click', function() {
+        var keyWord = $('#demoReload');
+        var house_name = keyWord.val();
+        
+        $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url:  "search" + '/' + house_name, //数据接口
+          method: 'get',
+          dataType: 'json',
+          success: function(res) {
+            if (res.status == 200) {
+              table.render({
+                height: 600,
+                toolbar: '#toolbarDemo',
+                page: true,//开启分页
+                data:res.data,
+                elem: '#LAY_table_user',
+                cols: [
+                  [
+
+                    {
+                        field: 'id',
+                        title: 'ID',
+                        width: 80,
+                        sort: true
+                    }, {
+                        field: 'houses_name',
+                        title: '楼盘名称',
+                    }, {
+                        field: 'houses_address',
+                        title: '楼盘地址',
+                    }, {
+                        field: 'map',
+                        title: '地图位置坐标',
+                    }, {
+                        field: 'city',
+                        title: '所属区县',
+                        width: 100
+                    }, {
+                        field: 'business_area',
+                        title: '所属商圈',
+                    }, {
+                        field: 'property_type',
+                        title: '物业类型',
+                        width: 100
+                    }, {
+                        fixed: 'right',
+                        title: "操作",
+                        align: 'center',
+                        toolbar: '#barDemo'
+                    }
+                ]
+                ],
+
+                title: '后台用户',
+                totalRow: true
+      
+              });
+    
+              }else if (res.status == 403) {
+              layer.msg('错误', {
+                offset: '15px',
+                icon: 2,
+                time: 3000
+              })
+            }
+          }
+        });
+
+
+      });
 
             //监听提交
             form.on('submit(create)', function (data) {
@@ -209,6 +290,7 @@
             table.render({
                 url: "look/house" //数据接口
                     ,
+                toolbar: '#toolbarDemo',
                 page: true //开启分页
                     ,
                 elem: '#LAY_table_user',

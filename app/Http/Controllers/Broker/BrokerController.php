@@ -274,10 +274,22 @@ class BrokerController extends Controller
     }
 
     public function queryAccount(Request $request)
-    {
+    { 
+        $permission = $this->userPermission();
         $limit = $request->get('limit');
-        $data= User::where('id','>',1)->select('id','branch','account','name','status')->orderBy('id','desc')->paginate($limit);
-        return $data;
+        $data= User::where('id','>',1)->select('id','branch','account','name','status')->orderBy('id','desc')->get();
+
+        $newData= array();
+         foreach ($data as $user) {
+            $arr = explode(',',$user->branch);
+            $str= $arr[count($arr)-1];
+            if(in_array($str,$permission)){
+                $newData[] = $user;
+            } 
+        } 
+        return response()->json(['status'=>200,'data'=>$newData]);
+        
+       // return response()->json(['status'=>200,'data'=>$d['name']]);
     }
 
     public function addRoleScope(Request $request)//给角色添加权限范围
@@ -371,6 +383,14 @@ class BrokerController extends Controller
 
             return response()->json([ 'status' => 403]);
         }  
+    }
+
+    public function userPermission()
+    {
+        $id = session('id');//用户id
+        $user = User::find($id);
+        $arr = explode(',',$user->branch);
+        return $arr;
     }
 
   
