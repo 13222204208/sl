@@ -21,7 +21,7 @@ class CleanController extends Controller
     public function gainClean(Request $request)
     { 
         if ($request->ajax()) {           
-            $state= $this->userinfo()->hasPermissionTo('导出扫楼记录');
+            $state= $this->userinfo()->hasPermissionTo('导出权限');
             $data = GetClean::with(['companytype:id,type_name','paytype:id,type_name','tenantneed:id,type_name'])->whereIn('permission',$this->userPermission())->orderBy('id','desc')->get();
             return response()->json(['status'=>200,'data'=>$data,'state'=> $state]);
       
@@ -69,7 +69,7 @@ class CleanController extends Controller
 
     public function getPermission()
     {
-        $state= $this->userinfo()->hasPermissionTo('导出扫楼记录');
+        $state= $this->userinfo()->hasPermissionTo('导出权限');
         return response()->json(['status'=>200,'state'=> $state]);
     }
 }

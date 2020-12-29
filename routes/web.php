@@ -94,6 +94,8 @@ Route::prefix('houses')->group(function () {//楼盘管理
     Route::get('info','Houses\HousesController@info');//楼盘详细信息
     Route::post('update/house','Houses\HousesController@updateHouse');//楼盘详细信息
     Route::get('search/{hname}','Houses\HousesController@search');//搜索楼盘
+    
+    Route::get('get/permission','Clean\CleanController@getPermission');//是否有导出权限
 
     Route::get('tenant/info/{hnum}','Houses\HousesController@tenantInfo');//楼盘上的租户信息
 
@@ -211,7 +213,7 @@ Route::prefix('clean')->group(function () {//扫楼记录管理
 
     Route::get('house/tenant','Clean\CleanController@houseTenant');//搜索扫楼信息
 
-    Route::get('get/permission','Clean\CleanController@getPermission');//是否有权限
+    Route::get('get/permission','Clean\CleanController@getPermission');//是否有导出权限
 
     Route::get('search/clean','Clean\CleanController@searchClean');//按楼盘查看数据变更
     
@@ -237,7 +239,7 @@ Route::prefix('tenant')->group(function () {//租户管理
     Route::get('query/account','Tenant\TenantController@queryAccount');//转移租户
     Route::post('update/broker','Tenant\TenantController@updateBroker');//确定转移租户
 
-
+    Route::get('get/permission','Clean\CleanController@getPermission');//是否有权限
     
     Route::get('manage', function () {
         return view('tenant.manage');//租户管理

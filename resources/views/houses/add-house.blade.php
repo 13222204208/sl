@@ -189,9 +189,15 @@
           dataType: 'json',
           success: function(res) {
             if (res.status == 200) {
+
+              toolbar = '';
+              if(res.state == true){
+                toolbar = '#toolbarDemo';
+              }   
+
               table.render({
                 height: 600,
-                toolbar: '#toolbarDemo',
+                toolbar: toolbar,
                 page: true,//开启分页
                 data:res.data,
                 elem: '#LAY_table_user',
@@ -287,63 +293,93 @@
                 return false;
             });
 
-            table.render({
-                url: "look/house" //数据接口
-                    ,
-                toolbar: '#toolbarDemo',
-                page: true //开启分页
-                    ,
-                elem: '#LAY_table_user',
-                cols: [
-                    [
+            $.ajax({
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              url: "get/permission",
+              method: 'get',
+              dataType: 'json',
+              success: function(res) {
+                console.log(res); 
+                if (res.status == 200) {
+                    toolbar = '';
+                    if(res.state == true){
+                      toolbar = '#toolbarDemo';
+                    }   
+      
 
-                        {
-                            field: 'id',
-                            title: 'ID',
-                            width: 80,
-                            sort: true
-                        }, {
-                            field: 'houses_name',
-                            title: '楼盘名称',
-                        }, {
-                            field: 'houses_address',
-                            title: '楼盘地址',
-                        }, {
-                            field: 'map',
-                            title: '地图位置坐标',
-                        }, {
-                            field: 'city',
-                            title: '所属区县',
-                            width: 100
-                        }, {
-                            field: 'business_area',
-                            title: '所属商圈',
-                        }, {
-                            field: 'property_type',
-                            title: '物业类型',
-                            width: 100
-                        }, {
-                            fixed: 'right',
-                            title: "操作",
-                            align: 'center',
-                            toolbar: '#barDemo'
-                        }
-                    ]
-                ],
-                parseData: function (res) { //res 即为原始返回的数据
-                    //console.log(res);
-                    return {
-                        "code": '0', //解析接口状态
-                        "msg": res.message, //解析提示文本
-                        "count": res.total, //解析数据长度
-                        "data": res.data //解析数据列表
-                    }
-                },
-                id: 'testReload',
-                title: '后台用户',
-                totalRow: true
-
+                    table.render({
+                      url: "look/house" //数据接口
+                          ,
+                      toolbar: toolbar,
+                      page: true //开启分页
+                          ,
+                      elem: '#LAY_table_user',
+                      cols: [
+                          [
+      
+                              {
+                                  field: 'id',
+                                  title: 'ID',
+                                  width: 80,
+                                  sort: true
+                              }, {
+                                  field: 'houses_name',
+                                  title: '楼盘名称',
+                              }, {
+                                  field: 'houses_address',
+                                  title: '楼盘地址',
+                              }, {
+                                  field: 'map',
+                                  title: '地图位置坐标',
+                              }, {
+                                  field: 'city',
+                                  title: '所属区县',
+                                  width: 100
+                              }, {
+                                  field: 'business_area',
+                                  title: '所属商圈',
+                              }, {
+                                  field: 'property_type',
+                                  title: '物业类型',
+                                  width: 100
+                              }, {
+                                  fixed: 'right',
+                                  title: "操作",
+                                  align: 'center',
+                                  toolbar: '#barDemo'
+                              }
+                          ]
+                      ],
+                      parseData: function (res) { //res 即为原始返回的数据
+                          //console.log(res);
+                          return {
+                              "code": '0', //解析接口状态
+                              "msg": res.message, //解析提示文本
+                              "count": res.total, //解析数据长度
+                              "data": res.data //解析数据列表
+                          }
+                      },
+                      id: 'testReload',
+                      title: '后台用户',
+                      totalRow: true
+      
+                  });
+         
+      
+                  }else if (res.status == 403) {
+                  layer.msg('错误', {
+                    offset: '15px',
+                    icon: 2,
+                    time: 3000
+                  })
+                }
+              }
             });
+
+
+
 
 
             table.on('tool(user)', function (obj) {

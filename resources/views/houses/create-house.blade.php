@@ -116,6 +116,8 @@
 
     </script>
 
+    <table class="layui-table layui-form" id="tree-table" lay-size="sm"></table>
+
     <script src="/layuiadmin/layui/layui.js"></script>
     <script>
         layui.config({
@@ -179,7 +181,7 @@
            
             //监听提交
             form.on('submit(create)', function (data) {
-                console.log(data);
+                console.log(data);return false;
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -214,32 +216,144 @@
                 });
                 return false;
             });
-        
 
-           var  tableIns = treeTable.render({
-            toolbar: '#toolbarDemo',
-            elem: '#LAY_table_user',
-            url: "gain/loupan"+'/'+id,
-            tree: {
-                iconIndex: 2,           // 折叠图标显示在第几列
-                isPidData: true,        // 是否是id、pid形式数据
-                idName: 'id',  // id字段名称
-                pidName: 'parent_id'     // pid字段名称
-            },
-            cols: [[
-                {type: 'numbers'},
-                {type: 'checkbox'},
-                {field: 'type_name', title: '分类名称'},
-                
-                {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
-            ]],
+            var	re = treeTable.render({
+                elem: '#tree-table',
+                data: [{"id":1,"pid":0,"title":"1-1"},{"id":2,"pid":0,"title":"1-2"},{"id":3,"pid":0,"title":"1-3"},{"id":4,"pid":1,"title":"1-1-1"},{"id":5,"pid":1,"title":"1-1-2"},{"id":6,"pid":2,"title":"1-2-1"},{"id":7,"pid":2,"title":"1-2-3"},{"id":8,"pid":3,"title":"1-3-1"},{"id":9,"pid":3,"title":"1-3-2"},{"id":10,"pid":4,"title":"1-1-1-1"},{"id":11,"pid":4,"title":"1-1-1-2"}],
+                icon_key: 'title',
+                is_checkbox: true,
+                checked: {
+                    key: 'id',
+                    data: [0,1,4,10,11,5,2,6,7,3,8,9],
+                },
+                end: function(e){
+                    form.render();
+                },
+                cols: [
+                    {
+                        key: 'title',
+                        title: '名称',
+                        width: '100px',
+                        template: function(item){
+                            if(item.level == 0){
+                                return '<span style="color:red;">'+item.title+'</span>';
+                            }else if(item.level == 1){
+                                return '<span style="color:green;">'+item.title+'</span>';
+                            }else if(item.level == 2){
+                                return '<span style="color:#aaa;">'+item.title+'</span>';
+                            }
+                        }
+                    },
+                    {
+                        key: 'id',
+                        title: 'ID',
+                        width: '100px',
+                        align: 'center',
+                    },
+                    {
+                        key: 'pid',
+                        title: '父ID',
+                        width: '100px',
+                        align: 'center',
+                    },
+                    {
+                        title: '开关',
+                        width: '100px',
+                        align: 'center',
+                        template: function(item){
+                            return '<input type="checkbox" name="close" lay-skin="switch" lay-text="ON|OFF">';
+                        }
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        template: function(item){
+                            return '<a lay-filter="add">添加</a> | <a target="_blank" href="/detail?id='+item.id+'">编辑</a>';
+                        }
+                    }
+                ]
+            });
+        
+         
+            $.ajax({
+                headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "get/permission",
+                method: 'get',
+                dataType: 'json',
+                success: function(res) {
+                  //console.log(res); 
+                  if (res.status == 200) {
+                      toolbar = '';
+                      if(res.state == true){
+                        //toolbar = '#toolbarDemo';
+                        var renderTable=  treeTable.render({
+                            toolbar: '#toolbarDemo',
+                            elem: '#LAY_table_user',
+                            url: "gain/loupan"+'/'+id,
+                            tree: {
+                                iconIndex: 2,           // 折叠图标显示在第几列
+                                isPidData: true,        // 是否是id、pid形式数据
+                                idName: 'id',  // id字段名称
+                                pidName: 'parent_id'     // pid字段名称
+                            },
+                            cols: [[
+                                {type: 'numbers'},
+                                {type: 'checkbox'},
+                                {field: 'type_name', title: '分类名称'},
+                                
+                                {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
+                            ]],
+                            
+                            done: function () {
+                                //关闭加载
+                                
+                                layer.closeAll('loading');
+                            }
+                        });
+                        
+                      }else{
+                        var renderTable= treeTable.render({
+                            elem: '#LAY_table_user',
+                            url: "gain/loupan"+'/'+id,
+                            tree: {
+                                iconIndex: 2,           // 折叠图标显示在第几列
+                                isPidData: true,        // 是否是id、pid形式数据
+                                idName: 'id',  // id字段名称
+                                pidName: 'parent_id'     // pid字段名称
+                            },
+                            cols: [[
+                                {type: 'numbers'},
+                                {type: 'checkbox'},
+                                {field: 'type_name', title: '分类名称'},
+                                
+                                {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
+                            ]],
+                            
+                            done: function () {
+                                //关闭加载
+                                
+                                layer.closeAll('loading');
+                            }
+                        });
+                       
+                      }   
+
+                     
+
+        
+                    }else if (res.status == 403) {
+                    layer.msg('错误', {
+                      offset: '15px',
+                      icon: 2,
+                      time: 3000
+                    })
+                  }
+                }
+              });
+              
             
-            done: function () {
-                //关闭加载
-                
-                layer.closeAll('loading');
-            }
-        });
 
    
 

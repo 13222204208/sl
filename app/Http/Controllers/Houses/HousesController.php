@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Houses;
 
 
+use App\Model\User;
 use App\Model\Clean;
 use App\Model\House;
 use App\Model\Level;
-use App\Model\Tenant;
 
+use App\Model\Tenant;
 use App\Model\GetTenant;
 use Illuminate\Http\Request;
 use function PHPSTORM_META\type;
@@ -266,9 +267,11 @@ class HousesController extends Controller
     public function search(Request $request, $hname)//  搜索楼盘   
     {
         $data = House::where('houses_name','like','%'.$hname.'%')->get();
-
+        $id = session('id');//用户id
+        $user = User::find($id);
+        $state= $user->hasPermissionTo('导出权限');
         if ($data) {
-            return response()->json(['status'=>200,'data'=>$data]);
+            return response()->json(['status'=>200,'data'=>$data,'state' => $state]);
         }else{
              return response()->json(['status'=>403]);
         }
