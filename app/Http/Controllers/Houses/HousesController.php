@@ -174,7 +174,7 @@ class HousesController extends Controller
             }
            
            if ($status) {
-                return response()->json(['status'=>200]);
+                return response()->json(['status'=>200,'data'=>$status]);
            }else{
                 return response()->json(['status'=>403]);
            }

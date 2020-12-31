@@ -12,4 +12,9 @@ class level extends Model
     use NodeTrait;
     protected $table = 'level';
     protected $guarded = [];
+/* 
+    public function getOpenAttribute($value)
+    {
+        return true;
+    }  */
 }
