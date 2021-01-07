@@ -81,7 +81,7 @@ class SaoLouController extends Controller
         $input = $request->only('account', 'password');
       
         $jwt_token = null;
- 
+        
         if (! $jwt_token = JWTAuth::attempt($input)) {
             return response()->json([
                 'code' => 0,
@@ -607,7 +607,7 @@ class SaoLouController extends Controller
         $sms = app('easysms');
         try {
             $sms->send($phone, [
-                'template' => 'SMS_171855867',
+                'template' => 'SMS_195575357',
                 'data' => [
                     'code' => $pcode
                 ],    

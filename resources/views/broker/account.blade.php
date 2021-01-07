@@ -258,7 +258,7 @@ var list = new Array();
 list = getChecked_list(checkData);
 data = data.field;
 data['branch'] =list;
-        console.log(data);return false;
+        console.log(data);
         $.ajax({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
