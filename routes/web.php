@@ -105,7 +105,7 @@ Route::prefix('houses')->group(function () {//楼盘管理
 
     Route::get('look/num/{id}','Houses\HousesController@lookNum');//获取分类下楼盘的房间号
   
-    Route::get('gain/house/num','Houses\HousesController@gainHouseNum');
+    Route::get('gain/house/num/{pid}','Houses\HousesController@gainHouseNum');
 
     Route::post('add/house','Houses\HousesController@addHouse')->middleware('adminLogin');//创建楼盘信息
     Route::get('look/house','Houses\HousesController@lookHouse');//查看楼盘信息

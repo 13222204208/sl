@@ -22,11 +22,16 @@ class HousesController extends Controller
         //$limit = $request->get('limit');  
         if ($request->ajax()) {
             $lpname = House::where('id',$id)->value('houses_name');
-          
-            $id = Level::where('type_name',$lpname)->value('id');
-            if($id){ 
+         
+            $level = Level::where('type_name',$lpname)->first(); 
+            if($level){ 
                 //$data= Level::where('parent_id',$id)->paginate($limit);
-                $data= Level::descendantsAndSelf($id);
+                //$data= Level::descendantsAndSelf($id);
+                if($level->parent_id == 0){
+                    $data= Level::where('id',$level->id)->get();
+                }else{
+                    $data= Level::where('parent_id',$level->id)->get();
+                }              
                 return response()->json([
                     'code' =>0,
                     'msg' => '',
@@ -34,9 +39,10 @@ class HousesController extends Controller
                 ]);
             }else{
                 Level::create(['type_name' => $lpname,'parent_id'=>0]);
-                $id = Level::where('type_name',$lpname)->value('id');
+                $data = Level::where('type_name',$lpname)->where('parent_id',null)->get();
 
-                $data= Level::descendantsAndSelf($id);
+                //$data= Level::descendantsAndSelf($id);
+                
                 return response()->json([
                     'code' =>200,
                     //'msg' => '',
@@ -117,10 +123,12 @@ class HousesController extends Controller
         }
     }
 
-    public function gainHouseNum()
+    public function gainHouseNum($pid)
     { 
-
-        $data= Level::all();
+        if($pid ==0){
+           $pid = Null; 
+        }
+        $data= Level::where('parent_id',$pid)->get();
         return response()->json([
             'code' =>0,
             'msg' => '',
@@ -164,15 +172,21 @@ class HousesController extends Controller
             $lpid = intval($request->lpid);
             if ($pid == 0) {
                 for ($i=0; $i < count($type_name) ; $i++) { 
-                  $status=  Level::create(['type_name'=> $type_name[$i],'lpid'=>$lpid]);
+                    $data[$i]['type_name'] =$type_name[$i];
+                    $data[$i]['lpid'] = $lpid;
+                  //$status=  Level::create(['type_name'=> $type_name[$i],'lpid'=>$lpid]);
                 }
             }else{
                
                 for ($i=0; $i < count($type_name) ; $i++) { 
-                    $status=  Level::create(['type_name'=> $type_name[$i],'parent_id'=>$pid ,'lpid'=>$lpid]);
+                    $data[$i]['type_name'] =$type_name[$i];
+                    $data[$i]['parent_id'] = $pid;
+                    $data[$i]['lpid'] = $lpid;
+                    //$status=  Level::create(['type_name'=> $type_name[$i],'parent_id'=>$pid ,'lpid'=>$lpid]);
                   }
             }
-           
+          
+            $status=  DB::table('level')->insert($data); 
            if ($status) {
                 return response()->json(['status'=>200,'data'=>$status]);
            }else{

@@ -14,7 +14,7 @@
 
 <body>
 
-    <div class="demoTable" style="margin:30px;">
+    <div class="demoTable" style="margin:5px;">
         <button class="layui-btn" data-type="reload" value="0" id="admin-management">添加分类</button>
         <div class="layui-inline" style="color:gray" id="lp_address">
         </div>

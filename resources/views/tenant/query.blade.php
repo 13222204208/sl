@@ -15,9 +15,46 @@
   </style>
 </head>
 
-<body>
-
+<body><br>
   <form class="layui-form" action="">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">是否我司:</label>
+          <div class="layui-input-block">
+              <select name="is_we_company" id="isNo" lay-filter="stateIsNo">
+                  <option value=""></option>
+                  <option value="1">我司租户</option>
+                  <option value="0">外部租户</option>
+              </select>
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">到期租户:</label>
+          <div class="layui-input-block">
+              <select name="day"  lay-filter="stateSelect">
+                  <option value=""></option>
+                  <option value="30">30天内到期</option>
+                  <option value="60">60天内到期</option>
+                  <option value="90">90天内到期</option>
+              </select>
+          </div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">租户名称：</label>
+            <div class="layui-input-inline">
+              <input class="layui-input" name="tenant_name" id="demoReload" autocomplete="off">
+            </div>
+            <div class="layui-input-inline">
+              <button class="layui-btn" lay-submit="" lay-filter="create">查询</button>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{{--    <form class="layui-form" action="">
     <br>
     <div class="layui-form-item">
        <label class="layui-form-label">  租户名称:</label>
@@ -59,7 +96,7 @@
           </div>
       </div>
   </div>
-</form>
+</form>  --}}
 
   <div class="layui-row" id="popUpdateTest" style="display:none;">
     <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
@@ -73,7 +110,7 @@
         </div>
       </div>
 
-      <div class="layui-form-item">
+{{--        <div class="layui-form-item">
         <label class="layui-form-label">是否我司</label>
         <div class="layui-input-block">
           <input type="text" name="is_we_company" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
@@ -92,7 +129,7 @@
         <div class="layui-input-block">
           <input type="text" name="company_type" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
-      </div>
+      </div>  --}}
 
       <div class="layui-form-item">
         <div class="layui-inline">
@@ -113,12 +150,12 @@
       </div>
 
 
-      <div class="layui-form-item">
+{{--        <div class="layui-form-item">
         <label class="layui-form-label">付款方式</label>
         <div class="layui-input-block">
           <input type="text" name="pay_type" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
-      </div>
+      </div>  --}}
 
       <div class="layui-form-item">
         <div class="layui-inline">
@@ -129,12 +166,12 @@
         </div>
       </div>
 
-      <div class="layui-form-item">
+{{--        <div class="layui-form-item">
         <label class="layui-form-label">租户需求</label>
         <div class="layui-input-block">
           <input type="text" name="tenant_need" required lay-verify="required" autocomplete="off" placeholder="" value="" class="layui-input">
         </div>
-      </div>
+      </div>  --}}
 
       <div class="layui-form-item">
         <label class="layui-form-label">备注</label>
@@ -225,20 +262,21 @@
         success: function(res) {
           console.log(res); 
           if (res.status == 200) {
-              toolbar = '';
+            defaultToolbar = '';
               if(res.state == true){
-                toolbar = '#toolbarDemo';
+                defaultToolbar = ['filter', 'exports', 'print'];
               }   
-
+    
               table.render({
                 height: 600,
+                defaultToolbar: defaultToolbar,
                 url: "query/tenant" //数据接口
                   ,
                 page: true //开启分页
                   ,
                 elem: '#LAY_table_user',
-                toolbar: toolbar,
-            
+                toolbar: '#toolbarDemo',
+                limit:15,
                 cols: [
                   [
                     {type:'checkbox'},
@@ -365,7 +403,7 @@
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
                         title: "经纪人信息",
-                       area: ['800px','600px'],
+                       area: ['800px','450px'],
                         content: $("#layuiadmin-form-admin")//引用的弹出层的页面层的方式加载修改界面表单
                     });
 
@@ -581,11 +619,11 @@
         success: function(res) {
           console.log(res); 
           if (res.status == 200) {
-              toolbar = '';
-              if(res.state == true){
-                toolbar = '#toolbarDemo';
-              }   
-
+            defaultToolbar = '';
+            if(res.state == true){
+              defaultToolbar = ['filter', 'exports', 'print'];
+            }   
+         
               table.render({
                 height: 600,
                 url: "stop/date"  //数据接口
@@ -597,8 +635,9 @@
                   is_we_company:data.field.is_we_company,
                   tenant_name:data.field.tenant_name
                 },
+                defaultToolbar:defaultToolbar,
                 elem: '#LAY_table_user',
-                toolbar: toolbar,
+                toolbar: '#toolbarDemo',
                 cols: [
                   [
                     {type:'checkbox'},
@@ -739,7 +778,7 @@
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
                         title: "修改租户信息",
-                       area: ['600px','600px'],
+                       area: ['600px','450px'],
                         content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
                     });
 

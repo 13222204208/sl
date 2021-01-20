@@ -25,7 +25,7 @@
       <form class="layui-form" action="">
         <div class="layui-form-item">
 
-          <div class="layui-inline" style="margin:20px">
+          <div class="layui-inline" style="margin:5px">
             <div class="layui-input-inline">
               <button type="button" class="layui-btn layui-btn-blue" id="admin-management">新建帐号</button>
             </div>
@@ -572,7 +572,7 @@ data['branch'] =list;
                                                     },
                                                     dataType: 'json',
                                                     success: function(res) {
-                                                      // console.log(res); return false;
+                                                      
                                                       tree.render({
                                                         elem: '#updateBranchName'
                                                         ,data: res.data.pers
@@ -582,11 +582,18 @@ data['branch'] =list;
                                                         ,id: 'demoId3'
                                                     
                                                       });
-
+                                                      //console.log(res.data);
                                                       branch=  res.data.branch[0].branch;
                                                       branchid= branch.split(',').map(Number);
-                                                      branchid.shift();
-                                                  
+                                                    
+                                                      console.log(branchid);
+                                                      if(branchid.length >4){
+                                                        branchid.shift();
+                                                      }else{
+                                                        branchid= branchid.pop();
+                                                      }
+                                                      console.log( branchid);
+                                              
                                                       tree.setChecked('demoId3',branchid);
                                                      
                                                       form.render();     

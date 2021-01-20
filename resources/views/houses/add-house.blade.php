@@ -14,7 +14,7 @@
 
 <body>
 
-    <div class="demoTable" style="margin:30px;">
+    <div class="demoTable" style="margin:5px;">
         <button class="layui-btn" data-type="reload" value="0" id="admin-management">创建楼盘</button>
 
     </div>
@@ -168,7 +168,7 @@
                     //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                     type: 1,
                     title: "新建楼盘",
-                    area: ['600px', '500px'],
+                    area: ['600px', '470px'],
                     content: $("#layuiadmin-form-admin") //引用的弹出层的页面层的方式加载修改界面表单
                 });
             });
@@ -396,7 +396,7 @@
                         //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
                         type: 1,
                         title: "修改楼盘信息",
-                       area: ['600px','500px'],
+                       area: ['600px','470px'],
                         content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
                     });
 

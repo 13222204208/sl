@@ -39,7 +39,31 @@
             var form = layui.form;
             var $ = layui.jquery;
         // 渲染树形表格
-     
+
+        treeTable.render({
+            elem: '#demoTb1',
+            treeDefaultClose: false,
+            treeLinkage: false,	
+            reqData: function(data, callback) {
+                var pid = data?data.id:0;
+                $.get('gain/house/num/'+pid, function (res) {
+                    callback(res.data);
+                });
+            },
+            tree: {
+                iconIndex: 1,  // 折叠图标显示在第几列
+                idName: 'id',  // 自定义id字段的名称
+                haveChildName: 'haveChild'  // 自定义标识是否还有子节点的字段名称
+            },
+            cols: [[
+                {type: 'numbers'},
+               // {type: 'checkbox'},
+                {field: 'type_name', title: '楼盘信息'},
+                
+                {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
+            ]],
+        });
+     /**
                 treeTable.render({
                 elem: '#demoTb1',
                 treeDefaultClose: false,
@@ -59,7 +83,7 @@
                     {align: 'center', toolbar: '#barDemo', title: '操作', width: 220}
                 ]],
                 
-            });
+            }); */
      
 
         treeTable.on('tool(demoTb1)', function (obj) {

@@ -12,9 +12,18 @@ class level extends Model
     use NodeTrait;
     protected $table = 'level';
     protected $guarded = [];
-/* 
-    public function getOpenAttribute($value)
+    protected $appends = ['haveChild'];
+
+    public function getHaveChildAttribute($value)
     {
-        return true;
-    }  */
+        $id = $this->attributes['id'];
+        $state = Level::where('parent_id',$id)->first();
+        if($state){
+            return true;
+        }else{
+            return false;
+        }
+        
+      
+    }  
 }

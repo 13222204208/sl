@@ -27,7 +27,9 @@ class WorkController extends Controller
                    $newData[] = $user;
                } 
            } 
-           return response()->json(['status'=>200,'data'=>$newData]);
+           $data->data = $newData;
+           return $data;
+           //return response()->json(['status'=>200,'data'=>$newData]);
         }
     }
 

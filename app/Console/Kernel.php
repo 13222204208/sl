@@ -33,16 +33,25 @@ class Kernel extends ConsoleKernel
             $sms = app('easysms');
 
             $dueTime= date("Y-m-d",strtotime("+1 month",time()));
-            $datas= GetTenant::whereDate('pay_time','<=',$dueTime)->get(); 
-            foreach($datas as $data){ 
+            $yDay= date("Y-m-d",strtotime("-2 day"));
+            $datas= GetTenant::whereDate('pay_time','<=',$dueTime)->where('pay_time','>',$yDay)->get(); 
+            foreach($datas as $data){    
+                $user = $data->tenant_user;     
+                $leg = strpos($user,'手机号'); 
+        
+                $info = substr($data->houses_name,0,19);
+                $name = substr($data->tenant_name,0,18);
+                $phone= substr($user,$leg+10,$leg-2);
+                $time = $data->pay_time;
+             
                 try {//付款提醒
-                    $sms->send($data['broker_phone'], [
+                    $sms->send($data->broker_phone, [
                         'template' => 'SMS_207961094',
                         'data' => [
-                            'info' => $data['houses_name'].$data['houses_info'],
-                            'name' => $data['tenant_name'],
-                            'user' => $data['tenant_user'],
-                            'time' => $data['pay_time']
+                            'info' => $info,
+                            'name' => $name,
+                            'user' => $phone,
+                            'time' => $time
                         ],    
                     ]);
                 } catch (NoGatewayAvailableException $exception) {
@@ -54,18 +63,24 @@ class Kernel extends ConsoleKernel
                 }
             }
     
-            $datas= GetTenant::whereDate('stop_time','<=',$dueTime)->get(); 
+            $datas= GetTenant::whereDate('stop_time','<=',$dueTime)->where('pay_time','>',$yDay)->get(); 
             foreach($datas as $data){ 
-    /*             $str= $data['houses_name'].$data['houses_info'].',租户名称：'.$data['tenant_name'].'联系人：'.$data['tenant_user'].',截止到'.$data['pay_time'].'为付款日期';  */
+                $user = $data->tenant_user;     
+                $leg = strpos($user,'手机号'); 
+        
+                $info = substr($data->houses_name,0,19);
+                $name = substr($data->tenant_name,0,18);
+                $phone= substr($user,$leg+10,$leg-2);
+                $time = $data->stop_time;
     
                 try {//付款提醒
-                    $sms->send($data['broker_phone'], [
+                    $sms->send($data->broker_phone, [
                         'template' => 'SMS_207961096',
                         'data' => [
-                            'info' => $data['houses_name'].$data['houses_info'],
-                            'name' => $data['tenant_name'],
-                            'user' => $data['tenant_user'],
-                            'time' => $data['stop_time']
+                            'info' => $info,
+                            'name' => $name,
+                            'user' => $phone,
+                            'time' => $time
                         ],    
                     ]);
                 } catch (NoGatewayAvailableException $exception) {
