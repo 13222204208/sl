@@ -182,6 +182,9 @@
             //监听提交
             form.on('submit(create)', function (data) {
                 console.log(data);
+                loading = layer.load('加载中...', {
+                    shade: [0.3,'#fff'] //0.1透明度的白色背景
+                  });
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -192,6 +195,11 @@
                     dataType: 'json',
                     success: function (res) {
                         console.log(res);
+                 
+                          setTimeout(function (res) {
+                            //最后数据加载完 让 loading层消失
+                            layer.close(loading);
+                          }, 5000);
                         if (res.status == 200) {
                             layer.msg('创建成功', {
                                 offset: '15px',

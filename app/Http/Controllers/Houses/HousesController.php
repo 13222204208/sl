@@ -170,28 +170,32 @@ class HousesController extends Controller
             $data= array();
             $pid = intval($request->pid); 
             $lpid = intval($request->lpid);
-            if ($pid == 0) {
+
+             if ($pid == 0) {
                 for ($i=0; $i < count($type_name) ; $i++) { 
-                    $data[$i]['type_name'] =$type_name[$i];
-                    $data[$i]['lpid'] = $lpid;
-                  //$status=  Level::create(['type_name'=> $type_name[$i],'lpid'=>$lpid]);
+                    //$data[$i]['type_name'] =$type_name[$i];
+                    //$data[$i]['lpid'] = $lpid;
+                
+                   Level::create(['type_name'=> $type_name[$i],'lpid'=>$lpid]);
                 }
             }else{
                
                 for ($i=0; $i < count($type_name) ; $i++) { 
-                    $data[$i]['type_name'] =$type_name[$i];
-                    $data[$i]['parent_id'] = $pid;
-                    $data[$i]['lpid'] = $lpid;
-                    //$status=  Level::create(['type_name'=> $type_name[$i],'parent_id'=>$pid ,'lpid'=>$lpid]);
+                   // $data[$i]['type_name'] =$type_name[$i];
+                   // $data[$i]['parent_id'] = $pid;
+                   // $data[$i]['lpid'] = $lpid;
+
+                     Level::create(['type_name'=> $type_name[$i],'parent_id'=>$pid ,'lpid'=>$lpid]);
                   }
-            }
-          
-            $status=  DB::table('level')->insert($data); 
-           if ($status) {
+            } 
+            
+            return response()->json(['status'=>200]);
+           // $status=  DB::table('level')->insert($data); 
+  /*          if ($status) {
                 return response()->json(['status'=>200,'data'=>$status]);
            }else{
                 return response()->json(['status'=>403]);
-           }
+           } */
         }
     }
 

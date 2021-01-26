@@ -326,12 +326,15 @@ class SaoLouController extends Controller
                  $arr= array();
     
                  $house = '';
-                 if($request->has('cid')){
+                 $arr = array();
+/*                  if($request->has('cid')){
                      $d= Level::defaultOrder()->ancestorsAndSelf($request->cid);
                    
                      foreach($d as $h){
-                         $house .= $h['type_name'].'>';
+                         //$house .= $h['type_name'].'>';
+                         $arr[$h['id']] = $h['type_name'];
                      }
+                     var_dump($arr);
                      $arr['house_info'] = $house;
     
                  }else{
@@ -340,16 +343,25 @@ class SaoLouController extends Controller
                     foreach($d as $h){
                         $house .= $h['type_name'].'>';
                     }
+                 } */
+                 $d= Level::defaultOrder()->ancestorsAndSelf(intval($request->lpid));
+                 Level::fixTree();
+                 $d =  json_decode( json_encode( $d),true); 
+                $last_ages = array_column($d,'id');
+                array_multisort($last_ages ,SORT_ASC,$d); 
+                 foreach($d as $h){
+                     $house .= $h['type_name'].'>';
                  }
+                 $arr['house_info'] = $house;
     
                  $hnum = Clean::where('houses_info',$house)->get('houses_num');
                  $farr = array();
                  foreach($hnum as  $fj){
                     $farr[] = $fj['houses_num'];
                  }
-    
+
                 foreach($data as $k=> $key){
-                    $arr['data'][] = $key;
+                    $arr['data'][] = $key; 
                   $d = Level::where('parent_id',$key['id'])->get(['type_name','id']);
                   if(empty($d[0])){
                     $arr['data'][$k]['num'] = 1;//判断当前的层级，1 为最后一层，2 为倒数第二层
