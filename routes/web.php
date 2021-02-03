@@ -213,6 +213,8 @@ Route::prefix('clean')->group(function () {//扫楼记录管理
 
     Route::get('house/tenant','Clean\CleanController@houseTenant');//搜索扫楼信息
 
+    Route::get('export','Clean\CleanController@export');//下载扫楼记录
+
     Route::get('get/permission','Clean\CleanController@getPermission');//是否有导出权限
 
     Route::get('search/clean','Clean\CleanController@searchClean');//按楼盘查看数据变更
@@ -231,6 +233,7 @@ Route::prefix('tenant')->group(function () {//租户管理
 
     Route::get('query/tenant','Tenant\TenantController@queryTenant');//租户信息列表 
     Route::get('gain/info','Tenant\TenantController@gainInfo');//查询单个租户信息
+    Route::get('export','Tenant\TenantController@export');//下载租户excel表格数据
 
     Route::post('del/tenant','Tenant\TenantController@delTenant');//删除租户信息
     Route::post('update/tenant','Tenant\TenantController@updateTenant');//更新租户信息

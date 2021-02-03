@@ -5,12 +5,19 @@ namespace App\Http\Controllers\Clean;
 use App\Model\User;
 use App\Model\Clean;
 use App\Model\GetClean;
+use App\Exports\CleanExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CleanController extends Controller
 {
+    public function export() 
+    {
+        return Excel::download(new CleanExport, '扫楼记录.xlsx');
+    }
+
     public function userinfo()
     {
         $id = session('id');//用户id

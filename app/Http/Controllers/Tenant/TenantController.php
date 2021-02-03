@@ -6,10 +6,17 @@ use App\Model\User;
 use App\Model\Tenant;
 use App\Model\GetTenant;
 use Illuminate\Http\Request;
+use App\Exports\TenantExport;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TenantController extends Controller
 {
+    public function export() 
+    {
+        return Excel::download(new TenantExport, '租户记录.xlsx');
+    }
+
     public function queryTenant(Request $request)
     {
         if ($request->ajax()) {

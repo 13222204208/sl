@@ -17,17 +17,20 @@ class WorkController extends Controller
         if ($request->ajax()) {  
             $limit = $request->get('limit'); 
             $permission = $this->userPermission();
+       
             $data= User::where('id','>',1)->paginate($limit);
-           
-            $newData= array();
+            
             foreach ($data as $user) {
-               $arr = explode(',',$user->branch);
+               $arr = explode(',',$user->branch); 
                $str= $arr[count($arr)-1];
                if(in_array($str,$permission)){
                    $newData[] = $user;
                } 
            } 
-           $data->data = $newData;
+           
+           $data = json_decode($data,true); 
+           $data['data'] = $newData;
+           $data=  json_encode($data);
            return $data;
            //return response()->json(['status'=>200,'data'=>$newData]);
         }

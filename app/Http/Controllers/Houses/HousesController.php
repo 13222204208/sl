@@ -141,7 +141,7 @@ class HousesController extends Controller
     {
         $limit = $request->get('limit');
 
-        $state= true;
+        $state= false;
         $data= Level::descendantsAndSelf($id)->where('lpid',1);
         $arr = array();
         foreach($data as $d){
@@ -151,7 +151,11 @@ class HousesController extends Controller
         if(empty($arr)){ 
             return [];
         }
-        $res = GetTenant::when($state,function ($q) use ($arr) {
+        $status= GetTenant::whereIn('permission',$this->userPermission())->first();
+        if($status){
+            $$state = true;
+        }
+        $res = GetTenant::whereIn('permission',$this->userPermission())->when($state,function ($q) use ($arr) {
             foreach ($arr as $d) { 
             $q->orWhereRaw('FIND_IN_SET(?,houses_num)',[$d]);
             }
@@ -293,5 +297,13 @@ class HousesController extends Controller
         }else{
              return response()->json(['status'=>403]);
         }
+    }
+
+    public function userPermission()//用户部门权限
+    {
+        $id = session('id');//用户id
+        $user = User::find($id);
+        $arr = explode(',',$user->branch);
+        return $arr;
     }
 }

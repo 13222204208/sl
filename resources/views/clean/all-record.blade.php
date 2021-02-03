@@ -186,7 +186,7 @@
   </div>
 
 
-
+  <div id="exportData" style="display: none"> <a href="export" style="color:blue">点击下载数据</a></div>
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
   <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
@@ -256,6 +256,7 @@
                   if (res.status == 200) {
                       toolbar = '';
                       if(res.state == true){
+                        $('#exportData').show();
                         toolbar = '#toolbarDemo';
                       }   
       
@@ -422,6 +423,7 @@
             if (res.status == 200) {
                 toolbar = '';
                 if(res.state == true){
+                  $('#exportData').show();
                   toolbar = '#toolbarDemo';
                 }   
 
@@ -576,6 +578,7 @@
           if (res.status == 200) {
               toolbar = '';
               if(res.state == true){
+                $('#exportData').show();
                 toolbar = '#toolbarDemo';
               }
                    //return false;
