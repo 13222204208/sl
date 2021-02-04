@@ -27,11 +27,11 @@ class WorkController extends Controller
                    $newData[] = $user;
                } 
            } 
-           
-           $data = json_decode($data,true); 
+           return response()->json(['status'=>200,'data'=>$newData]);  
+/*            $data = json_decode($data,true); 
            $data['data'] = $newData;
            $data=  json_encode($data);
-           return $data;
+           return $data; */
            //return response()->json(['status'=>200,'data'=>$newData]);
         }
     }
