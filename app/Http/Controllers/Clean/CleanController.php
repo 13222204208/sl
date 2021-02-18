@@ -13,9 +13,11 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class CleanController extends Controller
 {
-    public function export() 
+    public function export(Request $request) 
     {
-        return Excel::download(new CleanExport, '扫楼记录.xlsx');
+        $startTime= $request->get('start_time');
+        $stopTime= $request->get('stop_time');
+        return Excel::download(new CleanExport($startTime,$stopTime), '扫楼记录.xlsx');
     }
 
     public function userinfo()

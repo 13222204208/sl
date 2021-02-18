@@ -12,9 +12,10 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class TenantController extends Controller
 {
-    public function export() 
-    {
-        return Excel::download(new TenantExport, '租户记录.xlsx');
+    public function export(Request $request) 
+    {   $startTime= $request->get('start_time');
+        $stopTime= $request->get('stop_time');
+        return Excel::download(new TenantExport($startTime,$stopTime), '租户记录.xlsx');
     }
 
     public function queryTenant(Request $request)

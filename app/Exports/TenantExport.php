@@ -4,19 +4,42 @@ namespace App\Exports;
 
 use App\Model\User;
 use App\Model\GetTenant;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 
-class TenantExport implements ShouldAutoSize, WithHeadings, FromQuery
+class TenantExport implements FromCollection, ShouldAutoSize, WithHeadings
 {
+    use Exportable;
+    public $startTime;
+    public $stopTime;
 
-    public function query()
+    public function __construct($startTime, $stopTime)		// 导入外部查询参数
+    {
+        $this->startTime = $startTime;
+        $this->stopTime = $stopTime;
+
+    }
+
+    public function collection()
+    {
+
+        return GetTenant::query()
+            ->whereDate('created_at','>=',$this->startTime)
+            ->whereDate('created_at','<=',$this->stopTime)
+            ->whereIn('permission',$this->userPermission())
+
+            ->cursor(); // ← 重要的一点
+
+    }
+
+/*     public function query()
     {
         return GetTenant::query()->whereIn('permission',$this->userPermission());                
-    }
+    } */
 
     public function headings(): array
     {

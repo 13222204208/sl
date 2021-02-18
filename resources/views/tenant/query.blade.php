@@ -213,7 +213,35 @@
       </div>
     </script>
   </div>
-<div id="exportData" style="display: none"> <a href="export" style="color:blue">点击下载数据</a></div>
+<div id="exportData" style="display: none"> 
+  <form class="layui-form layui-from-pane" required lay-verify="required" action="">
+    <div class="layui-form-item"> 
+      <div class="layui-inline">
+        <label class="layui-form-label">开始时间：</label>
+        <div class="layui-input-inline">
+
+          <input type="text" name="startTime" class="layui-input" lay-verify="required"  id="startTime" placeholder="yyyy-MM-dd">
+        </div>
+
+      </div>
+
+      <div class="layui-inline">
+        <label class="layui-form-label">结束时间：</label>
+        <div class="layui-input-inline">
+          <input type="text" class="layui-input" name="stopTime" lay-verify="required" id="stopTime" placeholder="yyyy-MM-dd">
+        </div>
+
+      </div>
+      <div class="layui-inline">
+        <div class="layui-input-inline">
+          <button type="button" class="layui-btn layui-btn-blue" lay-submit=""  lay-filter="search">点击下载数据</button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+  
+  </div>
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
   <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
@@ -233,7 +261,35 @@
       var table = layui.table;
       var $ = layui.jquery;
       var form = layui.form;
-      var laydate= layui.laydate;
+       laydate= layui.laydate;
+
+      laydate.render({
+        elem: '#startTime',
+       // max: getNowFormatDate()
+      });
+      //日期时间范围
+      laydate.render({
+        elem: '#stopTime',
+       // max: getNowFormatDate()
+      });
+
+      function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+          month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+          strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month +
+          seperator1 + strDate + " " + date.getHours() + seperator2 +
+          date.getMinutes() + seperator2 + date.getSeconds();
+        return currentdate;
+      }
 
       laydate.render({
         elem: '#start-time',
@@ -382,6 +438,31 @@
       });
 
 
+      form.on('submit(search)', function(data) {
+        var data = data.field;
+        location.href='export?start_time='+data.startTime+"&stop_time="+data.stopTime;
+        // $.ajax({
+        //   headers: {
+        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //   },
+        //   url: "export",
+        //   method: 'get',
+        //   dataType: 'json',
+        //   data:{
+        //     start_time:data.startTime,
+        //     stop_time:data.stopTime
+        //   },
+        //   success: function(res) {
+        //     //console.log(res);return false;
+        //     layer.msg('下载成功', {
+        //         offset: '15px',
+        //         icon: 1,
+        //         time: 3000
+        //       })
+        //   }
+        // });
+        return false;
+      });
 
 
  //头工具栏事件
