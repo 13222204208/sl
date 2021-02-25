@@ -48,6 +48,12 @@
             <button type="button" class="layui-btn layui-btn-blue" lay-submit=""  lay-filter="search">搜索</button>
           </div>
         </div>
+
+        <div class="layui-inline" id="exportData" style="display: none">
+          <div class="layui-input-inline">
+            <button type="button" class="layui-btn layui-btn-blue" lay-submit=""  lay-filter="uploadExcel">点击下载数据</button>
+          </div>
+        </div>
       </div>
   
     </form>
@@ -186,7 +192,6 @@
   </div>
 
 
-  <div id="exportData" style="display: none"> <a href="export" style="color:blue">点击下载数据</a></div>
   <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
   <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
@@ -406,6 +411,12 @@
             });
 
 
+            form.on('submit(uploadExcel)', function(data) {
+        var data = data.field;
+        location.href='export?start_time='+data.startTime+"&stop_time="+data.stopTime;
+
+        return false;
+      });
 
       form.on('submit(search)', function(data) {
         var data = data.field;
