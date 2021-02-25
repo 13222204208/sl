@@ -21,7 +21,7 @@ class WorkController extends Controller
             $data= User::where('id','>',1)->paginate($limit);
             
             foreach ($data as $user) {
-               $arr = explode(',',$user->branch); 
+               $arr = array_filter(explode(',',$user->branch)); 
                $str= $arr[count($arr)-1];
                if(in_array($str,$permission)){
                    $newData[] = $user;
@@ -89,7 +89,7 @@ class WorkController extends Controller
     {
         $id = session('id');//用户id
         $user = User::find($id);
-        $arr = explode(',',$user->branch);
+        $arr = array_filter(explode(',',$user->branch));
         return $arr;
     }
 }

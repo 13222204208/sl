@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class CleanController extends Controller
 {
@@ -17,7 +18,11 @@ class CleanController extends Controller
     {
         $startTime= $request->get('start_time');
         $stopTime= $request->get('stop_time');
-        return Excel::download(new CleanExport($startTime,$stopTime), '扫楼记录.xlsx');
+        $path=  DIRECTORY_SEPARATOR.date('YmdHis')."扫楼记录.xlsx"; 
+         Excel::store(new CleanExport($startTime,$stopTime), $path);
+        //return Excel::download(new CleanExport($startTime,$stopTime), '扫楼记录.xlsx');
+
+        return response()->download(storage_path('app').$path);
     }
 
     public function userinfo()
@@ -65,7 +70,7 @@ class CleanController extends Controller
         $limit= $request->get('limit'); 
         $name=  $request->get('name');
 
-        $data= GetClean::with(['companytype:id,type_name','paytype:id,type_name','tenantneed:id,type_name'])->whereIn('permission',$this->userPermission())->where('houses_name','like','%'.$name.'%')->orWhere('tenant_name','like','%'.$name.'%')->paginate($limit);
+        $data= GetClean::with(['companytype:id,type_name','paytype:id,type_name','tenantneed:id,type_name'])->whereIn('permission',$this->userPermission())->where('houses_name','like','%'.$name.'%')->paginate($limit);
 
         return $data;
     }
@@ -74,7 +79,7 @@ class CleanController extends Controller
     {
         $id = session('id');//用户id
         $user = User::find($id);
-        $arr = explode(',',$user->branch);
+        $arr = array_filter(explode(',',$user->branch));
         return $arr;
     }
 

@@ -136,7 +136,7 @@
         url:  "broker/list", //数据接口
         method: 'get',
         dataType: 'json',
-        success: function(res) {
+        success: function(res) { console.log(res);
           if (res.status == 200) {
             table.render({
               height: 600,

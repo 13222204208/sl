@@ -142,11 +142,12 @@ class HousesController extends Controller
         $limit = $request->get('limit');
 
         $state= false;
-        $data= Level::descendantsAndSelf($id)->where('lpid',1);
+        $data= Level::descendantsof($id); 
         $arr = array();
         foreach($data as $d){
             $arr[] = $d['id'];
         }
+      
         //$result= GetTenant::whereRaw('FIND_IN_SET(?,houses_num)',$arr)->paginate($limit);
         if(empty($arr)){ 
             return [];
@@ -157,7 +158,7 @@ class HousesController extends Controller
         }
         $res = GetTenant::whereIn('permission',$this->userPermission())->when($state,function ($q) use ($arr) {
             foreach ($arr as $d) { 
-            $q->orWhereRaw('FIND_IN_SET(?,houses_num)',[$d]);
+            $q->whereRaw('FIND_IN_SET(?,houses_num)',[$d]);
             }
         })->paginate($limit);
        

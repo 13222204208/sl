@@ -12,10 +12,15 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class TenantController extends Controller
 {
-    public function export(Request $request) 
-    {   $startTime= $request->get('start_time');
+    public function export(Request $request)
+    {   
+        $startTime= $request->get('start_time'); 
         $stopTime= $request->get('stop_time');
-        return Excel::download(new TenantExport($startTime,$stopTime), '租户记录.xlsx');
+        //return Excel::download(new TenantExport($startTime,$stopTime), '租户记录.xlsx');
+        $path=  DIRECTORY_SEPARATOR.date('YmdHis')."租户记录.xlsx"; 
+        Excel::store(new TenantExport($startTime,$stopTime), $path);
+
+       return response()->download(storage_path('app').$path);
     }
 
     public function queryTenant(Request $request)
@@ -169,7 +174,7 @@ class TenantController extends Controller
     {
         $id = session('id');//用户id
         $user = User::find($id);
-        $arr = explode(',',$user->branch);
+        $arr = array_filter(explode(',',$user->branch));
         return $arr;
     }
 }

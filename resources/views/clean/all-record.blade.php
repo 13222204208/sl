@@ -19,7 +19,7 @@
   <div class="demoTable" style="margin:10px;">
     搜索：
     <div class="layui-inline">
-      <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+      <input class="layui-input" name="id" placeholder="楼盘名称" id="demoReload" autocomplete="off">
     </div>
     <button class="layui-btn" type="button" data-type="reload">查询</button>
   </div>

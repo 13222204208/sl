@@ -44,7 +44,7 @@ class TenantExport implements FromCollection, ShouldAutoSize, WithHeadings
     public function headings(): array
     {
         return[
-            'ID','租户名称','是否我司','联系人','公司类型','开始时间','结束时间','楼盘信息','','楼盘名称','房间号','物业类型','','付款类型','付款时间','租户需求','商圈','备注','经纪人','经纪人手机号'
+            'ID','租户名称','是否我司','联系人','公司类型','开始时间','结束时间','楼盘信息','','楼盘名称','房间号','物业类型','合同期限','付款类型','付款时间','租户需求','','商圈','备注','经纪人','经纪人手机号','所属部门','权限','经纪人id','状态','提交时间','更新时间'
         ];
     }
 
@@ -53,7 +53,7 @@ class TenantExport implements FromCollection, ShouldAutoSize, WithHeadings
     {
         $id = session('id');//用户id
         $user = User::find($id);
-        $arr = explode(',',$user->branch);
+        $arr = array_filter(explode(',',$user->branch));
         return $arr;
     }
 }

@@ -38,7 +38,7 @@ class CleanExport implements FromCollection,  ShouldAutoSize, WithHeadings
     public function headings(): array
     {
         return[
-            'ID','楼盘名称','楼盘信息','房间号','租户名称','是否我司','物业类型','','租户联系人','开始时间','','结束时间'
+            'ID','楼盘名称','楼盘信息','房间号','租户名称','是否我司','物业类型','公司类型','租户联系人','开始时间','合同期限','结束时间','付款类型','付款日期','租户需求','备注','城市','商圈','经纪人姓名','经纪人手机号','定位地址','图片地址','权限','所属部门','经纪人id','提交时间','更新时间'
         ];
     }
 
@@ -47,7 +47,7 @@ class CleanExport implements FromCollection,  ShouldAutoSize, WithHeadings
     {
         $id = session('id');//用户id
         $user = User::find($id);
-        $arr = explode(',',$user->branch);
+        $arr = array_filter(explode(',',$user->branch));
         return $arr;
     }
 
