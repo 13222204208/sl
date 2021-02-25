@@ -54,49 +54,6 @@
 
 </form>
 
-{{--    <form class="layui-form" action="">
-    <br>
-    <div class="layui-form-item">
-       <label class="layui-form-label">  租户名称:</label>
-
-    <div class="layui-inline">
-      <input class="layui-input" name="tenant_name" id="demoReload" autocomplete="off">
-    </div>
-    
-  </div>
- 
-
-    <div class="layui-form-item">
-      <label class="layui-form-label">是否我司:</label>
-      <div class="layui-input-block">
-          <select name="is_we_company" id="isNo" lay-filter="stateIsNo">
-              <option value=""></option>
-              <option value="1">我司租户</option>
-              <option value="0">外部租户</option>
-          </select>
-      </div>
-  </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">到期租户:</label>
-        <div class="layui-input-block">
-            <select name="day"  lay-filter="stateSelect">
-                <option value=""></option>
-                <option value="30">30天内到期</option>
-                <option value="60">60天内到期</option>
-                <option value="90">90天内到期</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="layui-form-item ">
-      <div class="layui-input-block">
-          <div class="layui-footer" style="left: 0;">
-              <button class="layui-btn" lay-submit="" lay-filter="create">查询</button>
-          </div>
-      </div>
-  </div>
-</form>  --}}
 
   <div class="layui-row" id="popUpdateTest" style="display:none;">
     <form class="layui-form layui-from-pane" required lay-verify="required" lay-filter="formUpdate" style="margin:20px">
@@ -354,6 +311,10 @@
                       field: 'houses_info',
                       title: '租户详情',
                       width: 220
+                    }, {
+                      field: 'houses_num',
+                      title: '房间号',
+                      width: 150
                     }, {
                       field: 'is_we_company',
                       title: '是否我司',
