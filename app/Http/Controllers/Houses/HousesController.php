@@ -142,7 +142,7 @@ class HousesController extends Controller
         $limit = $request->get('limit');
 
         $state= false;
-        $data= Level::descendantsof($id); 
+        $data= Level::descendantsof($id)->where('lpid',1); 
         $arr = array();
         foreach($data as $d){
             $arr[] = $d['id'];
@@ -152,15 +152,32 @@ class HousesController extends Controller
         if(empty($arr)){ 
             return [];
         }
-        $status= GetTenant::whereIn('permission',$this->userPermission())->first();
+/*         $status= GetTenant::whereIn('permission',$this->userPermission())->first();
         if($status){
             $$state = true;
+        } */
+        $all= array();
+        foreach ($arr as $d) { 
+           $info= GetTenant::whereIn('permission',$this->userPermission())->whereRaw('FIND_IN_SET(?,houses_num)',[$d])->pluck('id'); 
+           if(count($info) != 0){  
+               array_push($all,$info);
+           }
         }
-        $res = GetTenant::whereIn('permission',$this->userPermission())->when($state,function ($q) use ($arr) {
-            foreach ($arr as $d) { 
-            $q->whereRaw('FIND_IN_SET(?,houses_num)',[$d]);
+        
+        $gid= array();
+        foreach ($all as $value) {
+            foreach ($value as $v) {
+                array_push($gid,$v);
             }
-        })->paginate($limit);
+        } 
+        $gid= array_unique($gid);
+        $res = GetTenant::whereIn('permission',$this->userPermission())->whereIn('id',$gid)->paginate($limit);
+
+/*         $res = GetTenant::whereIn('permission',$this->userPermission())->when($state,function ($q) use ($arr) {
+            foreach ($arr as $d) {
+            $q->whereRaw('FIND_IN_SET(?,houses_num)',[$d])->get();
+            }
+        })->paginate($limit); */
        
         return $res;
     }
